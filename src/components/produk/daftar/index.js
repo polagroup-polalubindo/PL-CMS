@@ -29,7 +29,7 @@ export default function Index(params) {
   const tidakAktif = produk.filter((el) => el.statusProduk === false);
 
   useEffect(() => {
-    autoLogin();
+    // autoLogin();
     fetchProduk();
   }, []);
 

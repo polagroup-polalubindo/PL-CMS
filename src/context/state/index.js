@@ -9,6 +9,8 @@ const initialState = {
   transaksi: [],
   transaksiKomisi: [],
   member: [],
+  hasAuthentication: false,
+  userData: null
 };
 
 export const CMSContext = createContext(initialState);
@@ -33,6 +35,22 @@ export const Provider = ({ children }) => {
     });
     data = await data.json();
     localStorage.setItem("access_token", data.access_token);
+    localStorage.setItem("name_user", data.data.nama);
+  };
+
+  const login = async (payload) => {
+    let data = await fetch(URL_SERVER + `/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    data = await data.json();
+
+    if (data.access_token) {
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("name_user", data.data.nama);
+      dispatch({ type: "FECTH_USER_DATA", payload: data.data });
+    }
   };
 
   // PRODUK
@@ -238,6 +256,7 @@ export const Provider = ({ children }) => {
         inputResi,
 
         autoLogin,
+        login,
       }}
       {...{ children }}
     />

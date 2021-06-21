@@ -25,7 +25,11 @@ const CMSReducer = (state, action) => {
         ...state,
         transaksiKomisi: action.payload,
       };
-
+    case "FECTH_USER_DATA":
+      return {
+        ...state,
+        userData: action.payload,
+      };
     default:
       return state;
   }

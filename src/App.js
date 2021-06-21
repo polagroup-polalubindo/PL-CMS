@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Provider } from "./context/state";
 import PropTypes from "prop-types";
@@ -33,7 +33,11 @@ import Penjualan from "./components/penjualan";
 import TransaksiKomisi from "./components/transaksi/komisi";
 import TransaksiPenjualan from "./components/transaksi/penjualan";
 
+import Login from "./components/login";
+
 import useStyles from "./styles";
+
+import { CMSContext } from "./context/state";
 
 function App(props) {
   const { window } = props;
@@ -45,6 +49,7 @@ function App(props) {
   const [product, setProduct] = React.useState(false);
   const [member, setMember] = React.useState(false);
   const [transaksi, setTransaksi] = React.useState(false);
+  const { userData } = useContext(CMSContext);
 
   const handleClickProduct = () => {
     setProduct(!product);
@@ -61,6 +66,11 @@ function App(props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('name_user')
+  }
 
   const menus = [
     {
@@ -121,6 +131,12 @@ function App(props) {
       expand: true,
       icon: "/img/cms/sidebar/transaction-icon.png",
     },
+    {
+      value: "Logout",
+      sub: [],
+      link: "login",
+      icon: "/img/cms/sidebar/logout-icon.png",
+    }
   ];
 
   const drawer = (
@@ -128,6 +144,17 @@ function App(props) {
       <div className={classes.toolbar} />
       <List>
         {menus.map((menu) => (
+          (
+            (
+              (localStorage.getItem("name_user") && localStorage.getItem("name_user").toLowerCase() === "ss") &&
+              (menu.value === "Penjualan" || menu.value === "Logout")
+            ) ||
+            (
+              (localStorage.getItem("name_user") && localStorage.getItem("name_user").toLowerCase() === "sae") &&
+              (menu.value === "Transaksi" || menu.value === "Logout")
+            ) ||
+            (localStorage.getItem("name_user") && (localStorage.getItem("name_user").toLowerCase() !== "ss" && localStorage.getItem("name_user").toLowerCase() !== "sae"))
+          ) &&
           <>
             <ListItem
               button
@@ -136,10 +163,12 @@ function App(props) {
                 menu.value === "Produk"
                   ? handleClickProduct
                   : menu.value === "Member"
-                  ? handleClickMember
-                  : menu.value === "Transaksi"
-                  ? handleClickTransaksi
-                  : null
+                    ? handleClickMember
+                    : menu.value === "Transaksi"
+                      ? handleClickTransaksi
+                      : menu.value === "Logout"
+                        ? handleLogout
+                        : null
               }
               component={menu.expand === true ? null : Link}
               to={menu.expand === true ? null : `/${menu.link}`}
@@ -152,20 +181,20 @@ function App(props) {
                 product ? (
                   <ExpandLess />
                 ) : (
-                  <ExpandMore />
-                )
+                    <ExpandMore />
+                  )
               ) : menu.value === "Member" ? (
                 member ? (
                   <ExpandLess />
                 ) : (
-                  <ExpandMore />
-                )
+                    <ExpandMore />
+                  )
               ) : menu.value === "Transaksi" ? (
                 transaksi ? (
                   <ExpandLess />
                 ) : (
-                  <ExpandMore />
-                )
+                    <ExpandMore />
+                  )
               ) : null}
             </ListItem>
             <Collapse
@@ -173,10 +202,10 @@ function App(props) {
                 menu.value === "Produk"
                   ? product
                   : menu.value === "Member"
-                  ? member
-                  : menu.value === "Transaksi"
-                  ? transaksi
-                  : null
+                    ? member
+                    : menu.value === "Transaksi"
+                      ? transaksi
+                      : null
               }
               timeout="auto"
               unmountOnExit
@@ -198,7 +227,7 @@ function App(props) {
           </>
         ))}
       </List>
-    </div>
+    </div >
   );
 
   const container =
@@ -208,6 +237,9 @@ function App(props) {
     <Provider>
       <Router>
         <Switch>
+          <Route path='/login' component={Login} />
+          {/* {
+            hasAuthentication &&  */}
           <Route path="/">
             <div className={classes.root}>
               <CssBaseline />
@@ -288,6 +320,11 @@ function App(props) {
               </main>
             </div>
           </Route>
+          {/* }
+          {
+            !hasAuthentication && <Redirect to='/login' />
+          } */}
+
         </Switch>
       </Router>
     </Provider>
