@@ -16,8 +16,8 @@ export default function Index(props) {
   const { login } = useContext(CMSContext);
 
   useEffect(() => {
-    console.log(localStorage.getItem('access_token'))
-    if(localStorage.getItem('access_token')){
+    console.log(localStorage.getItem('access_token_CMS'))
+    if(localStorage.getItem('access_token_CMS')){
       props.history.push('/produk')
     }
   }, [])
@@ -29,7 +29,7 @@ export default function Index(props) {
     setProses(true)
     try {
       await login({ email: Username, password: Password })
-      props.history.push('/')
+      props.history.push('/produk')
     } catch (err) {
       Swal.fire({
         title: "Username atau Password Salah!",

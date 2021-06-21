@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import { Provider } from "./context/state";
 import PropTypes from "prop-types";
 
@@ -68,7 +68,7 @@ function App(props) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('access_token')
+    localStorage.removeItem('access_token_CMS')
     localStorage.removeItem('name_user')
   }
 
@@ -320,6 +320,7 @@ function App(props) {
               </main>
             </div>
           </Route>
+          <Redirect from='/' to='/login' />
           {/* }
           {
             !hasAuthentication && <Redirect to='/login' />
