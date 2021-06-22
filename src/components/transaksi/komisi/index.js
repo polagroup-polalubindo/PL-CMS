@@ -22,7 +22,7 @@ import DetailCard from "./KomisiDetailCard";
 export default function Index(params) {
   const classes = useStyles();
   const { fetchTransaksiKomisi, transaksiKomisi } = useContext(CMSContext);
-  console.log(transaksiKomisi);
+  //// console.log(transaksiKomisi);
 
   useEffect(() => {
     fetchTransaksiKomisi();

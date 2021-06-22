@@ -31,18 +31,18 @@ function Index() {
     brandId: null,
     deskripsi: "",
     minPesanan: 1,
-    hargaSatuan: null,
-    hargaGrosir: null,
+    hargaSatuan: 0,
+    hargaGrosir: 0,
     statusProduk: false,
-    stock: null,
+    stock: 0,
     sku: "",
     weight: 0,
     panjang: 0,
-    lebar: null,
-    tinggi: null,
+    lebar: 0,
+    tinggi: 0,
     komisiStatus: false,
-    komisi: null,
-    levelKomisi: null,
+    komisi: 0,
+    levelKomisi: 0,
   });
 
   useEffect(() => {
@@ -58,7 +58,7 @@ function Index() {
     },
   ];
 
-  const send = (e) => {
+  const send = async (e) => {
     if (image === null) {
       Swal.fire({
         title: "photo belum di upload",
@@ -79,13 +79,32 @@ function Index() {
       data.append("data", JSON.stringify(input, null, 2));
       data.append("file", image);
 
-      tambahProduk(data);
-      history.push("/produk");
+      try {
+        await tambahProduk(data);
+        Swal.fire({
+          title: "Tambah produk berhasil",
+          icon: "success",
+        });
+        history.push("/produk");
+      } catch (err) {
+        Swal.fire({
+          title: "Silahkan coba lagi",
+          icon: "error",
+        });
+      }
     }
   };
 
   const handleInput = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    if (e.target.name !== 'namaProduk' &&
+      e.target.name !== 'brandId' &&
+      e.target.name !== 'deskripsi' &&
+      e.target.name !== 'sku') {
+      if (!isNaN(e.target.value)) {
+        setInput({ ...input, [e.target.name]: e.target.value })};
+    } else {
+      setInput({ ...input, [e.target.name]: e.target.value });
+    }
   };
 
   const handleChangeWeight = (event) => {
@@ -321,6 +340,7 @@ function Index() {
                     ),
                   }}
                   name="hargaSatuan"
+                  value={input.hargaSatuan}
                   onChange={handleInput}
                 />
               </Grid>
@@ -383,6 +403,7 @@ function Index() {
                   size="small"
                   fullWidth
                   name="stock"
+                  value={input.stock}
                   onChange={handleInput}
                 />
               </Grid>
@@ -441,6 +462,7 @@ function Index() {
                   size="small"
                   fullWidth
                   name="weight"
+                  value={input.weight}
                   onChange={handleInput}
                 />
               </Grid>
@@ -463,6 +485,7 @@ function Index() {
                     ),
                   }}
                   name="panjang"
+                  value={input.panjang}
                   onChange={handleInput}
                 />
               </Grid>
@@ -477,6 +500,7 @@ function Index() {
                     ),
                   }}
                   name="lebar"
+                  value={input.lebar}
                   onChange={handleInput}
                 />
               </Grid>
@@ -491,6 +515,7 @@ function Index() {
                     ),
                   }}
                   name="tinggi"
+                  value={input.tinggi}
                   onChange={handleInput}
                 />
               </Grid>
@@ -620,6 +645,7 @@ function Index() {
                     ),
                   }}
                   name="komisi"
+                  value={input.komisi}
                   onChange={handleInput}
                   fullWidth
                 />
@@ -636,6 +662,7 @@ function Index() {
                   fullWidth
                   name="levelKomisi"
                   onChange={handleInput}
+                  value={input.levelKomisi}
                 />
               </Grid>
             </Grid>

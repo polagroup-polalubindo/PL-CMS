@@ -16,7 +16,6 @@ export default function Index(props) {
   const { login } = useContext(CMSContext);
 
   useEffect(() => {
-    console.log(localStorage.getItem('access_token_CMS'))
     if(localStorage.getItem('access_token_CMS')){
       props.history.push('/produk')
     }

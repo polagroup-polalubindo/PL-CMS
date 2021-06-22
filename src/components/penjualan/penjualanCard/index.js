@@ -40,7 +40,7 @@ const PenjualanCard = ({ item }) => {
 
   const handleInputResi = async (e) => {
     if (e.key === "Enter") {
-      console.log(resi);
+      //// console.log(resi);
 
       const response = await inputResi({
         noResi: resi,

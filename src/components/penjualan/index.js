@@ -40,7 +40,7 @@ export default function Index() {
     (el) => el.statusPengiriman === "pesanan selesai"
   );
 
-  console.log(transaksi);
+  //// console.log(transaksi);
 
   useEffect(() => {
     fetchTransaksi();

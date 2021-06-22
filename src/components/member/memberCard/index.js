@@ -19,6 +19,8 @@ import ListIcon from "@material-ui/icons/List";
 
 import useStyles from "./styles";
 
+import Swal from 'sweetalert2';
+
 export default function Index({ row }) {
   const classes = useStyles();
   let newPhoneNumber = "+62";
@@ -35,7 +37,7 @@ export default function Index({ row }) {
   );
   const handlePremiereStatus = () => {
     setPremiereStatus(!statusPremier);
-    console.log(statusPremier);
+    //// console.log(statusPremier);
     ubahStatusPremiere(
       !statusPremier === true
         ? { statusPremier: "aktif", referralStatus: true, id: row.id }
@@ -73,9 +75,18 @@ export default function Index({ row }) {
   };
   const closeAction = (input) => {
     setAnchorEl(null);
-    console.log(input);
     if (input === "hapus") {
-      deleteMember(row.id);
+      Swal.fire({
+        title: 'Hapus user permanen?',
+        showCancelButton: true,
+        confirmButtonText: `Hapus`,
+        cancelButtonText: `Batal`,
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await deleteMember(row.id);
+          Swal.fire('Berhasil dihapus!', '', 'success')
+        }
+      })
     }
   };
   return (
