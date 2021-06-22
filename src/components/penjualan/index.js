@@ -156,16 +156,16 @@ export default function Index() {
       </form> */}
 
       {view === "pesanan baru"
-        ? pesananBaru.map((item) => <PenjualanCard item={item} />)
+        ? pesananBaru && pesananBaru.length > 0 && pesananBaru.map((item) => <PenjualanCard item={item} />)
         : view === "siap dikirim"
-        ? siapDikirim.map((item) => <PenjualanCard item={item} />)
+        ? siapDikirim && siapDikirim.length > 0 && siapDikirim.map((item) => <PenjualanCard item={item} />)
         : view === "dalam pengiriman"
-        ? dalamPengiriman.map((item) => <PenjualanCard item={item} />)
+        ? dalamPengiriman && dalamPengiriman.length > 0 && dalamPengiriman.map((item) => <PenjualanCard item={item} />)
         : view === "pesanan selesai"
-        ? pesananSelesai.map((item) => <PenjualanCard item={item} />)
+        ? pesananSelesai && pesananSelesai.length > 0 && pesananSelesai.map((item) => <PenjualanCard item={item} />)
         : view === "pesanan ditolak"
-        ? pesananDitolak.map((item) => <PenjualanCard item={item} />)
-        : transaksi.map((item) => <PenjualanCard item={item} />)}
+        ? pesananDitolak && pesananDitolak.length > 0 && pesananDitolak.map((item) => <PenjualanCard item={item} />)
+        : transaksi && transaksi.length > 0 && transaksi.map((item) => <PenjualanCard item={item} />)}
     </>
   );
 }

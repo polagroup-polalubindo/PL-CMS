@@ -119,10 +119,10 @@ export default function Index(params) {
           </TableHead>
           <TableBody>
             {view === "semua produk"
-              ? produk.map((row) => <ProdukCard row={row} />)
+              ? produk && produk.length > 0 && produk.map((row) => <ProdukCard row={row} />)
               : view === "aktif"
-              ? aktif.map((row) => <ProdukCard row={row} />)
-              : tidakAktif.map((row) => <ProdukCard row={row} />)}
+              ? aktif && aktif.length > 0 && aktif.map((row) => <ProdukCard row={row} />)
+              : tidakAktif && tidakAktif.length > 0 && tidakAktif.map((row) => <ProdukCard row={row} />)}
           </TableBody>
         </Table>
       </TableContainer>

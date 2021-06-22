@@ -94,7 +94,7 @@ export default function Index() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {member.map((row) => (
+            {member && member.length > 0 && member.map((row) => (
               <MemberCard row={row} />
             ))}
           </TableBody>

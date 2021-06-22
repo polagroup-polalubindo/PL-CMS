@@ -132,7 +132,7 @@ const PenjualanCard = ({ item }) => {
           </Grid>
 
           {openProduk
-            ? item.Carts.map((el) => (
+            ? item.Carts && item.Carts.length > 0 && item.Carts.map((el) => (
                 <Grid item xs={10} container>
                   <Grid item xs={2}>
                     <img

@@ -75,7 +75,7 @@ export default function Index(params) {
             </TableRow>
           </TableHead>
           <TableBody style={{ margin: "0.3rem" }}>
-            {transaksiKomisi.map((item) => (
+            {transaksiKomisi && transaksiKomisi.length > 0 && transaksiKomisi.map((item) => (
               <DetailCard item={item} />
             ))}
           </TableBody>

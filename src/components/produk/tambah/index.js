@@ -201,7 +201,7 @@ function Index() {
                   name="brandId"
                   onChange={handleInput}
                 >
-                  {brand &&
+                  {brand && brand.length > 0 &&
                     brand.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
                         {item.namaBrand}

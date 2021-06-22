@@ -13,10 +13,10 @@ export default function Index(props) {
   const [Username, setUsername] = useState(null)
   const [Password, setPassword] = useState(null)
   const [Proses, setProses] = useState(false)
-  const { login } = useContext(CMSContext);
+  const { login, userData } = useContext(CMSContext);
 
   useEffect(() => {
-    if(localStorage.getItem('access_token_CMS')){
+    if (localStorage.getItem('access_token_CMS')) {
       props.history.push('/produk')
     }
   }, [])
@@ -28,8 +28,16 @@ export default function Index(props) {
     setProses(true)
     try {
       await login({ email: Username, password: Password })
-      props.history.push('/produk')
+
+      if(userData){
+        if (userData.nama.toLowerCase() === 'sae') props.history.push('/transaksi')
+        else if (userData.nama.toLowerCase() === 'ss') props.history.push('/penjualan')
+        else props.history.push('/produk')
+      }else{
+        props.history.push('/produk')
+      }
     } catch (err) {
+      console.log(err)
       Swal.fire({
         title: "Username atau Password Salah!",
         icon: "error",

@@ -76,7 +76,7 @@ export default function Index(params) {
       <br />
       <br />
       <div className={classes.root}>
-        {allFilter.map((option) => (
+        {allFilter && allFilter.length > 0 && allFilter.map((option) => (
           <Chip
             key={option.value}
             label={option.value}
@@ -108,7 +108,7 @@ export default function Index(params) {
           </TableHead>
           <TableBody>
             {filter === "perlu verifikasi"
-              ? needVerification.map((item) => (
+              ? needVerification && needVerification.length > 0 && needVerification.map((item) => (
                   <RowCard
                     item={item}
                     handleVerified={handleVerified}
@@ -116,7 +116,7 @@ export default function Index(params) {
                   />
                 ))
               : filter === "belum bayar"
-              ? beforePayment.map((item) => (
+              ? beforePayment && beforePayment.length > 0 && beforePayment.map((item) => (
                   <RowCard
                     item={item}
                     handleVerified={handleVerified}
@@ -124,7 +124,7 @@ export default function Index(params) {
                   />
                 ))
               : filter === "verified"
-              ? verified.map((item) => (
+              ? verified && verified.length > 0 && verified.map((item) => (
                   <RowCard
                     item={item}
                     handleVerified={handleVerified}
@@ -132,14 +132,14 @@ export default function Index(params) {
                   />
                 ))
               : filter === "pembayaran ditolak"
-              ? rejected.map((item) => (
+              ? rejected && rejected.length > 0 && rejected.map((item) => (
                   <RowCard
                     item={item}
                     handleVerified={handleVerified}
                     handleTolak={handleTolak}
                   />
                 ))
-              : transaksi.map((item) => (
+              : transaksi && transaksi.length > 0 && transaksi.map((item) => (
                   <RowCard
                     item={item}
                     handleVerified={handleVerified}

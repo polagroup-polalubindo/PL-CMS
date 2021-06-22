@@ -52,7 +52,7 @@ const DetailCard = ({ item }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {item.transaksi &&
+                  {item.transaksi && item.transaksi.length > 0 &&
                     item.transaksi.map((el) => (
                       <TableRow key={el.User?.id}>
                         <TableCell>{el.User?.id}</TableCell>
