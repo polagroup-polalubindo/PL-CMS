@@ -47,9 +47,13 @@ export const Provider = ({ children }) => {
     });
     data = await data.json();
 
-    if (data.access_token) {
-      await dispatch({ type: "FETCH_USER_DATA", payload: data.data });
-      localStorage.setItem("access_token_CMS", data.access_token);
+    if (data.data.role === 'admin') {
+      if (data.access_token) {
+        await dispatch({ type: "FETCH_USER_DATA", payload: data.data });
+        localStorage.setItem("access_token_CMS", data.access_token);
+      }
+    } else {
+      throw "Not admin"
     }
   };
 

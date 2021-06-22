@@ -29,19 +29,25 @@ export default function Index(props) {
     try {
       await login({ email: Username, password: Password })
 
-      if(userData){
+      if (userData) {
         if (userData.nama.toLowerCase() === 'sae') props.history.push('/transaksi')
         else if (userData.nama.toLowerCase() === 'ss') props.history.push('/penjualan')
         else props.history.push('/produk')
-      }else{
+      } else {
         props.history.push('/produk')
       }
     } catch (err) {
-      console.log(err)
-      Swal.fire({
-        title: "Username atau Password Salah!",
-        icon: "error",
-      });
+      if (err = "Not admin") {
+        Swal.fire({
+          title: "Anda bukan admin !",
+          icon: "error",
+        });
+      } else {
+        Swal.fire({
+          title: "Anda bukan admin !",
+          icon: "error",
+        });
+      }
     }
 
     setProses(false)
