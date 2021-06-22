@@ -88,7 +88,7 @@ function Navsidebar(props) {
       props.history.push('/penjualan')
       setMenus([
         {
-          value: "Penjualan",
+          value: "Pesanan",
           sub: [],
           link: "penjualan",
           icon: "/img/cms/sidebar/sales-icon.png",
@@ -143,7 +143,7 @@ function Navsidebar(props) {
         icon: "/img/cms/sidebar/product-icon.png",
       },
       {
-        value: "Penjualan",
+        value: "Pesanan",
         sub: [],
         link: "penjualan",
         icon: "/img/cms/sidebar/sales-icon.png",

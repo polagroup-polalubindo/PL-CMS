@@ -3,27 +3,27 @@ const CMSReducer = (state, action) => {
     case "FETCH_PRODUK":
       return {
         ...state,
-        produk: action.payload,
+        produk: action.payload || [],
       };
     case "FETCH_MEMBER":
       return {
         ...state,
-        member: action.payload,
+        member: action.payload || [],
       };
     case "FETCH_TRANSAKSI":
       return {
         ...state,
-        transaksi: action.payload,
+        transaksi: action.payload || [],
       };
     case "FETCH_BRAND":
       return {
         ...state,
-        brand: action.payload,
+        brand: action.payload || [],
       };
     case "FETCH_TRANSAKSI_KOMISI":
       return {
         ...state,
-        transaksiKomisi: action.payload,
+        transaksiKomisi: action.payload || [],
       };
     case "FETCH_USER_DATA":
       return {

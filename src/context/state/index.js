@@ -65,7 +65,7 @@ export const Provider = ({ children }) => {
   const fetchProduk = async () => {
     let data = await fetch(URL_SERVER + "/produk");
     data = await data.json();
-    dispatch({ type: "FETCH_PRODUK", payload: data });
+    dispatch({ type: "FETCH_PRODUK", payload: data || [] });
   };
 
   const ubahStatusProduk = async (newData) => {
@@ -117,7 +117,7 @@ export const Provider = ({ children }) => {
     });
     //// console.log(data, "<<<");
     data = await data.json();
-    dispatch({ type: "FETCH_MEMBER", payload: data });
+    dispatch({ type: "FETCH_MEMBER", payload: data || [] });
   };
 
   const tambahMember = async (input) => {
@@ -184,7 +184,7 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_TRANSAKSI", payload: data });
+    dispatch({ type: "FETCH_TRANSAKSI", payload: data || [] });
   };
 
   const fetchTransaksiKomisi = async () => {
@@ -194,7 +194,7 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_TRANSAKSI_KOMISI", payload: data });
+    dispatch({ type: "FETCH_TRANSAKSI_KOMISI", payload: data || [] });
   };
 
   const konfirmasiTransaksi = async (newData) => {
@@ -250,7 +250,7 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_BRAND", payload: data });
+    dispatch({ type: "FETCH_BRAND", payload: data || []});
   };
 
   return (

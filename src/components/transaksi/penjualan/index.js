@@ -23,6 +23,11 @@ export default function Index(params) {
   const { transaksi, fetchTransaksi, ubahStatusPembayaran, tolakPesanan } =
     useContext(CMSContext);
   const [filter, setFilter] = React.useState("semua transaksi");
+  // const [needVerification, setNeedVerification] = useState([])
+  // const [beforePayment, setBeforePayment] = useState([])
+  // const [verified, setVerified] = useState([])
+  // const [rejected, setRejected] = useState([])
+
   const needVerification = transaksi.filter(
     (el) => el.statusPembayaran === "menunggu konfirmasi"
   );
@@ -58,9 +63,23 @@ export default function Index(params) {
     }
   };
 
-  useEffect(() => {
-    fetchTransaksi();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchData(){
+  //     await fetchTransaksi();
+
+  //     transaksi.filter(
+  //       (el) => el.statusPembayaran === "menunggu konfirmasi"
+  //     );
+  //     const beforePayment = transaksi.filter(
+  //       (el) => el.statusPembayaran === "menunggu pembayaran"
+  //     );
+  //     const verified = transaksi.filter((el) => el.statusPembayaran === "verified");
+  //     const rejected = transaksi.filter(
+  //       (el) => el.statusPembayaran === "pesanan di tolak"
+  //     );
+  //   }
+
+  // }, []);
 
   return (
     <>
@@ -109,43 +128,43 @@ export default function Index(params) {
           <TableBody>
             {filter === "perlu verifikasi"
               ? needVerification && needVerification.length > 0 && needVerification.map((item) => (
-                  <RowCard
-                    item={item}
-                    handleVerified={handleVerified}
-                    handleTolak={handleTolak}
-                  />
-                ))
+                <RowCard
+                  item={item}
+                  handleVerified={handleVerified}
+                  handleTolak={handleTolak}
+                />
+              ))
               : filter === "belum bayar"
-              ? beforePayment && beforePayment.length > 0 && beforePayment.map((item) => (
+                ? beforePayment && beforePayment.length > 0 && beforePayment.map((item) => (
                   <RowCard
                     item={item}
                     handleVerified={handleVerified}
                     handleTolak={handleTolak}
                   />
                 ))
-              : filter === "verified"
-              ? verified && verified.length > 0 && verified.map((item) => (
-                  <RowCard
-                    item={item}
-                    handleVerified={handleVerified}
-                    handleTolak={handleTolak}
-                  />
-                ))
-              : filter === "pembayaran ditolak"
-              ? rejected && rejected.length > 0 && rejected.map((item) => (
-                  <RowCard
-                    item={item}
-                    handleVerified={handleVerified}
-                    handleTolak={handleTolak}
-                  />
-                ))
-              : transaksi && transaksi.length > 0 && transaksi.map((item) => (
-                  <RowCard
-                    item={item}
-                    handleVerified={handleVerified}
-                    handleTolak={handleTolak}
-                  />
-                ))}
+                : filter === "verified"
+                  ? verified && verified.length > 0 && verified.map((item) => (
+                    <RowCard
+                      item={item}
+                      handleVerified={handleVerified}
+                      handleTolak={handleTolak}
+                    />
+                  ))
+                  : filter === "pembayaran ditolak"
+                    ? rejected && rejected.length > 0 && rejected.map((item) => (
+                      <RowCard
+                        item={item}
+                        handleVerified={handleVerified}
+                        handleTolak={handleTolak}
+                      />
+                    ))
+                    : transaksi && transaksi.length > 0 && transaksi.map((item) => (
+                      <RowCard
+                        item={item}
+                        handleVerified={handleVerified}
+                        handleTolak={handleTolak}
+                      />
+                    ))}
           </TableBody>
         </Table>
       </TableContainer>
