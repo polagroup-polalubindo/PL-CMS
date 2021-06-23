@@ -50,7 +50,8 @@ function Navsidebar(props) {
           });
 
           data = await data.json()
-          setUserData(data.data)
+          await setUserData(data.data)
+          if (userData) fetchMenu()
         } catch (err) {
           console.log(err)
         }
@@ -85,12 +86,11 @@ function Navsidebar(props) {
 
   const fetchMenu = () => {
     if (userData.nama.toLowerCase() === "ss") {
-      props.history.push('/penjualan')
       setMenus([
         {
           value: "Pesanan",
           sub: [],
-          link: "penjualan",
+          link: "pesanan",
           icon: "/img/cms/sidebar/sales-icon.png",
         }, ,
         {
@@ -100,7 +100,7 @@ function Navsidebar(props) {
           icon: "/img/cms/sidebar/logout-icon.png",
         }
       ])
-      props.history.push('/penjualan')
+      props.history.push('/pesanan')
     } else if (userData.nama.toLowerCase() === "sae") {
       props.history.push('/transaksi')
       setMenus([
@@ -145,7 +145,7 @@ function Navsidebar(props) {
       {
         value: "Pesanan",
         sub: [],
-        link: "penjualan",
+        link: "pesanan",
         icon: "/img/cms/sidebar/sales-icon.png",
       },
       {

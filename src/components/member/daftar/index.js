@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CMSContext } from "../../../context/state";
 import {
   Button,
@@ -12,6 +12,8 @@ import {
   TextField,
   InputAdornment,
   Typography,
+  CircularProgress,
+  Grid,
 } from "@material-ui/core";
 
 import ImportExportOutlinedIcon from "@material-ui/icons/ImportExportOutlined";
@@ -26,7 +28,7 @@ export default function Index() {
   const classes = useStyles();
   const history = useHistory();
 
-  const { fetchMember, member } = useContext(CMSContext);
+  const { fetchMember, member, proses } = useContext(CMSContext);
 
   useEffect(() => {
     fetchMember();
@@ -94,11 +96,21 @@ export default function Index() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {member && member.length > 0 && member.map((row) => (
+            {!proses && member && member.length > 0 && member.map((row) => (
               <MemberCard row={row} />
             ))}
           </TableBody>
         </Table>
+        <Grid style={{ display: 'flex', justifyContent: 'center' }}>
+          {
+            proses
+              ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 80, height: 80 }}>
+                <CircularProgress style={{ width: 50, height: 50 }} />
+              </Grid>
+              : member.length === 0 &&
+              <p>Tidak ada data member</p>
+          }
+        </Grid>
       </TableContainer>
     </>
   );

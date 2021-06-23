@@ -6,6 +6,8 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  Grid,
+  CircularProgress
 } from "@material-ui/core";
 import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined";
 import useStyles from "./styles";
@@ -16,7 +18,7 @@ import PenjualanCard from "./penjualanCard";
 
 export default function Index() {
   const classes = useStyles();
-  let { transaksi, fetchTransaksi } = useContext(CMSContext);
+  let { transaksi, fetchTransaksi, proses } = useContext(CMSContext);
   const pesananDitolak = transaksi.filter(
     (el) => el.statusPesanan === "pesanan di tolak"
   );
@@ -155,17 +157,34 @@ export default function Index() {
         </Button>
       </form> */}
 
-      {view === "pesanan baru"
+      {!proses && (view === "pesanan baru"
         ? pesananBaru && pesananBaru.length > 0 && pesananBaru.map((item) => <PenjualanCard item={item} />)
         : view === "siap dikirim"
-        ? siapDikirim && siapDikirim.length > 0 && siapDikirim.map((item) => <PenjualanCard item={item} />)
-        : view === "dalam pengiriman"
-        ? dalamPengiriman && dalamPengiriman.length > 0 && dalamPengiriman.map((item) => <PenjualanCard item={item} />)
-        : view === "pesanan selesai"
-        ? pesananSelesai && pesananSelesai.length > 0 && pesananSelesai.map((item) => <PenjualanCard item={item} />)
-        : view === "pesanan ditolak"
-        ? pesananDitolak && pesananDitolak.length > 0 && pesananDitolak.map((item) => <PenjualanCard item={item} />)
-        : transaksi && transaksi.length > 0 && transaksi.map((item) => <PenjualanCard item={item} />)}
+          ? siapDikirim && siapDikirim.length > 0 && siapDikirim.map((item) => <PenjualanCard item={item} />)
+          : view === "dalam pengiriman"
+            ? dalamPengiriman && dalamPengiriman.length > 0 && dalamPengiriman.map((item) => <PenjualanCard item={item} />)
+            : view === "pesanan selesai"
+              ? pesananSelesai && pesananSelesai.length > 0 && pesananSelesai.map((item) => <PenjualanCard item={item} />)
+              : view === "pesanan ditolak"
+                ? pesananDitolak && pesananDitolak.length > 0 && pesananDitolak.map((item) => <PenjualanCard item={item} />)
+                : transaksi && transaksi.length > 0 && transaksi.map((item) => <PenjualanCard item={item} />))}
+
+      <Grid style={{ display: 'flex', justifyContent: 'center' }}>
+        {
+          proses
+            ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 80, height: 80 }}>
+              <CircularProgress style={{ width: 50, height: 50 }} />
+            </Grid>
+            : (
+              ((view === "pesanan baru" && pesananBaru.length === 0) ||
+                (view === "siap dikirim" && siapDikirim.length === 0) ||
+                (view === "dalam pengiriman" && dalamPengiriman.length === 0) ||
+                (view === "pesanan selesai" && pesananSelesai.length === 0) ||
+                (view === "pesanan ditolak" && pesananDitolak.length === 0) ||
+                transaksi.length === 0) &&
+              <p>Tidak ada data</p>)
+        }
+      </Grid>
     </>
   );
 }

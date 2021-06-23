@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { Link } from 'react-router-dom';
 import { TextField, Button, CircularProgress, InputAdornment, Typography } from '@material-ui/core';
 
 import MailIcon from '@material-ui/icons/Mail';
@@ -31,7 +30,7 @@ export default function Index(props) {
 
       if (userData) {
         if (userData.nama.toLowerCase() === 'sae') props.history.push('/transaksi')
-        else if (userData.nama.toLowerCase() === 'ss') props.history.push('/penjualan')
+        else if (userData.nama.toLowerCase() === 'ss') props.history.push('/pesanan')
         else props.history.push('/produk')
       } else {
         props.history.push('/produk')

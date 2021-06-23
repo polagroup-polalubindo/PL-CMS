@@ -10,7 +10,8 @@ const initialState = {
   transaksi: [],
   transaksiKomisi: [],
   member: [],
-  userData: null
+  userData: null,
+  proses: false
 };
 
 export const CMSContext = createContext(initialState);
@@ -63,7 +64,8 @@ export const Provider = ({ children }) => {
 
   // PRODUK
   const fetchProduk = async () => {
-    let data = await fetch(URL_SERVER + "/produk");
+    dispatch({ type: "SET_PROSES" });
+    let data = await fetch(URL_SERVER + "/produk?all=true");
     data = await data.json();
     dispatch({ type: "FETCH_PRODUK", payload: data || [] });
   };
@@ -110,6 +112,7 @@ export const Provider = ({ children }) => {
 
   // MEMBER
   const fetchMember = async () => {
+    dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + "/customer", {
       method: "GET",
@@ -176,8 +179,19 @@ export const Provider = ({ children }) => {
     fetchMember();
   }
 
+  const ubahMember = async (id, newData) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/customer/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });;
+    fetchMember();
+  }
+
   // TRANSAKSI
   const fetchTransaksi = async () => {
+    dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + `/transaksi`, {
       method: "GET",
@@ -188,6 +202,7 @@ export const Provider = ({ children }) => {
   };
 
   const fetchTransaksiKomisi = async () => {
+    dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + `/all-transaksi`, {
       method: "GET",
@@ -244,13 +259,14 @@ export const Provider = ({ children }) => {
 
   // BRAND
   const fetchBrand = async () => {
+    dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + `/brand`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_BRAND", payload: data || []});
+    dispatch({ type: "FETCH_BRAND", payload: data || [] });
   };
 
   return (
@@ -263,6 +279,7 @@ export const Provider = ({ children }) => {
         transaksiKomisi: state.transaksiKomisi,
         userData: state.userData,
         isLogin: state.isLogin,
+        proses: state.proses,
 
         // PRODUK
         fetchProduk,
@@ -277,6 +294,7 @@ export const Provider = ({ children }) => {
         ubahStatusPremiere,
         ubahStatus,
         deleteMember,
+        ubahMember,
 
         // TRANSAKSI
         fetchTransaksi,

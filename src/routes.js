@@ -8,7 +8,7 @@ import DaftarProduk from "./components/produk/daftar";
 import TambahMember from "./components/member/tambah";
 import DaftarMember from "./components/member/daftar";
 
-import Penjualan from "./components/penjualan";
+import Pesanan from "./components/pesanan";
 
 import TransaksiKomisi from "./components/transaksi/komisi";
 import TransaksiPenjualan from "./components/transaksi/penjualan";
@@ -27,7 +27,7 @@ function Routes() {
         <Route path="/login" component={Login} />
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />
         <AuthenticatedRoute path="/produk" component={DaftarProduk} />
-        <AuthenticatedRoute path="/penjualan" component={Penjualan} />
+        <AuthenticatedRoute path="/pesanan" component={Pesanan} />
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
         <AuthenticatedRoute path="/member" component={DaftarMember} />
         <AuthenticatedRoute path="/transaksi/komisi" component={TransaksiKomisi} />

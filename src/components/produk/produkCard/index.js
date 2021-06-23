@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import {
   Checkbox,
@@ -17,9 +17,8 @@ const ProdukCard = ({ row, history }) => {
   const { ubahStatusProduk, deleteproduk, editProduk } = useContext(CMSContext);
   const [checked, setChecked] = useState(false);
 
-  const [produkStatus, setProdukStatus] = useState(
-    row.statusProduk === true ? true : false
-  );
+  const [produkStatus, setProdukStatus] = useState(false);
+
   const [data, setData] = useState({
     hargaSatuan: row.hargaSatuan,
     stock: row.stock,
@@ -32,6 +31,10 @@ const ProdukCard = ({ row, history }) => {
       id: row.id,
     });
   };
+
+  useEffect(() => {
+    setProdukStatus(row.statusProduk)
+  }, [row])
 
   //// console.log(row);
   const actions = [

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CMSContext } from "../../../context/state";
 import {
   Button,
@@ -10,6 +10,8 @@ import {
   TableHead,
   TableRow,
   Paper,
+  CircularProgress,
+  Grid,
 } from "@material-ui/core";
 
 import useStyles from "./styles";
@@ -22,16 +24,21 @@ import { useHistory } from "react-router";
 export default function Index(params) {
   const classes = useStyles();
   const history = useHistory();
-  const { autoLogin, fetchProduk, produk } = useContext(CMSContext);
+  const { autoLogin, fetchProduk, produk, proses } = useContext(CMSContext);
   const [view, setView] = React.useState("semua produk");
 
-  const aktif = produk.filter((el) => el.statusProduk === true);
-  const tidakAktif = produk.filter((el) => el.statusProduk === false);
+  const [aktif, setAktif] = useState([])
+  const [tidakAktif, setTidakAktif] = useState([])
 
   useEffect(() => {
     // autoLogin();
     fetchProduk();
   }, []);
+
+  useEffect(() => {
+    setAktif(produk.filter((el) => el.statusProduk === true))
+    setTidakAktif(produk.filter((el) => el.statusProduk === false))
+  }, [produk]);
 
   const views = [
     { value: "semua produk" },
@@ -118,14 +125,32 @@ export default function Index(params) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {view === "semua produk"
-              ? produk && produk.length > 0 && produk.map((row) => <ProdukCard row={row} />)
-              : view === "aktif"
-              ? aktif && aktif.length > 0 && aktif.map((row) => <ProdukCard row={row} />)
-              : tidakAktif && tidakAktif.length > 0 && tidakAktif.map((row) => <ProdukCard row={row} />)}
+            {
+              !proses &&
+              (view === "semua produk"
+                ? produk && produk.length > 0 && produk.map((row) => <ProdukCard row={row} />)
+                : view === "aktif"
+                  ? aktif && aktif.length > 0 && aktif.map((row) => <ProdukCard row={row} />)
+                  : tidakAktif && tidakAktif.length > 0 && tidakAktif.map((row) => <ProdukCard row={row} />)
+              )
+            }
           </TableBody>
         </Table>
-      </TableContainer>
+        <Grid style={{ display: 'flex', justifyContent: 'center' }}>
+          {
+            proses
+              ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 80, height: 80 }}>
+                <CircularProgress style={{ width: 50, height: 50 }} />
+              </Grid>
+              : (
+                ((view === "aktif" && aktif.length === 0) ||
+                  (view === "tidak aktif" && tidakAktif.length === 0) ||
+                  produk.length === 0) && <p> Tidak ada data produk</p>
+              )
+              
+          }
+        </Grid>
+    </TableContainer>
     </>
   );
 }

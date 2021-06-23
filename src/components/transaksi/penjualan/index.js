@@ -11,6 +11,8 @@ import {
   Paper,
   TableBody,
   MenuItem,
+  Grid,
+  CircularProgress
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -20,24 +22,38 @@ import { RowCard } from "./RowCard";
 
 export default function Index(params) {
   const classes = useStyles();
-  const { transaksi, fetchTransaksi, ubahStatusPembayaran, tolakPesanan } =
+  const { transaksi, fetchTransaksi, ubahStatusPembayaran, tolakPesanan, proses } =
     useContext(CMSContext);
   const [filter, setFilter] = React.useState("semua transaksi");
-  // const [needVerification, setNeedVerification] = useState([])
-  // const [beforePayment, setBeforePayment] = useState([])
-  // const [verified, setVerified] = useState([])
-  // const [rejected, setRejected] = useState([])
+  const [needVerification, setNeedVerification] = useState([])
+  const [beforePayment, setBeforePayment] = useState([])
+  const [verified, setVerified] = useState([])
+  const [rejected, setRejected] = useState([])
 
-  const needVerification = transaksi.filter(
-    (el) => el.statusPembayaran === "menunggu konfirmasi"
-  );
-  const beforePayment = transaksi.filter(
-    (el) => el.statusPembayaran === "menunggu pembayaran"
-  );
-  const verified = transaksi.filter((el) => el.statusPembayaran === "verified");
-  const rejected = transaksi.filter(
-    (el) => el.statusPembayaran === "pesanan di tolak"
-  );
+  // const needVerification = ;
+  // const beforePayment = ;
+  // const verified = ;
+  // const rejected = ;
+
+  useEffect(() => {
+    fetchTransaksi();
+  }, [])
+
+  useEffect(() => {
+    async function fetch() {
+      setNeedVerification(transaksi.filter(
+        (el) => el.statusPembayaran === "menunggu konfirmasi"
+      ))
+      setBeforePayment(transaksi.filter(
+        (el) => el.statusPembayaran === "menunggu pembayaran"
+      ))
+      setVerified(transaksi.filter((el) => el.statusPembayaran === "verified"))
+      setRejected(transaksi.filter(
+        (el) => el.statusPembayaran === "pesanan di tolak"
+      ))
+    }
+    fetch()
+  }, [transaksi])
 
   const allFilter = [
     { value: "semua transaksi" },
@@ -62,24 +78,6 @@ export default function Index(params) {
       fetchTransaksi();
     }
   };
-
-  // useEffect(() => {
-  //   async function fetchData(){
-  //     await fetchTransaksi();
-
-  //     transaksi.filter(
-  //       (el) => el.statusPembayaran === "menunggu konfirmasi"
-  //     );
-  //     const beforePayment = transaksi.filter(
-  //       (el) => el.statusPembayaran === "menunggu pembayaran"
-  //     );
-  //     const verified = transaksi.filter((el) => el.statusPembayaran === "verified");
-  //     const rejected = transaksi.filter(
-  //       (el) => el.statusPembayaran === "pesanan di tolak"
-  //     );
-  //   }
-
-  // }, []);
 
   return (
     <>
@@ -126,7 +124,7 @@ export default function Index(params) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filter === "perlu verifikasi"
+            {!proses && (filter === "perlu verifikasi"
               ? needVerification && needVerification.length > 0 && needVerification.map((item) => (
                 <RowCard
                   item={item}
@@ -164,9 +162,24 @@ export default function Index(params) {
                         handleVerified={handleVerified}
                         handleTolak={handleTolak}
                       />
-                    ))}
+                    )))}
           </TableBody>
         </Table>
+        <Grid style={{ display: 'flex', justifyContent: 'center' }}>
+          {
+            proses
+              ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 80, height: 80 }}>
+                <CircularProgress style={{ width: 50, height: 50 }} />
+              </Grid>
+              : (
+                ((filter === "perlu verifikasi" && needVerification.length === 0) ||
+                  (filter === "belum bayar" && beforePayment.length === 0) ||
+                  (filter === "verified" && verified.length === 0) ||
+                  (filter === "pembayaran ditolak" && rejected.length === 0) ||
+                  transaksi.length === 0) &&
+                <p>Tidak ada data</p>)
+          }
+        </Grid>
       </TableContainer>
     </>
   );

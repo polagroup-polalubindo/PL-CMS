@@ -33,15 +33,15 @@ export default function Index({ row }) {
 
   // PREMIERE
   const [statusPremier, setPremiereStatus] = useState(
-    row.statusPremier === "aktif" ? true : false
+    row.statusPremier === "aktif" && row.referralStatus ? true : false
   );
   const handlePremiereStatus = () => {
     setPremiereStatus(!statusPremier);
     //// console.log(statusPremier);
     ubahStatusPremiere(
       !statusPremier === true
-        ? { statusPremier: "aktif", referralStatus: true, id: row.id }
-        : { statusPremier: null, referralStatus: false, id: row.id }
+        ? { statusPremier: "aktif", referralStatus: 1, id: row.id }
+        : { statusPremier: null, referralStatus: null, id: row.id }
     );
   };
 
@@ -65,7 +65,7 @@ export default function Index({ row }) {
 
   // AKSI
   const actions = [
-    { value: "edit" },
+    // { value: "edit" },
     { value: "hapus" },
     { value: "reset password" },
   ];
