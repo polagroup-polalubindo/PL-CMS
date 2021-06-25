@@ -40,23 +40,26 @@ function Navsidebar(props) {
 
   useEffect(() => {
     async function checkToken() {
-      const access_token = localStorage.getItem("access_token_CMS");
+      try {
+        const access_token = localStorage.getItem("access_token_CMS");
 
-      if (access_token) {
-        try {
+        if (access_token) {
           let data = await fetch(URL_SERVER + "/check-token", {
             method: "GET",
             headers: { access_token, "Content-Type": "application/json" },
           });
 
           data = await data.json()
-          await setUserData(data.data)
-          if (userData) fetchMenu()
-        } catch (err) {
-          localStorage.removeItem("access_token_CMS");
-          props.history.push('/login')
+          if (data.message === "user not found") {
+            throw 'error'
+          } else {
+            await setUserData(data.data)
+            if (userData) fetchMenu()
+          }
+        } else {
+          throw 'error'
         }
-      } else {
+      } catch (err) {
         localStorage.removeItem("access_token_CMS");
         props.history.push('/login')
       }
