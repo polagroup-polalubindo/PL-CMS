@@ -42,7 +42,7 @@ function Navsidebar(props) {
     async function checkToken() {
       const access_token = localStorage.getItem("access_token_CMS");
 
-      if (access_token)
+      if (access_token) {
         try {
           let data = await fetch(URL_SERVER + "/check-token", {
             method: "GET",
@@ -53,8 +53,13 @@ function Navsidebar(props) {
           await setUserData(data.data)
           if (userData) fetchMenu()
         } catch (err) {
-          console.log(err)
+          localStorage.removeItem("access_token_CMS");
+          props.history.push('/login')
         }
+      } else {
+        localStorage.removeItem("access_token_CMS");
+        props.history.push('/login')
+      }
     }
     checkToken()
   }, [])
