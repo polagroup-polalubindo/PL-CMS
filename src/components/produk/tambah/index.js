@@ -10,6 +10,9 @@ import {
   Switch,
   MenuItem,
   Button,
+  FormControl,
+  RadioGroup,
+  Radio,
 } from "@material-ui/core";
 
 import useStyles from "./styles";
@@ -96,12 +99,15 @@ function Index() {
   };
 
   const handleInput = (e) => {
-    if (e.target.name !== 'namaProduk' &&
-      e.target.name !== 'brandId' &&
-      e.target.name !== 'deskripsi' &&
-      e.target.name !== 'sku') {
+    if (
+      e.target.name !== "namaProduk" &&
+      e.target.name !== "brandId" &&
+      e.target.name !== "deskripsi" &&
+      e.target.name !== "sku"
+    ) {
       if (!isNaN(e.target.value)) {
-        setInput({ ...input, [e.target.name]: e.target.value })};
+        setInput({ ...input, [e.target.name]: e.target.value });
+      }
     } else {
       setInput({ ...input, [e.target.name]: e.target.value });
     }
@@ -201,7 +207,8 @@ function Index() {
                   name="brandId"
                   onChange={handleInput}
                 >
-                  {brand && brand.length > 0 &&
+                  {brand &&
+                    brand.length > 0 &&
                     brand.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
                         {item.namaBrand}
@@ -239,7 +246,7 @@ function Index() {
               </Grid>
             </Grid>
 
-            {/* <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   Video Produk
@@ -250,35 +257,32 @@ function Index() {
                   + Tambah URL Video
                 </Button>
               </Grid>
-            </Grid> */}
+            </Grid>
 
-            {/* <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   TDS Produk
                 </Typography>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={4}>
                 <Button variant="outlined" color="transparent">
                   + Tambah URL TDS
                 </Button>
               </Grid>
-            </Grid> */}
-
-            {/* <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   MSDS Produk
                 </Typography>
               </Grid>
-              <Grid item xs={10}>
+              <Grid item xs={4}>
                 <Button variant="outlined" color="transparent">
                   + Tambah URL MSDS
                 </Button>
               </Grid>
-            </Grid> */}
+            </Grid>
 
-            {/* <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   Sertifikasi
@@ -296,10 +300,11 @@ function Index() {
                   + Tambah URL Sertifikasi
                 </Button>
               </Grid>
-            </Grid> */}
+            </Grid>
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -309,7 +314,7 @@ function Index() {
             <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
-                  Minimal Pemesanan
+                  Minimum Pemesanan
                 </Typography>
               </Grid>
               <Grid item xs={10}>
@@ -361,6 +366,7 @@ function Index() {
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -428,6 +434,7 @@ function Index() {
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -521,7 +528,7 @@ function Index() {
               </Grid>
             </Grid>
 
-            {/* <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   Asuransi Pengiriman
@@ -537,20 +544,20 @@ function Index() {
                   >
                     <FormControlLabel
                       value="Wajib"
-                      control={<RedRadio />}
+                      control={<Radio />}
                       label="Wajib"
                     />
                     <FormControlLabel
                       value="Opsional"
-                      control={<RedRadio />}
+                      control={<Radio />}
                       label="Opsional"
                     />
                   </RadioGroup>
                 </FormControl>
               </Grid>
-            </Grid> */}
+            </Grid>
 
-            {/* <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   Layanan Pengiriman
@@ -566,18 +573,18 @@ function Index() {
                   >
                     <FormControlLabel
                       value="Standar"
-                      control={<RedRadio />}
+                      control={<Radio />}
                       label="Standar"
                     />
                     <FormControlLabel
                       value="Custom"
-                      control={<RedRadio />}
+                      control={<Radio />}
                       label="Custom"
                     />
                   </RadioGroup>
                 </FormControl>
               </Grid>
-            </Grid> */}
+            </Grid>
 
             {/* <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
@@ -587,18 +594,14 @@ function Index() {
               </Grid>
               <Grid item xs={10}>
                 <FormControlLabel
-                  control={
-                    <IOSSwitch
-                      checked={}
-                      onChange={}
-                    />
-                  }
+                  control={<IOSSwitch checked={""} onChange={""} />}
                 />
               </Grid>
             </Grid> */}
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -608,7 +611,7 @@ function Index() {
             <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
-                  Status Produk
+                  Status
                 </Typography>
               </Grid>
               <Grid item xs={10}>
@@ -656,21 +659,74 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  name="levelKomisi"
-                  onChange={handleInput}
-                  value={input.levelKomisi}
-                />
+                <Typography variant="body2" component="p" gutterBottom>
+                  Level 1
+                </Typography>
               </Grid>
             </Grid>
 
             <Grid container spacing={5} alignItems="center">
-              <Grid item xs={12}>
+              <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
-                  * nama level komisi
+                  Berlaku Sebesar
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
+                  }}
+                  name="komisi"
+                  value={input.komisi}
+                  onChange={handleInput}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Nama Level Komisi
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Level 2
+                </Typography>
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={5} alignItems="center">
+              <Grid item xs={2}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Berlaku Sebesar
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">%</InputAdornment>
+                    ),
+                  }}
+                  name="komisi"
+                  value={input.komisi}
+                  onChange={handleInput}
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={2}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Nama Level Komisi
+                </Typography>
+              </Grid>
+              <Grid item xs={4}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Level 3
                 </Typography>
               </Grid>
             </Grid>
