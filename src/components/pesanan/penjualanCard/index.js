@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Button,
   Paper,
@@ -13,11 +13,12 @@ import useStyles from "../styles";
 
 import { CMSContext } from "../../../context/state";
 
-const PenjualanCard = ({ item }) => {
+const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
   const { konfirmasiTransaksi, tolakPesanan, fetchTransaksi, inputResi } =
     useContext(CMSContext);
   const [openProduk, setOpenProduk] = useState(false);
   const [resi, setResi] = useState("");
+  const [statusCheck, setStatusCheck] = useState(false);
 
   const handleKonfirmasi = async () => {
     item.statusPesanan = "pesanan di konfirmasi";
@@ -52,6 +53,22 @@ const PenjualanCard = ({ item }) => {
     }
   };
 
+  useEffect(() => {
+    // if(statusCheckAll){
+      setStatusCheck(statusCheckAll)
+    // }
+  }, [statusCheckAll])
+
+  useEffect(async () => {
+    if (statusCheck) {
+      if(!statusCheckAll){
+        await handleSelectedPesanan('add', item)
+      }
+    } else {
+      await handleSelectedPesanan('remove', item)
+    }
+  }, [statusCheck])
+
   return (
     <>
       <Paper style={{ padding: "10px 24px" }}>
@@ -64,7 +81,10 @@ const PenjualanCard = ({ item }) => {
         >
           <Grid item xs={9}>
             <FormControlLabel
-              control={<Checkbox name="checkedA" />}
+              control={<Checkbox
+                name="statusCheck"
+                checked={statusCheck}
+                onChange={(e) => setStatusCheck(e.target.checked)} />}
               label={
                 <>
                   <b>
@@ -133,24 +153,24 @@ const PenjualanCard = ({ item }) => {
 
           {openProduk
             ? item.Carts && item.Carts.length > 0 && item.Carts.map((el) => (
-                <Grid item xs={10} container>
-                  <Grid item xs={2}>
-                    <img
-                      src={el.Produk?.fotoProduk}
-                      alt={el.Produk?.namaProduk}
-                      width="50"
-                      height="50"
-                    />
-                  </Grid>
-                  <Grid item xs={10}>
-                    <Typography variant="body2">
-                      <b>{el.Produk?.namaProduk}</b>
-                      <br />
-                      {el.qty} x Rp {el.Produk?.hargaSatuan}
-                    </Typography>
-                  </Grid>
+              <Grid item xs={10} container>
+                <Grid item xs={2}>
+                  <img
+                    src={el.Produk?.fotoProduk}
+                    alt={el.Produk?.namaProduk}
+                    width="50"
+                    height="50"
+                  />
                 </Grid>
-              ))
+                <Grid item xs={10}>
+                  <Typography variant="body2">
+                    <b>{el.Produk?.namaProduk}</b>
+                    <br />
+                    {el.qty} x Rp {el.Produk?.hargaSatuan}
+                  </Typography>
+                </Grid>
+              </Grid>
+            ))
             : null}
 
           <Grid item xs={10}>

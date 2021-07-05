@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   InputAdornment,
@@ -7,7 +7,7 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
-  CircularProgress
+  CircularProgress,
 } from "@material-ui/core";
 import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined";
 import useStyles from "./styles";
@@ -15,6 +15,8 @@ import useStyles from "./styles";
 import { CMSContext } from "../../context/state";
 
 import PenjualanCard from "./penjualanCard";
+import LabelPengiriman from '../LabelPengiriman';
+import Invoice from '../Invoice';
 
 export default function Index() {
   const classes = useStyles();
@@ -41,6 +43,10 @@ export default function Index() {
   const pesananSelesai = transaksi.filter(
     (el) => el.statusPengiriman === "pesanan selesai"
   );
+  const [dataSelected, setDataSelected] = useState([])
+  const [statusCheckAll, setStatusCheckAll] = useState(false)
+  const [checked, setChecked] = useState(false)
+  const [Counter, setCounter] = useState(0)
 
   //// console.log(transaksi);
 
@@ -54,20 +60,20 @@ export default function Index() {
     setFilter(event.target.value);
   };
 
-  const [pilih, setPilih] = React.useState({
-    checkedA: true,
-    checkedB: true,
-    checkedF: true,
-    checkedG: true,
-  });
+  // const [pilih, setPilih] = React.useState({
+  //   checkedA: true,
+  //   checkedB: true,
+  //   checkedF: true,
+  //   checkedG: true,
+  // });
 
-  const handlePilih = (event) => {
-    setPilih({ ...pilih, [event.target.name]: event.target.checked });
-  };
+  // const handlePilih = (event) => {
+  //   setPilih({ ...pilih, [event.target.name]: event.target.checked });
+  // };
 
-  const RedCheckbox = () => (
-    <Checkbox color="default" className={classes.checkbox} />
-  );
+  // const RedCheckbox = () => (
+  //   <Checkbox color="default" className={classes.checkbox} />
+  // );
 
   const views = [
     { value: "semua pesanan" },
@@ -78,6 +84,72 @@ export default function Index() {
     { value: "pesanan ditolak" },
   ];
   const [view, setView] = React.useState("semua pesanan");
+
+  const handleSelectedPesanan = async (flag, data) => {
+    if (flag === "add") {
+      await setDataSelected([...dataSelected, data])
+    } else {
+      let newDataSelected = await dataSelected.filter(el => el.id !== data.id)
+      await setDataSelected(newDataSelected)
+    }
+  }
+
+  useEffect(() => {
+    let selectAll = false;
+
+    if (transaksi.length > 0) {
+      if (view === "pesanan baru") {
+        if (pesananBaru.length === dataSelected.length) selectAll = true
+        else selectAll = false
+      } else if (view === "siap dikirim") {
+        if (siapDikirim.length === dataSelected.length) selectAll = true
+        else selectAll = false
+      } else if (view === "dalam pengiriman") {
+        if (dalamPengiriman.length === dataSelected.length) selectAll = true
+        else selectAll = false
+      } else if (view === "pesanan selesai") {
+        if (pesananSelesai.length === dataSelected.length) selectAll = true
+        else selectAll = false
+      } else if (view === "pesanan ditolak") {
+        if (pesananDitolak.length === dataSelected.length) selectAll = true
+        else selectAll = false
+      } else {
+        console.log(transaksi.length, dataSelected.length)
+        if (transaksi.length === dataSelected.length) selectAll = true
+        else selectAll = false
+      }
+
+      if (selectAll) {
+        // setStatusCheckAll(true)
+        setChecked(true)
+      } else {
+        setChecked(false)
+      }
+    }
+  }, [dataSelected])
+
+  const handleCheck = (e) => {
+    setChecked(e.target.checked)
+    // setStatusCheckAll(e.target.checked)
+
+    if (!e.target.checked) setDataSelected([])
+    // else {
+    //   if (view === "pesanan baru") {
+    //     setDataSelected(pesananBaru)
+    //   } else if (view === "siap dikirim") {
+    //     setDataSelected(siapDikirim)
+    //   } else if (view === "dalam pengiriman") {
+    //     setDataSelected(dalamPengiriman)
+    //   } else if (view === "pesanan selesai") {
+    //     setDataSelected(pesananSelesai)
+    //   } else if (view === "pesanan ditolak") {
+    //     setDataSelected(pesananDitolak)
+    //   } else {
+    //     setDataSelected(transaksi)
+    //   }
+    // }
+  }
+
   return (
     <>
       {views.map((option) => (
@@ -157,17 +229,34 @@ export default function Index() {
         </Button>
       </form> */}
 
+      <Grid style={{ padding: '10px 24px', display: 'flex', alignItems: 'center' }}>
+        {/* <FormControlLabel
+          control={<Checkbox
+            name="checked"
+            checked={checked}
+            onChange={handleCheck}
+            disabled />}
+          label={`Pilih semua ${dataSelected.length > 0 ? `(${dataSelected.length})` : ''}`}
+          style={{ marginRight: 20 }}
+        /> */}
+        <b style={{ marginRight: 20, fontSize: 17 }}>{dataSelected.length} Data yang dipilih</b>
+        <Grid style={{ marginRight: 20 }}>
+          <Invoice data={dataSelected} />
+        </Grid>
+        <LabelPengiriman data={dataSelected} />
+      </Grid>
+
       {!proses && (view === "pesanan baru"
-        ? pesananBaru && pesananBaru.length > 0 && pesananBaru.map((item) => <PenjualanCard item={item} />)
+        ? pesananBaru && pesananBaru.length > 0 && pesananBaru.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
         : view === "siap dikirim"
-          ? siapDikirim && siapDikirim.length > 0 && siapDikirim.map((item) => <PenjualanCard item={item} />)
+          ? siapDikirim && siapDikirim.length > 0 && siapDikirim.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
           : view === "dalam pengiriman"
-            ? dalamPengiriman && dalamPengiriman.length > 0 && dalamPengiriman.map((item) => <PenjualanCard item={item} />)
+            ? dalamPengiriman && dalamPengiriman.length > 0 && dalamPengiriman.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
             : view === "pesanan selesai"
-              ? pesananSelesai && pesananSelesai.length > 0 && pesananSelesai.map((item) => <PenjualanCard item={item} />)
+              ? pesananSelesai && pesananSelesai.length > 0 && pesananSelesai.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
               : view === "pesanan ditolak"
-                ? pesananDitolak && pesananDitolak.length > 0 && pesananDitolak.map((item) => <PenjualanCard item={item} />)
-                : transaksi && transaksi.length > 0 && transaksi.map((item) => <PenjualanCard item={item} />))}
+                ? pesananDitolak && pesananDitolak.length > 0 && pesananDitolak.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
+                : transaksi && transaksi.length > 0 && transaksi.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />))}
 
       <Grid style={{ display: 'flex', justifyContent: 'center' }}>
         {
