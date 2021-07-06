@@ -155,7 +155,7 @@ function Index() {
                   src={file}
                   alt="Placeholder"
                   id="img"
-                  style={{ width: "180px", height: "auto" }}
+                  className={classes.imgTag}
                 />
               </label>
               <input
@@ -186,7 +186,6 @@ function Index() {
                   size="small"
                   fullWidth
                   helperText={`${input.namaProduk?.length}/255`}
-                  style={{ height: "100%" }}
                   name="namaProduk"
                   onChange={handleInput}
                 />
@@ -203,7 +202,7 @@ function Index() {
                   variant="outlined"
                   size="small"
                   select
-                  style={{ width: "40%" }}
+                  className={classes.brandWidth}
                   name="brandId"
                   onChange={handleInput}
                 >
@@ -271,7 +270,12 @@ function Index() {
                 </Button>
               </Grid>
               <Grid item xs={2}>
-                <Typography variant="body2" component="p" gutterBottom>
+                <Typography
+                  align="right"
+                  variant="body2"
+                  component="p"
+                  gutterBottom
+                >
                   MSDS Produk
                 </Typography>
               </Grid>
@@ -358,7 +362,11 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                <Button variant="outlined" color="secondary">
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  className={classes.buttonOutlined}
+                >
                   + Tambah Grosir
                 </Button>
               </Grid>
@@ -390,6 +398,15 @@ function Index() {
                           statusProduk: !input.statusProduk,
                         })
                       }
+                      focusVisibleClassName={classes.focusVisible}
+                      disableRipple
+                      classes={{
+                        root: classes.switch,
+                        switchBase: classes.switchBase,
+                        thumb: classes.thumb,
+                        track: classes.track,
+                        checked: classes.checked,
+                      }}
                     />
                   }
                   label="Aktif"
@@ -488,8 +505,16 @@ function Index() {
                   placeholder="Panjang"
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="start">cm</InputAdornment>
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>cm</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingRight: "0",
+                    },
                   }}
                   name="panjang"
                   value={input.panjang}
@@ -503,8 +528,16 @@ function Index() {
                   placeholder="Lebar"
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="start">cm</InputAdornment>
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>cm</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingRight: "0",
+                    },
                   }}
                   name="lebar"
                   value={input.lebar}
@@ -518,8 +551,16 @@ function Index() {
                   placeholder="Tinggi"
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="start">cm</InputAdornment>
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>cm</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingRight: "0",
+                    },
                   }}
                   name="tinggi"
                   value={input.tinggi}
@@ -544,12 +585,26 @@ function Index() {
                   >
                     <FormControlLabel
                       value="Wajib"
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          classes={{
+                            root: classes.checkbox,
+                            checked: classes.checkedBox,
+                          }}
+                        />
+                      }
                       label="Wajib"
                     />
                     <FormControlLabel
                       value="Opsional"
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          classes={{
+                            root: classes.checkbox,
+                            checked: classes.checkedBox,
+                          }}
+                        />
+                      }
                       label="Opsional"
                     />
                   </RadioGroup>
@@ -573,12 +628,26 @@ function Index() {
                   >
                     <FormControlLabel
                       value="Standar"
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          classes={{
+                            root: classes.checkbox,
+                            checked: classes.checkedBox,
+                          }}
+                        />
+                      }
                       label="Standar"
                     />
                     <FormControlLabel
                       value="Custom"
-                      control={<Radio />}
+                      control={
+                        <Radio
+                          classes={{
+                            root: classes.checkbox,
+                            checked: classes.checkedBox,
+                          }}
+                        />
+                      }
                       label="Custom"
                     />
                   </RadioGroup>
@@ -586,7 +655,7 @@ function Index() {
               </Grid>
             </Grid>
 
-            {/* <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5} alignItems="center">
               <Grid item xs={2}>
                 <Typography variant="body2" component="p" gutterBottom>
                   Preorder
@@ -594,10 +663,24 @@ function Index() {
               </Grid>
               <Grid item xs={10}>
                 <FormControlLabel
-                  control={<IOSSwitch checked={""} onChange={""} />}
+                  control={
+                    <Switch
+                      checked={input.komisiStatus}
+                      onChange={() => null}
+                      focusVisibleClassName={classes.focusVisible}
+                      disableRipple
+                      classes={{
+                        root: classes.switch,
+                        switchBase: classes.switchBase,
+                        thumb: classes.thumb,
+                        track: classes.track,
+                        checked: classes.checked,
+                      }}
+                    />
+                  }
                 />
               </Grid>
-            </Grid> */}
+            </Grid>
           </CardContent>
         </Card>
       </Grid>
@@ -625,6 +708,15 @@ function Index() {
                           komisiStatus: !input.komisiStatus,
                         })
                       }
+                      focusVisibleClassName={classes.focusVisible}
+                      disableRipple
+                      classes={{
+                        root: classes.switch,
+                        switchBase: classes.switchBase,
+                        thumb: classes.thumb,
+                        track: classes.track,
+                        checked: classes.checked,
+                      }}
                     />
                   }
                   label="Aktif"
@@ -638,14 +730,22 @@ function Index() {
                   Berlaku Sebesar
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={2}>
                 <TextField
                   variant="outlined"
                   size="small"
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">%</InputAdornment>
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>%</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingRight: "0",
+                    },
                   }}
                   name="komisi"
                   value={input.komisi}
@@ -653,14 +753,9 @@ function Index() {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={8}>
                 <Typography variant="body2" component="p" gutterBottom>
-                  Nama Level Komisi
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body2" component="p" gutterBottom>
-                  Level 1
+                  Nama Level Komisi&emsp;&emsp;Level 1
                 </Typography>
               </Grid>
             </Grid>
@@ -671,14 +766,22 @@ function Index() {
                   Berlaku Sebesar
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={2}>
                 <TextField
                   variant="outlined"
                   size="small"
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">%</InputAdornment>
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>%</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingRight: "0",
+                    },
                   }}
                   name="komisi"
                   value={input.komisi}
@@ -686,14 +789,9 @@ function Index() {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={8}>
                 <Typography variant="body2" component="p" gutterBottom>
-                  Nama Level Komisi
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body2" component="p" gutterBottom>
-                  Level 2
+                  Nama Level Komisi&emsp;&emsp;Level 2
                 </Typography>
               </Grid>
             </Grid>
@@ -704,14 +802,22 @@ function Index() {
                   Berlaku Sebesar
                 </Typography>
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={2}>
                 <TextField
                   variant="outlined"
                   size="small"
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">%</InputAdornment>
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>%</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingRight: "0",
+                    },
                   }}
                   name="komisi"
                   value={input.komisi}
@@ -719,21 +825,16 @@ function Index() {
                   fullWidth
                 />
               </Grid>
-              <Grid item xs={2}>
+              <Grid item xs={8}>
                 <Typography variant="body2" component="p" gutterBottom>
-                  Nama Level Komisi
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography variant="body2" component="p" gutterBottom>
-                  Level 3
+                  Nama Level Komisi&emsp;&emsp;Level 3
                 </Typography>
               </Grid>
             </Grid>
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12} className={classes.button}>
+      <Grid item xs={12} className={classes.buttonGroup}>
         <Button variant="outlined" onClick={() => history.push("/produk")}>
           Batal
         </Button>
@@ -741,7 +842,7 @@ function Index() {
           variant="contained"
           color="primary"
           disableElevation
-          className={classes.button_simpan}
+          className={classes.buttonContained}
           onClick={send}
         >
           Simpan
