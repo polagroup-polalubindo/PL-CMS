@@ -28,6 +28,17 @@ function Index() {
   const [file, setFile] = useState("/img/cms/photo-product-placeholder.png");
   const [image, setImage] = useState(null);
   const [weight, setWeight] = useState("gram");
+
+  const [openUrlVideo, setOpenUrlVideo] = useState(true);
+  const [openUrlTDS, setOpenUrlTDS] = useState(true);
+  const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
+  const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
+
+  const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
+  const [layananPengiriman, setLayananPengiriman] = useState("Standar");
+
+  const [openHargaGrosir, setHargaGrosir] = useState(true);
+
   const [input, setInput] = useState({
     fotoProduk: null,
     namaProduk: "",
@@ -44,8 +55,23 @@ function Index() {
     lebar: 0,
     tinggi: 0,
     komisiStatus: false,
-    komisi: 0,
+    komisiLevel1: 0,
+    komisiLevel2: 0,
+    komisiLevel3: 0,
     levelKomisi: 0,
+
+    urlVideo: "",
+    urlTDS: "",
+    urlMSDS: "",
+    urlSertifikasi: "",
+
+    asuransiPengiriman: "Wajib",
+    layananPengiriman: "Standar",
+
+    preOrder: false,
+
+    banyaknya: "",
+    hargaSatuanGrosir: "",
   });
 
   useEffect(() => {
@@ -58,6 +84,24 @@ function Index() {
     },
     {
       value: "kilogram",
+    },
+  ];
+
+  const allAsuransiPengiriman = [
+    {
+      value: "Wajib",
+    },
+    {
+      value: "Opsional",
+    },
+  ];
+
+  const allLayananPengiriman = [
+    {
+      value: "Standar",
+    },
+    {
+      value: "Custom",
     },
   ];
 
@@ -103,7 +147,13 @@ function Index() {
       e.target.name !== "namaProduk" &&
       e.target.name !== "brandId" &&
       e.target.name !== "deskripsi" &&
-      e.target.name !== "sku"
+      e.target.name !== "sku" &&
+      e.target.name !== "urlVideo" &&
+      e.target.name !== "urlTDS" &&
+      e.target.name !== "urlMSDS" &&
+      e.target.name !== "urlSertifikasi" &&
+      e.target.name !== "banyaknya" &&
+      e.target.name !== "hargaSatuanGrosir"
     ) {
       if (!isNaN(e.target.value)) {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -115,6 +165,14 @@ function Index() {
 
   const handleChangeWeight = (event) => {
     setWeight(event.target.value);
+  };
+
+  const handleAsuransiPengiriman = (event) => {
+    setAsuransiPengiriman(event.target.value);
+  };
+
+  const handleLayananPengiriman = (event) => {
+    setLayananPengiriman(event.target.value);
   };
 
   const handleImage = (e) => {
@@ -168,6 +226,7 @@ function Index() {
           </Grid>
         </Card>
       </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -219,6 +278,7 @@ function Index() {
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -252,9 +312,33 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                <Button variant="outlined" color="transparent">
-                  + Tambah URL Video
-                </Button>
+                {openUrlVideo ? (
+                  <Button
+                    variant="outlined"
+                    color="transparent"
+                    onClick={() => setOpenUrlVideo(false)}
+                  >
+                    + Tambah URL Video
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlVideo(true)}
+                    >
+                      Cancel
+                    </Button>
+                    <br />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name="urlVideo"
+                      onChange={handleInput}
+                    />
+                  </>
+                )}
               </Grid>
             </Grid>
 
@@ -265,9 +349,33 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Button variant="outlined" color="transparent">
-                  + Tambah URL TDS
-                </Button>
+                {openUrlTDS ? (
+                  <Button
+                    variant="outlined"
+                    color="transparent"
+                    onClick={() => setOpenUrlTDS(false)}
+                  >
+                    + Tambah URL TDS
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlTDS(true)}
+                    >
+                      Cancel
+                    </Button>
+                    <br />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name="urlTDS"
+                      onChange={handleInput}
+                    />
+                  </>
+                )}
               </Grid>
               <Grid item xs={2}>
                 <Typography
@@ -280,9 +388,33 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Button variant="outlined" color="transparent">
-                  + Tambah URL MSDS
-                </Button>
+                {openUrlMSDS ? (
+                  <Button
+                    variant="outlined"
+                    color="transparent"
+                    onClick={() => setOpenUrlMSDS(false)}
+                  >
+                    + Tambah URL MSDS
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlMSDS(true)}
+                    >
+                      Cancel
+                    </Button>
+                    <br />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name="urlMSDS"
+                      onChange={handleInput}
+                    />
+                  </>
+                )}
               </Grid>
             </Grid>
 
@@ -300,9 +432,33 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={5}>
-                <Button variant="outlined" color="transparent">
-                  + Tambah URL Sertifikasi
-                </Button>
+                {openUrlSertifikasi === true ? (
+                  <Button
+                    variant="outlined"
+                    color="transparent"
+                    onClick={() => setOpenUrlSertifikasi(false)}
+                  >
+                    + Tambah URL Sertifikasi
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlSertifikasi(true)}
+                    >
+                      Cancel
+                    </Button>
+                    <br />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name="urlSertifikasi"
+                      onChange={handleInput}
+                    />
+                  </>
+                )}
               </Grid>
             </Grid>
           </CardContent>
@@ -362,13 +518,43 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  className={classes.buttonOutlined}
-                >
-                  + Tambah Grosir
-                </Button>
+                {openHargaGrosir ? (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    className={classes.buttonOutlined}
+                    onClick={() => setHargaGrosir(false)}
+                  >
+                    + Tambah Grosir
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      className={classes.buttonOutlined}
+                      onClick={() => setHargaGrosir(true)}
+                    >
+                      Cancel
+                    </Button>
+                    <br />
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      name="banyaknya"
+                      onChange={handleInput}
+                      placeholder="Banyaknya"
+                    />
+                    &emsp;
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      name="hargaSatuanGrosir"
+                      onChange={handleInput}
+                      placeholder="Harga Satuan"
+                    />
+                  </>
+                )}
               </Grid>
             </Grid>
           </CardContent>
@@ -581,32 +767,25 @@ function Index() {
                     row
                     aria-label="position"
                     name="position"
-                    defaultValue="Wajib"
+                    defaultValue={asuransiPengiriman}
+                    value={asuransiPengiriman}
+                    onChange={handleAsuransiPengiriman}
                   >
-                    <FormControlLabel
-                      value="Wajib"
-                      control={
-                        <Radio
-                          classes={{
-                            root: classes.checkbox,
-                            checked: classes.checkedBox,
-                          }}
-                        />
-                      }
-                      label="Wajib"
-                    />
-                    <FormControlLabel
-                      value="Opsional"
-                      control={
-                        <Radio
-                          classes={{
-                            root: classes.checkbox,
-                            checked: classes.checkedBox,
-                          }}
-                        />
-                      }
-                      label="Opsional"
-                    />
+                    {allAsuransiPengiriman.map((option) => (
+                      <FormControlLabel
+                        control={
+                          <Radio
+                            classes={{
+                              root: classes.checkbox,
+                              checked: classes.checkedBox,
+                            }}
+                          />
+                        }
+                        key={option.value}
+                        label={option.value}
+                        value={option.value}
+                      />
+                    ))}
                   </RadioGroup>
                 </FormControl>
               </Grid>
@@ -624,32 +803,25 @@ function Index() {
                     row
                     aria-label="position"
                     name="position"
-                    defaultValue=""
+                    defaultValue={layananPengiriman}
+                    value={layananPengiriman}
+                    onChange={handleLayananPengiriman}
                   >
-                    <FormControlLabel
-                      value="Standar"
-                      control={
-                        <Radio
-                          classes={{
-                            root: classes.checkbox,
-                            checked: classes.checkedBox,
-                          }}
-                        />
-                      }
-                      label="Standar"
-                    />
-                    <FormControlLabel
-                      value="Custom"
-                      control={
-                        <Radio
-                          classes={{
-                            root: classes.checkbox,
-                            checked: classes.checkedBox,
-                          }}
-                        />
-                      }
-                      label="Custom"
-                    />
+                    {allLayananPengiriman.map((option) => (
+                      <FormControlLabel
+                        control={
+                          <Radio
+                            classes={{
+                              root: classes.checkbox,
+                              checked: classes.checkedBox,
+                            }}
+                          />
+                        }
+                        key={option.value}
+                        label={option.value}
+                        value={option.value}
+                      />
+                    ))}
                   </RadioGroup>
                 </FormControl>
               </Grid>
@@ -665,8 +837,13 @@ function Index() {
                 <FormControlLabel
                   control={
                     <Switch
-                      checked={input.komisiStatus}
-                      onChange={() => null}
+                      checked={input.preOrder}
+                      onChange={() =>
+                        setInput({
+                          ...input,
+                          preOrder: !input.preOrder,
+                        })
+                      }
                       focusVisibleClassName={classes.focusVisible}
                       disableRipple
                       classes={{
@@ -747,8 +924,8 @@ function Index() {
                       paddingRight: "0",
                     },
                   }}
-                  name="komisi"
-                  value={input.komisi}
+                  name="komisiLevel1"
+                  value={input.komisiLevel1}
                   onChange={handleInput}
                   fullWidth
                 />
@@ -783,8 +960,8 @@ function Index() {
                       paddingRight: "0",
                     },
                   }}
-                  name="komisi"
-                  value={input.komisi}
+                  name="komisiLevel2"
+                  value={input.komisiLevel2}
                   onChange={handleInput}
                   fullWidth
                 />
@@ -819,8 +996,8 @@ function Index() {
                       paddingRight: "0",
                     },
                   }}
-                  name="komisi"
-                  value={input.komisi}
+                  name="komisiLevel3"
+                  value={input.komisiLevel3}
                   onChange={handleInput}
                   fullWidth
                 />
@@ -834,6 +1011,7 @@ function Index() {
           </CardContent>
         </Card>
       </Grid>
+
       <Grid item xs={12} className={classes.buttonGroup}>
         <Button variant="outlined" onClick={() => history.push("/produk")}>
           Batal
