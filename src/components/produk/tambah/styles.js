@@ -1,6 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
+  // Upload Image
   imgInput: {
     "& > input": {
       visibility: "hidden",
@@ -8,14 +9,20 @@ const useStyles = makeStyles((theme) => ({
       height: 0,
     },
   },
-  // button
-  button: {
+  imgTag: { width: "180px", height: "auto" },
+
+  // Brand
+  brandWidth: { width: "40%" },
+
+  // Button
+  buttonGroup: {
     "& > *": {
       margin: theme.spacing(1),
     },
     textAlign: "right",
   },
-  button_simpan: { backgroundColor: "red" },
+  buttonContained: { backgroundColor: "red" },
+  buttonOutlined: { color: "red", border: "1px solid red" },
 
   //   Cards
   root: {
@@ -71,13 +78,22 @@ const useStyles = makeStyles((theme) => ({
   checked: {},
   focusVisible: {},
 
-  //   Checkbox
+  //   Radio
   checkbox: {
-    color: "red",
-    "&$checked": {
+    "&$checkedBox": {
       color: "red",
     },
   },
+  checkedBox: {},
+
+  // Input Adornment
+  inputAdornment: {
+    backgroundColor: "#acacac",
+    height: "2.5rem",
+    maxHeight: "3rem",
+    padding: 15,
+  },
+  colorTextWhite: { color: "white" },
 }));
 
 export default useStyles;
