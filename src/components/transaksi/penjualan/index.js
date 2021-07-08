@@ -10,7 +10,6 @@ import {
   TableRow,
   Paper,
   TableBody,
-  MenuItem,
   Grid,
   CircularProgress
 } from "@material-ui/core";

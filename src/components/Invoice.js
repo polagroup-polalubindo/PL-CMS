@@ -193,7 +193,7 @@ export default function Invoice(props) {
                   </View>
 
                   <View style={{ ...styles.fieldSubtotal, color: 'black' }}>
-                    <Text>{formatRupiah(el.totalHarga)}</Text>
+                    <Text>{formatRupiah(el.totalHarga - el.ongkosKirim)}</Text>
                   </View>
                 </View>
               </View>
@@ -215,7 +215,7 @@ export default function Invoice(props) {
 
                 <View id="totalBelanja" style={{ border: '1px solid #a8a8a8', padding: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, borderRadius: 5 }}>
                   <Text style={{ fontSize: 10, marginBottom: 2 }}>Total Belanja</Text>
-                  <Text style={{ fontSize: 10 }}>{formatRupiah(el.ongkosKirim + el.totalHarga)}</Text>
+                  <Text style={{ fontSize: 10 }}>{formatRupiah(el.totalHarga)}</Text>
                 </View>
               </View>
             </View>

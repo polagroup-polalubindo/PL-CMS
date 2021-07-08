@@ -54,7 +54,7 @@ export const Provider = ({ children }) => {
         localStorage.setItem("access_token_CMS", data.access_token);
       }
     } else {
-      throw "Not admin"
+      throw { message: "Not admin" }
     }
   };
 
@@ -72,32 +72,31 @@ export const Provider = ({ children }) => {
 
   const ubahStatusProduk = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-produk/${newData.id}`, {
+    await fetch(URL_SERVER + `/ubah-status-produk/${newData.id}`, {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    data = await data.json();
-    fetchProduk();
+    await fetchProduk();
   };
 
   const deleteproduk = async (id) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    const data = await fetch(URL_SERVER + `/produk/${id}`, {
+    await fetch(URL_SERVER + `/produk/${id}`, {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    fetchProduk();
+    await fetchProduk();
   };
 
   const tambahProduk = async (input) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    const data = await Axios(URL_SERVER + "/produk", {
+    await Axios(URL_SERVER + "/produk", {
       method: "POST",
       headers: { access_token },
       data: input,
     });
-    fetchProduk();
+    await fetchProduk();
   };
 
   const editProduk = async (id, newData) => {
@@ -107,7 +106,7 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    fetchProduk();
+    await fetchProduk();
   };
 
   // MEMBER
@@ -149,7 +148,7 @@ export const Provider = ({ children }) => {
 
   const ubahStatusPremiere = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-premier`, {
+    await fetch(URL_SERVER + `/ubah-status-premier`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
@@ -160,7 +159,7 @@ export const Provider = ({ children }) => {
 
   const ubahStatus = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-customer`, {
+    await fetch(URL_SERVER + `/ubah-status-customer`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
@@ -171,7 +170,7 @@ export const Provider = ({ children }) => {
 
   const deleteMember = async (id) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/customer/${id}`, {
+    await fetch(URL_SERVER + `/customer/${id}`, {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
@@ -181,7 +180,7 @@ export const Provider = ({ children }) => {
 
   const ubahMember = async (id, newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/customer/${id}`, {
+    await fetch(URL_SERVER + `/customer/${id}`, {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
@@ -238,7 +237,7 @@ export const Provider = ({ children }) => {
 
   const ubahStatusPembayaran = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-pembayaran`, {
+    await fetch(URL_SERVER + `/ubah-status-pembayaran`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),

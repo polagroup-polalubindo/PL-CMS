@@ -55,13 +55,13 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
 
   useEffect(() => {
     // if(statusCheckAll){
-      setStatusCheck(statusCheckAll)
+    setStatusCheck(statusCheckAll)
     // }
   }, [statusCheckAll])
 
   useEffect(async () => {
     if (statusCheck) {
-      if(!statusCheckAll){
+      if (!statusCheckAll) {
         await handleSelectedPesanan('add', item)
       }
     } else {
@@ -145,7 +145,9 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
           </Grid>
           <Grid item xs={2} style={{ borderLeft: "1px solid" }}>
             <Typography variant="body2">
-              Kurir JNE Reguler
+              {item.kurir === 'tiki'
+                ? `Kurir TIKI (${item.serviceKurir})`
+                : `Kurir JNE (${item.serviceKurir})`}
               <br />
               Rp {item.ongkosKirim}
             </Typography>
