@@ -104,29 +104,8 @@ const ProdukCard = (props, { row }) => {
           </Grid>
         </Grid>
       </TableCell>
-      <TableCell>
-        <TextField
-          variant="outlined"
-          size="small"
-          value={data.hargaSatuan}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">Rp.</InputAdornment>
-            ),
-          }}
-          name="hargaSatuan"
-          onChange={handleChange}
-        />
-      </TableCell>
-      <TableCell>
-        <TextField
-          variant="outlined"
-          size="small"
-          value={data.stock}
-          name="stock"
-          onChange={handleChange}
-        />
-      </TableCell>
+      <TableCell>{props.row.hargaSatuan}</TableCell>
+      <TableCell>{props.row.stock}</TableCell>
       <TableCell>
         <Switch checked={produkStatus} onChange={handleStatus} />
       </TableCell>
