@@ -244,14 +244,6 @@ function Index(props) {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlVideo(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
@@ -259,6 +251,14 @@ function Index(props) {
                       name="urlVideo"
                       onChange={handleInput}
                     />
+                    <br /> <br />
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlVideo(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
@@ -281,14 +281,6 @@ function Index(props) {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlTDS(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
@@ -296,6 +288,14 @@ function Index(props) {
                       name="urlTDS"
                       onChange={handleInput}
                     />
+                    <br /> <br />
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlTDS(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
@@ -320,14 +320,6 @@ function Index(props) {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlMSDS(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
@@ -335,6 +327,14 @@ function Index(props) {
                       name="urlMSDS"
                       onChange={handleInput}
                     />
+                    <br /> <br />
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlMSDS(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
@@ -346,14 +346,22 @@ function Index(props) {
                   Sertifikasi
                 </Typography>
               </Grid>
-              <Grid item xs={5}>
-                <TextField variant="outlined" size="small" fullWidth />
-                <br />
-                <Typography variant="body2" component="p" gutterBottom>
-                  + Tambah Sertifikasi Baru
-                </Typography>
-              </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={10}>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  helperText={
+                    <Typography
+                      variant="body2"
+                      component="p"
+                      gutterBottom
+                      style={{ cursor: "pointer" }}
+                    >
+                      + Tambah Sertifikasi Baru
+                    </Typography>
+                  }
+                />
+                &emsp; &emsp;
                 {openUrlSertifikasi === true ? (
                   <Button
                     variant="outlined"
@@ -364,6 +372,13 @@ function Index(props) {
                   </Button>
                 ) : (
                   <>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      name="urlSertifikasi"
+                      onChange={handleInput}
+                    />
+                    &emsp; &emsp;
                     <Button
                       variant="outlined"
                       color="secondary"
@@ -371,14 +386,6 @@ function Index(props) {
                     >
                       Cancel
                     </Button>
-                    <br />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="urlSertifikasi"
-                      onChange={handleInput}
-                    />
                   </>
                 )}
               </Grid>
@@ -423,11 +430,49 @@ function Index(props) {
                   size="small"
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">Rp.</InputAdornment>
+                      <InputAdornment
+                        position="start"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>Rp.</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingLeft: "0",
+                    },
                   }}
                   name="hargaSatuan"
                   value={props.location.state.hargaSatuan}
+                  onChange={handleInput}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={5} alignItems="center">
+              <Grid item xs={2}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Diskon
+                </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>%</p>
+                      </InputAdornment>
+                    ),
+                    style: {
+                      paddingRight: "0",
+                    },
+                  }}
+                  name="discount"
+                  value={props.location.state.discount}
                   onChange={handleInput}
                 />
               </Grid>
@@ -451,21 +496,22 @@ function Index(props) {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      className={classes.buttonOutlined}
-                      onClick={() => setHargaGrosir(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
                       name="banyaknya"
                       onChange={handleInput}
                       placeholder="Banyaknya"
+                      helperText={
+                        <Typography
+                          variant="body2"
+                          component="p"
+                          gutterBottom
+                          style={{ cursor: "pointer" }}
+                        >
+                          + Tambah Harga Grosir Baru
+                        </Typography>
+                      }
                     />
                     &emsp;
                     <TextField
@@ -475,6 +521,15 @@ function Index(props) {
                       onChange={handleInput}
                       placeholder="Harga Satuan"
                     />
+                    &emsp;
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      className={classes.buttonOutlined}
+                      onClick={() => setHargaGrosir(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
@@ -848,7 +903,7 @@ function Index(props) {
                     },
                   }}
                   name="komisiLevel1"
-                  value={input.komisiLevel1}
+                  value={props.location.state.komisi}
                   onChange={handleInput}
                   fullWidth
                 />
