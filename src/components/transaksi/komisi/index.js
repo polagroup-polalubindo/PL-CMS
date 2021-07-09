@@ -67,11 +67,11 @@ export default function Index(params) {
         <Table className={classes.table} aria-label="simple table">
           <TableHead className={classes.table_head}>
             <TableRow>
-              <TableCell />
-              <TableCell>ID Komisi</TableCell>
-              <TableCell>Member</TableCell>
-              <TableCell>Total Komisi</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell style={{width:'5%'}} />
+              <TableCell style={{width:'10%'}}>ID Komisi</TableCell>
+              <TableCell style={{width:'35%'}}>Member</TableCell>
+              <TableCell style={{width:'25%'}}>Total Komisi</TableCell>
+              <TableCell style={{width:'25%'}}>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody style={{ margin: "0.3rem" }}>
