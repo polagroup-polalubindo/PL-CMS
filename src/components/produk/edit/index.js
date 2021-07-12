@@ -13,7 +13,10 @@ import {
   FormControl,
   RadioGroup,
   Radio,
+  IconButton,
 } from "@material-ui/core";
+
+import ClearIcon from "@material-ui/icons/Clear";
 
 import useStyles from "./styles";
 
@@ -27,6 +30,7 @@ function Index(props) {
   const { brand, fetchBrand, tambahProduk } = useContext(CMSContext);
   const [file, setFile] = useState("/img/cms/photo-product-placeholder.png");
   const [image, setImage] = useState(null);
+  const [clear, setClear] = useState(true);
 
   const [weight, setWeight] = useState("gram");
 
@@ -172,20 +176,45 @@ function Index(props) {
               </CardContent>
             </Grid>
             <Grid item xs={9} className={classes.imgInput}>
-              <label for="file-input">
-                <img
-                  src={file}
-                  alt="Placeholder"
-                  id="img"
-                  className={classes.imgTag}
-                />
-              </label>
-              <input
-                id="file-input"
-                type="file"
-                accept=".jpg"
-                onChange={handleImage}
-              />
+              {clear ? (
+                <>
+                  <label for="file-input">
+                    <img
+                      src={props.location.state.fotoProduk}
+                      alt="Placeholder"
+                      id="img"
+                      className={classes.imgTag}
+                    />
+                  </label>
+                  <IconButton onClick={() => setClear(false)}>
+                    <ClearIcon />
+                  </IconButton>
+                </>
+              ) : (
+                <>
+                  <label for="file-input">
+                    <img
+                      src={file}
+                      alt="Placeholder"
+                      id="img"
+                      className={classes.imgTag}
+                    />
+                  </label>
+                  <input
+                    id="file-input"
+                    type="file"
+                    accept=".jpg"
+                    onChange={handleImage}
+                  />
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => setClear(true)}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
             </Grid>
           </Grid>
         </Card>
