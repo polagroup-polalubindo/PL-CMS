@@ -38,11 +38,13 @@ function Index(props) {
   const [openUrlTDS, setOpenUrlTDS] = useState(true);
   const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
   const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
+  const [newSertifikasi, setNewSertifikasi] = useState(0);
 
   const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
   const [layananPengiriman, setLayananPengiriman] = useState("Standar");
 
-  const [openHargaGrosir, setHargaGrosir] = useState(true);
+  const [openHargaGrosir, setOpenHargaGrosir] = useState(true);
+  const [newHargaGrosir, setNewHargaGrosir] = useState(0);
 
   const [input, setInput] = useState({
     fotoProduk: null,
@@ -422,20 +424,7 @@ function Index(props) {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  helperText={
-                    <Typography
-                      variant="body2"
-                      component="p"
-                      gutterBottom
-                      style={{ cursor: "pointer" }}
-                    >
-                      + Tambah Sertifikasi Baru
-                    </Typography>
-                  }
-                />
+                <TextField variant="outlined" size="small" />
                 &emsp; &emsp;
                 {openUrlSertifikasi === true ? (
                   <Button
@@ -463,6 +452,39 @@ function Index(props) {
                     </Button>
                   </>
                 )}
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={5} alignItems="center">
+              <Grid item xs={2} />
+              <Grid item xs={10}>
+                <Typography
+                  variant="body2"
+                  component="p"
+                  gutterBottom
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setNewSertifikasi(newSertifikasi + 1)}
+                >
+                  + Tambah Sertifikasi Baru
+                </Typography>
+                {[...Array(newSertifikasi)].map((i) => (
+                  <>
+                    <TextField variant="outlined" size="small" />
+                    <br />
+                    <br />
+                  </>
+                ))}
+                {newSertifikasi ? (
+                  <Typography
+                    variant="body2"
+                    component="p"
+                    gutterBottom
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setNewSertifikasi(newSertifikasi - 1)}
+                  >
+                    Hapus Baris
+                  </Typography>
+                ) : null}
               </Grid>
             </Grid>
           </CardContent>
@@ -565,7 +587,7 @@ function Index(props) {
                     variant="outlined"
                     color="secondary"
                     className={classes.buttonOutlined}
-                    onClick={() => setHargaGrosir(false)}
+                    onClick={() => setOpenHargaGrosir(false)}
                   >
                     + Tambah Grosir
                   </Button>
@@ -577,16 +599,6 @@ function Index(props) {
                       name="banyaknya"
                       onChange={handleInput}
                       placeholder="Banyaknya"
-                      helperText={
-                        <Typography
-                          variant="body2"
-                          component="p"
-                          gutterBottom
-                          style={{ cursor: "pointer" }}
-                        >
-                          + Tambah Harga Grosir Baru
-                        </Typography>
-                      }
                     />
                     &emsp;
                     <TextField
@@ -601,7 +613,7 @@ function Index(props) {
                       variant="outlined"
                       color="secondary"
                       className={classes.buttonOutlined}
-                      onClick={() => setHargaGrosir(true)}
+                      onClick={() => setOpenHargaGrosir(true)}
                     >
                       Cancel
                     </Button>
@@ -609,6 +621,41 @@ function Index(props) {
                 )}
               </Grid>
             </Grid>
+
+            {openHargaGrosir === false && (
+              <Grid container spacing={5} alignItems="center">
+                <Grid item xs={2} />
+                <Grid item xs={10}>
+                  <Typography
+                    variant="body2"
+                    component="p"
+                    gutterBottom
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setNewHargaGrosir(newHargaGrosir + 1)}
+                  >
+                    + Tambah Harga Grosir Baru
+                  </Typography>
+                  {[...Array(newHargaGrosir)].map((i) => (
+                    <>
+                      <TextField variant="outlined" size="small" />
+                      <br />
+                      <br />
+                    </>
+                  ))}
+                  {newHargaGrosir ? (
+                    <Typography
+                      variant="body2"
+                      component="p"
+                      gutterBottom
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
+                    >
+                      Hapus Baris
+                    </Typography>
+                  ) : null}
+                </Grid>
+              </Grid>
+            )}
           </CardContent>
         </Card>
       </Grid>
