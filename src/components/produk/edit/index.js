@@ -185,7 +185,6 @@ function Index(props) {
                 type="file"
                 accept=".jpg"
                 onChange={handleImage}
-                value={props.location.state.fotoProduk}
               />
             </Grid>
           </Grid>
