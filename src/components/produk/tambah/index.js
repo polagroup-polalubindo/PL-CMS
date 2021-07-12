@@ -33,11 +33,13 @@ function Index() {
   const [openUrlTDS, setOpenUrlTDS] = useState(true);
   const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
   const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
+  const [newSertifikasi, setNewSertifikasi] = useState(0);
 
   const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
   const [layananPengiriman, setLayananPengiriman] = useState("Standar");
 
   const [openHargaGrosir, setHargaGrosir] = useState(true);
+  const [newHargaGrosir, setNewHargaGrosir] = useState(0);
 
   const [input, setInput] = useState({
     fotoProduk: null,
@@ -322,6 +324,14 @@ function Index() {
                   </Button>
                 ) : (
                   <>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      name="urlVideo"
+                      onChange={handleInput}
+                    />{" "}
+                    <br /> <br />
                     <Button
                       variant="outlined"
                       color="secondary"
@@ -329,14 +339,6 @@ function Index() {
                     >
                       Cancel
                     </Button>
-                    <br />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="urlVideo"
-                      onChange={handleInput}
-                    />
                   </>
                 )}
               </Grid>
@@ -359,14 +361,6 @@ function Index() {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlTDS(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
@@ -374,6 +368,15 @@ function Index() {
                       name="urlTDS"
                       onChange={handleInput}
                     />
+                    <br />
+                    <br />
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlTDS(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
@@ -398,14 +401,6 @@ function Index() {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlMSDS(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
@@ -413,6 +408,15 @@ function Index() {
                       name="urlMSDS"
                       onChange={handleInput}
                     />
+                    <br />
+                    <br />
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setOpenUrlMSDS(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
@@ -424,14 +428,9 @@ function Index() {
                   Sertifikasi
                 </Typography>
               </Grid>
-              <Grid item xs={5}>
-                <TextField variant="outlined" size="small" fullWidth />
-                <br />
-                <Typography variant="body2" component="p" gutterBottom>
-                  + Tambah Sertifikasi Baru
-                </Typography>
-              </Grid>
-              <Grid item xs={5}>
+              <Grid item xs={10}>
+                <TextField variant="outlined" size="small" />
+                &emsp; &emsp;
                 {openUrlSertifikasi === true ? (
                   <Button
                     variant="outlined"
@@ -442,6 +441,13 @@ function Index() {
                   </Button>
                 ) : (
                   <>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      name="urlSertifikasi"
+                      onChange={handleInput}
+                    />
+                    &emsp; &emsp;
                     <Button
                       variant="outlined"
                       color="secondary"
@@ -449,16 +455,41 @@ function Index() {
                     >
                       Cancel
                     </Button>
-                    <br />
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="urlSertifikasi"
-                      onChange={handleInput}
-                    />
                   </>
                 )}
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={5} alignItems="center">
+              <Grid item xs={2} />
+              <Grid item xs={10}>
+                <Typography
+                  variant="body2"
+                  component="p"
+                  gutterBottom
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setNewSertifikasi(newSertifikasi + 1)}
+                >
+                  + Tambah Sertifikasi Baru
+                </Typography>
+                {[...Array(newSertifikasi)].map((i) => (
+                  <>
+                    <TextField variant="outlined" size="small" />
+                    <br />
+                    <br />
+                  </>
+                ))}
+                {newSertifikasi ? (
+                  <Typography
+                    variant="body2"
+                    component="p"
+                    gutterBottom
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setNewSertifikasi(newSertifikasi - 1)}
+                  >
+                    Hapus Baris
+                  </Typography>
+                ) : null}
               </Grid>
             </Grid>
           </CardContent>
@@ -501,11 +532,49 @@ function Index() {
                   size="small"
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">Rp.</InputAdornment>
+                      <InputAdornment
+                        position="start"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>Rp.</p>
+                      </InputAdornment>
                     ),
+                    style: {
+                      paddingLeft: "0",
+                    },
                   }}
                   name="hargaSatuan"
                   value={input.hargaSatuan}
+                  onChange={handleInput}
+                />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={5} alignItems="center">
+              <Grid item xs={2}>
+                <Typography variant="body2" component="p" gutterBottom>
+                  Diskon
+                </Typography>
+              </Grid>
+              <Grid item xs={10}>
+                <TextField
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>%</p>
+                      </InputAdornment>
+                    ),
+                    style: {
+                      paddingRight: "0",
+                    },
+                  }}
+                  name="discount"
+                  value={input.discount}
                   onChange={handleInput}
                 />
               </Grid>
@@ -529,15 +598,6 @@ function Index() {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      className={classes.buttonOutlined}
-                      onClick={() => setHargaGrosir(true)}
-                    >
-                      Cancel
-                    </Button>
-                    <br />
                     <TextField
                       variant="outlined"
                       size="small"
@@ -553,10 +613,54 @@ function Index() {
                       onChange={handleInput}
                       placeholder="Harga Satuan"
                     />
+                    &emsp;
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      className={classes.buttonOutlined}
+                      onClick={() => setHargaGrosir(true)}
+                    >
+                      Cancel
+                    </Button>
                   </>
                 )}
               </Grid>
             </Grid>
+
+            {openHargaGrosir === false && (
+              <Grid container spacing={5} alignItems="center">
+                <Grid item xs={2} />
+                <Grid item xs={10}>
+                  <Typography
+                    variant="body2"
+                    component="p"
+                    gutterBottom
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setNewHargaGrosir(newHargaGrosir + 1)}
+                  >
+                    + Tambah Harga Grosir Baru
+                  </Typography>
+                  {[...Array(newHargaGrosir)].map((i) => (
+                    <>
+                      <TextField variant="outlined" size="small" />
+                      <br />
+                      <br />
+                    </>
+                  ))}
+                  {newHargaGrosir ? (
+                    <Typography
+                      variant="body2"
+                      component="p"
+                      gutterBottom
+                      style={{ cursor: "pointer" }}
+                      onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
+                    >
+                      Hapus Baris
+                    </Typography>
+                  ) : null}
+                </Grid>
+              </Grid>
+            )}
           </CardContent>
         </Card>
       </Grid>
