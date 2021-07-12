@@ -25,6 +25,8 @@ function Index(props) {
   const classes = useStyles();
   const history = useHistory();
   const { brand, fetchBrand, tambahProduk } = useContext(CMSContext);
+  const [file, setFile] = useState("/img/cms/photo-product-placeholder.png");
+  const [image, setImage] = useState(null);
 
   const [weight, setWeight] = useState("gram");
 
@@ -137,6 +139,17 @@ function Index(props) {
     setLayananPengiriman(event.target.value);
   };
 
+  const handleImage = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+      let reader = new FileReader();
+      reader.onload = (e) => {
+        setFile(e.target.result);
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
   return (
     <Grid
       container
@@ -145,6 +158,40 @@ function Index(props) {
       justify="flex-start"
       alignItems="center"
     >
+      <Grid item xs={12}>
+        <Card className={classes.root} elevation={2}>
+          <Grid container>
+            <Grid item xs={3}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  <b>Ganti Foto Produk</b>
+                </Typography>
+                <Typography variant="body2" component="p">
+                  ukuran 700px x 700px
+                </Typography>
+              </CardContent>
+            </Grid>
+            <Grid item xs={9} className={classes.imgInput}>
+              <label for="file-input">
+                <img
+                  src={file}
+                  alt="Placeholder"
+                  id="img"
+                  className={classes.imgTag}
+                />
+              </label>
+              <input
+                id="file-input"
+                type="file"
+                accept=".jpg"
+                onChange={handleImage}
+                value={props.location.state.fotoProduk}
+              />
+            </Grid>
+          </Grid>
+        </Card>
+      </Grid>
+
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
