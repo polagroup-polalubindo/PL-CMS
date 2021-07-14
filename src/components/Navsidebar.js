@@ -166,6 +166,10 @@ function Navsidebar(props) {
           value: "Member",
           sub: [
             {
+              value: "Edit Member",
+              link: "member/edit/:id",
+            },
+            {
               value: "Tambah Member",
               link: "member/tambah",
             },
