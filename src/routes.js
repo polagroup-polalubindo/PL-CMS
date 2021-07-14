@@ -5,6 +5,7 @@ import EditProduk from "./components/produk/edit";
 import TambahProduk from "./components/produk/tambah";
 import DaftarProduk from "./components/produk/daftar";
 
+import EditMember from "./components/member/edit";
 import TambahMember from "./components/member/tambah";
 import DaftarMember from "./components/member/daftar";
 
@@ -29,6 +30,7 @@ function Routes() {
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />
         <AuthenticatedRoute path="/produk" component={DaftarProduk} />
         <AuthenticatedRoute path="/pesanan" component={Pesanan} />
+        <AuthenticatedRoute path="/member/edit/:id" component={EditMember} />
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
         <AuthenticatedRoute path="/member" component={DaftarMember} />
         <AuthenticatedRoute
