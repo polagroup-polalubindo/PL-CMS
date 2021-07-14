@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
 
+import { useHistory } from "react-router-dom";
+
 import { CMSContext } from "../../../context/state";
 
 // MATERIAL UI
@@ -19,13 +21,13 @@ import ListIcon from "@material-ui/icons/List";
 
 import useStyles from "./styles";
 
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
-export default function Index({ row }) {
+export default function Index(props, { row }) {
   const classes = useStyles();
   let newPhoneNumber = "+62";
-  for (let i = 1; i < row.phone.length; i++) {
-    newPhoneNumber += row.phone[i];
+  for (let i = 1; i < props.row.phone.length; i++) {
+    newPhoneNumber += props.row.phone[i];
   }
 
   const { ubahStatusPremiere, ubahStatus, deleteMember } =
@@ -33,20 +35,24 @@ export default function Index({ row }) {
 
   // PREMIERE
   const [statusPremier, setPremiereStatus] = useState(
-    row.statusPremier === "aktif" && row.referralStatus ? true : false
+    props.row.statusPremier === "aktif" && props.row.referralStatus
+      ? true
+      : false
   );
   const handlePremiereStatus = () => {
     setPremiereStatus(!statusPremier);
     //// console.log(statusPremier);
     ubahStatusPremiere(
       !statusPremier === true
-        ? { statusPremier: "aktif", referralStatus: 1, id: row.id }
-        : { statusPremier: null, referralStatus: null, id: row.id }
+        ? { statusPremier: "aktif", referralStatus: 1, id: props.row.id }
+        : { statusPremier: null, referralStatus: null, id: props.row.id }
     );
   };
 
   // STATUS
-  const [status, setStatus] = useState(row.status === true ? true : false);
+  const [status, setStatus] = useState(
+    props.row.status === true ? true : false
+  );
   const handleStatus = () => {
     setStatus(!status);
     ubahStatus({ status: !status });
@@ -65,7 +71,7 @@ export default function Index({ row }) {
 
   // AKSI
   const actions = [
-    // { value: "edit" },
+    { value: "edit" },
     { value: "hapus" },
     { value: "reset password" },
   ];
@@ -73,26 +79,37 @@ export default function Index({ row }) {
   const openAction = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const history = useHistory();
+
   const closeAction = (input) => {
     setAnchorEl(null);
+
     if (input === "hapus") {
       Swal.fire({
-        title: 'Hapus user permanen?',
+        title: "Hapus user permanen?",
         showCancelButton: true,
         confirmButtonText: `Hapus`,
         cancelButtonText: `Batal`,
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await deleteMember(row.id);
-          Swal.fire('Berhasil dihapus!', '', 'success')
+          await deleteMember(props.row.id);
+          Swal.fire("Berhasil dihapus!", "", "success");
         }
-      })
+      });
+    } else if (input === "edit") {
+      history.push({
+        pathname: `/member/edit/${props.row.id}`,
+        state: props.row,
+      });
+    } else {
+      // HAPUS PASSWORD
     }
   };
   return (
-    <TableRow key={row.nama}>
-      <TableCell>{row.nama}</TableCell>
-      <TableCell>{row.createdAt.split("T")[0]}</TableCell>
+    <TableRow key={props.row.nama}>
+      <TableCell>{props.row.nama}</TableCell>
+      <TableCell>{props.row.createdAt.split("T")[0]}</TableCell>
       <TableCell>
         <Grid container alignItems="center">
           <Grid
@@ -109,23 +126,23 @@ export default function Index({ row }) {
             <img src="/img/cms/WhatsApp.svg" alt="WhatsApp" width="30" />
           </Grid>
           <Grid item xs={9}>
-            {row.phone[0] === "+" ? row.phone : newPhoneNumber}
+            {props.row.phone[0] === "+" ? props.row.phone : newPhoneNumber}
           </Grid>
           <Grid item xs={3}>
             <MailOutlineIcon />
           </Grid>
           <Grid item xs={9}>
-            {row.email}
+            {props.row.email}
           </Grid>
         </Grid>
       </TableCell>
-      <TableCell>{row.noKtp}</TableCell>
-      <TableCell>{row.noNPWP}</TableCell>
-      <TableCell>Rp.{row.Komisis[0]?.totalKomisi}</TableCell>
+      <TableCell>{props.row.noKtp}</TableCell>
+      <TableCell>{props.row.noNPWP}</TableCell>
+      <TableCell>Rp.{props.row.Komisis[0]?.totalKomisi}</TableCell>
       <TableCell>
-        Rp.{row.totalPembelian === null ? 0 : row.totalPembelian}
+        Rp.{props.row.totalPembelian === null ? 0 : props.row.totalPembelian}
       </TableCell>
-      <TableCell>{row.statusPremier}</TableCell>
+      <TableCell>{props.row.statusPremier}</TableCell>
       {/* <TableCell>
         <TextField
           select
@@ -144,7 +161,7 @@ export default function Index({ row }) {
       <TableCell>
         <Grid container alignItems="center">
           <Grid item xs={12}>
-            {row.discount} produk
+            {props.row.discount} produk
           </Grid>
           <Grid item xs={12}>
             <Button variant="outlined">ubah</Button>
