@@ -135,6 +135,12 @@ function Index(props) {
     }
   };
 
+  const handleInputSertifikasi = (e, index) => {
+    newSertifikasi[index].sertifikasiName = e.target.value;
+    newSertifikasi[index].sertifikasiUrl = e.target.value;
+    setNewSertifikasi({ newSertifikasi });
+  };
+
   const handleChangeWeight = (event) => {
     setWeight(event.target.value);
   };
@@ -494,7 +500,7 @@ function Index(props) {
                     <TextField
                       variant="outlined"
                       size="small"
-                      onChange={handleInput}
+                      onChange={handleInputSertifikasi}
                       value={item.sertifikasiName}
                     />
                     &emsp; &emsp;
@@ -512,7 +518,7 @@ function Index(props) {
                           variant="outlined"
                           size="small"
                           name="urlSertifikasi"
-                          onChange={handleInput}
+                          onChange={handleInputSertifikasi}
                           value={item.sertifikasiUrl}
                         />
                         &emsp; &emsp;
