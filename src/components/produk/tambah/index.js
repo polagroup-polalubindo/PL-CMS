@@ -33,13 +33,13 @@ function Index() {
   const [openUrlTDS, setOpenUrlTDS] = useState(true);
   const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
   const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
-  const [newSertifikasi, setNewSertifikasi] = useState(0);
+  const [newSertifikasi, setNewSertifikasi] = useState([]);
 
   const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
   const [layananPengiriman, setLayananPengiriman] = useState("Standar");
 
-  const [openHargaGrosir, setHargaGrosir] = useState(true);
-  const [newHargaGrosir, setNewHargaGrosir] = useState(0);
+  const [openHargaGrosir, setOpenHargaGrosir] = useState(true);
+  const [newHargaGrosir, setNewHargaGrosir] = useState([]);
 
   const [input, setInput] = useState({
     fotoProduk: null,
@@ -468,28 +468,50 @@ function Index() {
                   component="p"
                   gutterBottom
                   style={{ cursor: "pointer" }}
-                  onClick={() => setNewSertifikasi(newSertifikasi + 1)}
+                  onClick={() =>
+                    setNewSertifikasi([...newSertifikasi, newSertifikasi])
+                  }
                 >
                   + Tambah Sertifikasi Baru
                 </Typography>
-                {[...Array(newSertifikasi)].map((i) => (
-                  <>
+                {newSertifikasi.map((id) => (
+                  <div key={id}>
                     <TextField variant="outlined" size="small" />
+                    &emsp; &emsp;
+                    {openUrlSertifikasi === true ? (
+                      <Button
+                        variant="outlined"
+                        color="transparent"
+                        onClick={() => setOpenUrlSertifikasi(false)}
+                      >
+                        + Tambah URL Sertifikasi
+                      </Button>
+                    ) : (
+                      <>
+                        <TextField
+                          variant="outlined"
+                          size="small"
+                          name="urlSertifikasi"
+                          onChange={handleInput}
+                        />
+                        &emsp; &emsp;
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => setOpenUrlSertifikasi(true)}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    )}
+                    &emsp; &emsp;
+                    <Button variant="outlined" color="secondary">
+                      Hapus Baris
+                    </Button>
                     <br />
                     <br />
-                  </>
+                  </div>
                 ))}
-                {newSertifikasi ? (
-                  <Typography
-                    variant="body2"
-                    component="p"
-                    gutterBottom
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setNewSertifikasi(newSertifikasi - 1)}
-                  >
-                    Hapus Baris
-                  </Typography>
-                ) : null}
               </Grid>
             </Grid>
           </CardContent>
@@ -592,7 +614,7 @@ function Index() {
                     variant="outlined"
                     color="secondary"
                     className={classes.buttonOutlined}
-                    onClick={() => setHargaGrosir(false)}
+                    onClick={() => setOpenHargaGrosir(false)}
                   >
                     + Tambah Grosir
                   </Button>
@@ -618,7 +640,7 @@ function Index() {
                       variant="outlined"
                       color="secondary"
                       className={classes.buttonOutlined}
-                      onClick={() => setHargaGrosir(true)}
+                      onClick={() => setOpenHargaGrosir(true)}
                     >
                       Cancel
                     </Button>
@@ -636,28 +658,51 @@ function Index() {
                     component="p"
                     gutterBottom
                     style={{ cursor: "pointer" }}
-                    onClick={() => setNewHargaGrosir(newHargaGrosir + 1)}
+                    onClick={() =>
+                      setNewHargaGrosir([...newHargaGrosir, newHargaGrosir])
+                    }
                   >
                     + Tambah Harga Grosir Baru
                   </Typography>
-                  {[...Array(newHargaGrosir)].map((i) => (
+                  {newHargaGrosir.map((i) => (
                     <>
-                      <TextField variant="outlined" size="small" />
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        name="banyaknya"
+                        onChange={handleInput}
+                        placeholder="Banyaknya"
+                      />
+                      &emsp;
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        name="hargaSatuanGrosir"
+                        onChange={handleInput}
+                        placeholder="Harga Satuan"
+                      />
+                      &emsp;
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        className={classes.buttonOutlined}
+                        onClick={() => setOpenHargaGrosir(true)}
+                      >
+                        Cancel
+                      </Button>
+                      &emsp;
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        className={classes.buttonOutlined}
+                        onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
+                      >
+                        Hapus Baris
+                      </Button>
                       <br />
                       <br />
                     </>
                   ))}
-                  {newHargaGrosir ? (
-                    <Typography
-                      variant="body2"
-                      component="p"
-                      gutterBottom
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
-                    >
-                      Hapus Baris
-                    </Typography>
-                  ) : null}
                 </Grid>
               </Grid>
             )}
