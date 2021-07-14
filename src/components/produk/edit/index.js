@@ -38,13 +38,15 @@ function Index(props) {
   const [openUrlTDS, setOpenUrlTDS] = useState(true);
   const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
   const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
-  const [newSertifikasi, setNewSertifikasi] = useState(0);
+  const [newSertifikasi, setNewSertifikasi] = useState([
+    { sertifikasiName: "", sertifikasiUrl: "" },
+  ]);
 
   const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
   const [layananPengiriman, setLayananPengiriman] = useState("Standar");
 
   const [openHargaGrosir, setOpenHargaGrosir] = useState(true);
-  const [newHargaGrosir, setNewHargaGrosir] = useState(0);
+  const [newHargaGrosir, setNewHargaGrosir] = useState([]);
 
   const [input, setInput] = useState({
     fotoProduk: null,
@@ -156,6 +158,13 @@ function Index(props) {
     }
   };
 
+  const deleteByIndex = async (index) => {
+    var array = newSertifikasi;
+    console.log(array);
+    array.splice(index, 1);
+    console.log(array);
+    await setNewSertifikasi(array);
+  };
   return (
     <Grid
       container
@@ -164,6 +173,7 @@ function Index(props) {
       justify="flex-start"
       alignItems="center"
     >
+      {/* UPLOAD FOTO PRODUK */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <Grid container>
@@ -177,37 +187,43 @@ function Index(props) {
                 </Typography>
               </CardContent>
             </Grid>
-            <Grid item xs={9} className={classes.imgInput}>
+            <Grid item xs={9}>
               {clear ? (
-                <>
-                  <label for="file-input">
-                    <img
-                      src={props.location.state.fotoProduk}
-                      alt="Placeholder"
-                      id="img"
-                      className={classes.imgTag}
-                    />
-                  </label>
-                  <IconButton onClick={() => setClear(false)}>
-                    <ClearIcon />
-                  </IconButton>
-                </>
+                <div className={classes.imgInput}>
+                  <img
+                    src={props.location.state.fotoProduk}
+                    alt="Placeholder"
+                    id="img"
+                    className={classes.imgTag}
+                  />
+                  <br /> <br />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setClear(false)}
+                  >
+                    Edit Gambar
+                  </Button>
+                </div>
               ) : (
                 <>
-                  <label for="file-input">
-                    <img
-                      src={file}
-                      alt="Placeholder"
-                      id="img"
-                      className={classes.imgTag}
+                  <div className={classes.imgInput}>
+                    <label for="file-input">
+                      <img
+                        src={file}
+                        alt="Placeholder"
+                        id="img"
+                        className={classes.imgTag}
+                      />
+                    </label>
+                    <input
+                      id="file-input"
+                      type="file"
+                      accept=".jpg"
+                      onChange={handleImage}
                     />
-                  </label>
-                  <input
-                    id="file-input"
-                    type="file"
-                    accept=".jpg"
-                    onChange={handleImage}
-                  />
+                  </div>
+
                   <Button
                     variant="outlined"
                     color="secondary"
@@ -222,6 +238,7 @@ function Index(props) {
         </Card>
       </Grid>
 
+      {/* INFORMASI PRODUK */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -261,7 +278,6 @@ function Index(props) {
                   name="brandId"
                   onChange={handleInput}
                   value={props.location.state.brandId}
-                  selec
                 >
                   {brand &&
                     brand.length > 0 &&
@@ -277,6 +293,7 @@ function Index(props) {
         </Card>
       </Grid>
 
+      {/* DETIL PRODUK */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -463,34 +480,70 @@ function Index(props) {
                   component="p"
                   gutterBottom
                   style={{ cursor: "pointer" }}
-                  onClick={() => setNewSertifikasi(newSertifikasi + 1)}
+                  onClick={() =>
+                    setNewSertifikasi([
+                      ...newSertifikasi,
+                      { sertifikasiName: "", sertifikasiUrl: "" },
+                    ])
+                  }
                 >
                   + Tambah Sertifikasi Baru
                 </Typography>
-                {[...Array(newSertifikasi)].map((i) => (
-                  <>
-                    <TextField variant="outlined" size="small" />
+                {newSertifikasi.map((item, index) => (
+                  <div key={index}>
+                    <TextField
+                      variant="outlined"
+                      size="small"
+                      onChange={handleInput}
+                      value={item.sertifikasiName}
+                    />
+                    &emsp; &emsp;
+                    {openUrlSertifikasi === true ? (
+                      <Button
+                        variant="outlined"
+                        color="transparent"
+                        onClick={() => setOpenUrlSertifikasi(false)}
+                      >
+                        + Tambah URL Sertifikasi
+                      </Button>
+                    ) : (
+                      <>
+                        <TextField
+                          variant="outlined"
+                          size="small"
+                          name="urlSertifikasi"
+                          onChange={handleInput}
+                          value={item.sertifikasiUrl}
+                        />
+                        &emsp; &emsp;
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => setOpenUrlSertifikasi(true)}
+                        >
+                          Cancel
+                        </Button>
+                      </>
+                    )}
+                    &emsp; &emsp;
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => deleteByIndex(index)}
+                    >
+                      Hapus Baris
+                    </Button>
                     <br />
                     <br />
-                  </>
+                  </div>
                 ))}
-                {newSertifikasi ? (
-                  <Typography
-                    variant="body2"
-                    component="p"
-                    gutterBottom
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setNewSertifikasi(newSertifikasi - 1)}
-                  >
-                    Hapus Baris
-                  </Typography>
-                ) : null}
               </Grid>
             </Grid>
           </CardContent>
         </Card>
       </Grid>
 
+      {/* HARGA PRODUK */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -631,28 +684,51 @@ function Index(props) {
                     component="p"
                     gutterBottom
                     style={{ cursor: "pointer" }}
-                    onClick={() => setNewHargaGrosir(newHargaGrosir + 1)}
+                    onClick={() =>
+                      setNewHargaGrosir([...newHargaGrosir, newHargaGrosir])
+                    }
                   >
                     + Tambah Harga Grosir Baru
                   </Typography>
-                  {[...Array(newHargaGrosir)].map((i) => (
+                  {newHargaGrosir.map((i) => (
                     <>
-                      <TextField variant="outlined" size="small" />
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        name="banyaknya"
+                        onChange={handleInput}
+                        placeholder="Banyaknya"
+                      />
+                      &emsp;
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        name="hargaSatuanGrosir"
+                        onChange={handleInput}
+                        placeholder="Harga Satuan"
+                      />
+                      &emsp;
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        className={classes.buttonOutlined}
+                        onClick={() => setOpenHargaGrosir(true)}
+                      >
+                        Cancel
+                      </Button>
+                      &emsp;
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        className={classes.buttonOutlined}
+                        onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
+                      >
+                        Hapus Baris
+                      </Button>
                       <br />
                       <br />
                     </>
                   ))}
-                  {newHargaGrosir ? (
-                    <Typography
-                      variant="body2"
-                      component="p"
-                      gutterBottom
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
-                    >
-                      Hapus Baris
-                    </Typography>
-                  ) : null}
                 </Grid>
               </Grid>
             )}
@@ -660,6 +736,7 @@ function Index(props) {
         </Card>
       </Grid>
 
+      {/* PENGELOLAAN PRODUK */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -738,6 +815,7 @@ function Index(props) {
         </Card>
       </Grid>
 
+      {/* BERAT & PENGIRIMAN */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -962,6 +1040,7 @@ function Index(props) {
         </Card>
       </Grid>
 
+      {/* KOMISI */}
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <CardContent>
@@ -1112,6 +1191,7 @@ function Index(props) {
         </Card>
       </Grid>
 
+      {/* ACTION BUTTONS */}
       <Grid item xs={12} className={classes.buttonGroup}>
         <Button variant="outlined" onClick={() => history.push("/produk")}>
           Batal
