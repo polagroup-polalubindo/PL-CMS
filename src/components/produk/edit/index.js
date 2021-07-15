@@ -39,7 +39,8 @@ function Index(props) {
   const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
   const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
   const [newSertifikasi, setNewSertifikasi] = useState([
-    { sertifikasiName: "", sertifikasiUrl: "" },
+    { sertifikasiName: "aadef", sertifikasiUrl: "aaeffaw" },
+    { sertifikasiName: "afeaf", sertifikasiUrl: "aaefsfasdafaw" },
   ]);
 
   const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
@@ -135,10 +136,11 @@ function Index(props) {
     }
   };
 
-  const handleInputSertifikasi = (e, index) => {
-    newSertifikasi[index].sertifikasiName = e.target.value;
-    newSertifikasi[index].sertifikasiUrl = e.target.value;
-    setNewSertifikasi({ newSertifikasi });
+  const handleInputSertifikasi = (index) => (e) => {
+    let newArr = [...newSertifikasi]; // copying the old datas array
+    newArr[index] = e.target.value; // replace e.target.value with whatever you want to change it to
+
+    setNewSertifikasi(newArr); // ??
   };
 
   const handleChangeWeight = (event) => {
@@ -487,10 +489,7 @@ function Index(props) {
                   gutterBottom
                   style={{ cursor: "pointer" }}
                   onClick={() =>
-                    setNewSertifikasi([
-                      ...newSertifikasi,
-                      { sertifikasiName: "", sertifikasiUrl: "" },
-                    ])
+                    setNewSertifikasi([...newSertifikasi, newSertifikasi])
                   }
                 >
                   + Tambah Sertifikasi Baru
@@ -500,7 +499,7 @@ function Index(props) {
                     <TextField
                       variant="outlined"
                       size="small"
-                      onChange={handleInputSertifikasi}
+                      onChange={handleInputSertifikasi(index)}
                       value={item.sertifikasiName}
                     />
                     &emsp; &emsp;
@@ -518,7 +517,7 @@ function Index(props) {
                           variant="outlined"
                           size="small"
                           name="urlSertifikasi"
-                          onChange={handleInputSertifikasi}
+                          onChange={handleInputSertifikasi(index)}
                           value={item.sertifikasiUrl}
                         />
                         &emsp; &emsp;
