@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Table,
   TableCell,
@@ -9,12 +9,19 @@ import {
   Typography,
   IconButton,
   Box,
+  Select,
+  MenuItem,
+  FormControl
 } from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 
-const DetailCard = ({ item }) => {
+import { CMSContext } from "../../../../context/state";
+
+const DetailCard = ({ item, refresh }) => {
   const [dropDown, setDropDown] = useState(false);
+  const [Status, setStatus] = useState(item.status)
+  const { updateKomisi } = useContext(CMSContext);
 
   const formatRupiah = (harga) => {
     let reverse = harga.toString().split('').reverse().join('');
@@ -23,24 +30,36 @@ const DetailCard = ({ item }) => {
     return `Rp. ${ribuan.join('.').split('').reverse().join('')}`;
   }
 
+  const changeStatus = async (e) => {
+    setStatus(e.target.value)
+    await updateKomisi({ status: e.target.value, id: item.id })
+    await refresh()
+  }
+
   return (
     <>
       <TableRow style={{ backgroundColor: '#f3f3f3' }}>
         <TableCell>
-          {
-            item?.transaksi && <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setDropDown(!dropDown)}
-            >
-              {dropDown ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          }
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setDropDown(!dropDown)}
+          >
+            {dropDown ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
         </TableCell>
         <TableCell>{item.id}</TableCell>
         <TableCell>{item?.User?.nama}</TableCell>
         <TableCell>{formatRupiah(item.totalKomisi)}</TableCell>
-        <TableCell>status</TableCell>
+        <TableCell>
+          <FormControl variant="outlined" size="small">
+            <Select value={Status} onChange={changeStatus} style={{ backgroundColor: '#fff' }}>
+              <MenuItem value="Menunggu Transfer">Menunggu Transfer</MenuItem>
+              <MenuItem value="Sudah Transfer">Sudah Transfer</MenuItem>
+              <MenuItem value="Verified">Verified</MenuItem>
+            </Select>
+          </FormControl>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ marginBottom: 50, paddingBottom: dropDown ? 10 : 0, paddingTop: dropDown ? 10 : 0 }} colSpan={6}>
@@ -61,19 +80,18 @@ const DetailCard = ({ item }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {item.transaksi && item.transaksi.length > 0 &&
-                    item.transaksi.map((el) => (
-                      <TableRow key={el.User?.id}>
-                        <TableCell>{el.User?.id}</TableCell>
-                        <TableCell>{el.User?.nama}</TableCell>
-                        <TableCell>{el.transaksiId}</TableCell>
-                        <TableCell>{el.Transaksi?.invoice}</TableCell>
-                        <TableCell>{formatRupiah(el.Transaksi?.totalHarga)}</TableCell>
-                        <TableCell>
-                          {el.Transaksi.createdAt.split("T")[0]}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                  {item.TransaksiKomisis.map((el) => (
+                    <TableRow key={el.User?.id}>
+                      <TableCell>{el.User?.id}</TableCell>
+                      <TableCell>{el.User?.nama}</TableCell>
+                      <TableCell>{el.transaksiId}</TableCell>
+                      <TableCell>{el.Transaksi?.invoice}</TableCell>
+                      <TableCell>{formatRupiah(el.Transaksi?.totalHarga)}</TableCell>
+                      <TableCell>
+                        {el.Transaksi.createdAt.split("T")[0]}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </Box>

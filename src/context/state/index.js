@@ -11,7 +11,8 @@ const initialState = {
   transaksiKomisi: [],
   member: [],
   userData: null,
-  proses: false
+  proses: false,
+  dataKomisi: []
 };
 
 export const CMSContext = createContext(initialState);
@@ -268,6 +269,29 @@ export const Provider = ({ children }) => {
     dispatch({ type: "FETCH_BRAND", payload: data || [] });
   };
 
+  // KOMISI
+  const fetchAllKomisi = async (payload) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/all-komisi?month=${payload.month}&year=${payload.year}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+    console.log(data)
+    dispatch({ type: "FETCH_KOMISI", payload: data || [] });
+  };
+
+  const updateKomisi = async (payload) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/komisi/${payload.id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ status: payload.status }),
+    });
+  };
+
   return (
     <CMSContext.Provider
       value={{
@@ -279,6 +303,7 @@ export const Provider = ({ children }) => {
         userData: state.userData,
         isLogin: state.isLogin,
         proses: state.proses,
+        dataKomisi: state.dataKomisi,
 
         // PRODUK
         fetchProduk,
@@ -303,6 +328,9 @@ export const Provider = ({ children }) => {
         tolakPesanan,
         ubahStatusPembayaran,
         inputResi,
+
+        fetchAllKomisi,
+        updateKomisi,
 
         autoLogin,
         login,
