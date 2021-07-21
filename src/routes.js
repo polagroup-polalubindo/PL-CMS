@@ -1,6 +1,9 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
+import TambahVoucher from "./components/voucher/tambah";
+import DaftarVoucher from "./components/voucher/daftar";
+
 import EditProduk from "./components/produk/edit";
 import TambahProduk from "./components/produk/tambah";
 import DaftarProduk from "./components/produk/daftar";
@@ -26,6 +29,8 @@ function Routes() {
       <div className={classes.toolbar} />
       <Switch>
         <Route path="/login" component={Login} />
+        <AuthenticatedRoute path="/voucher/tambah" component={TambahVoucher} />
+        <AuthenticatedRoute path="/voucher" component={DaftarVoucher} />
         <AuthenticatedRoute path="/produk/edit/:id" component={EditProduk} />
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />
         <AuthenticatedRoute path="/produk" component={DaftarProduk} />
