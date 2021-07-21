@@ -35,6 +35,7 @@ function Navsidebar(props) {
   const [product, setProduct] = React.useState(false);
   const [member, setMember] = React.useState(false);
   const [transaksi, setTransaksi] = React.useState(false);
+  const [voucher, setVoucher] = React.useState(false);
   const [menus, setMenus] = React.useState([]);
   const { userData, setUserData } = useContext(CMSContext);
 
@@ -71,27 +72,6 @@ function Navsidebar(props) {
     if (userData) fetchMenu();
   }, [userData]);
 
-  const handleClickProduct = () => {
-    setProduct(!product);
-  };
-
-  const handleClickMember = () => {
-    setMember(!member);
-  };
-
-  const handleClickTransaksi = () => {
-    setTransaksi(!transaksi);
-  };
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("access_token_CMS");
-    props.history.push("/login");
-  };
-
   const fetchMenu = () => {
     if (userData.nama.toLowerCase() === "ss") {
       setMenus([
@@ -101,7 +81,6 @@ function Navsidebar(props) {
           link: "pesanan",
           icon: "/img/cms/sidebar/sales-icon.png",
         },
-        ,
         {
           value: "Logout",
           sub: [],
@@ -197,6 +176,21 @@ function Navsidebar(props) {
           icon: "/img/cms/sidebar/transaction-icon.png",
         },
         {
+          value: "Voucher",
+          sub: [
+            {
+              value: "Tambah Voucher",
+              link: "voucher/tambah",
+            },
+            {
+              value: "Daftar Voucher",
+              link: "voucher",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/transaction-icon.png",
+        },
+        {
           value: "Logout",
           sub: [],
           link: "login",
@@ -227,13 +221,18 @@ function Navsidebar(props) {
               key={menu.value}
               onClick={
                 menu.value === "Produk"
-                  ? handleClickProduct
+                  ? () => setProduct(!product)
                   : menu.value === "Member"
-                  ? handleClickMember
+                  ? () => setMember(!member)
                   : menu.value === "Transaksi"
-                  ? handleClickTransaksi
+                  ? () => setTransaksi(!transaksi)
+                  : menu.value === "Voucher"
+                  ? () => setVoucher(!voucher)
                   : menu.value === "Logout"
-                  ? handleLogout
+                  ? () => {
+                      localStorage.removeItem("access_token_CMS");
+                      props.history.push("/login");
+                    }
                   : null
               }
               component={menu.expand === true ? null : Link}
@@ -261,6 +260,12 @@ function Navsidebar(props) {
                 ) : (
                   <ExpandMore />
                 )
+              ) : menu.value === "Voucher" ? (
+                voucher ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )
               ) : null}
             </ListItem>
             <Collapse
@@ -271,6 +276,8 @@ function Navsidebar(props) {
                   ? member
                   : menu.value === "Transaksi"
                   ? transaksi
+                  : menu.value === "Voucher"
+                  ? voucher
                   : null
               }
               timeout="auto"
@@ -319,7 +326,9 @@ function Navsidebar(props) {
                 color="inherit"
                 aria-label="open drawer"
                 edge="start"
-                onClick={handleDrawerToggle}
+                onClick={() => {
+                  setMobileOpen(!mobileOpen);
+                }}
                 className={classes.menuButton}
               >
                 <MenuIcon />
@@ -351,7 +360,7 @@ function Navsidebar(props) {
                 variant="temporary"
                 anchor={theme.direction === "rtl" ? "right" : "left"}
                 open={mobileOpen}
-                onClose={handleDrawerToggle}
+                onClose={() => setMobileOpen(!mobileOpen)}
                 classes={{
                   paper: classes.drawerPaper,
                 }}
