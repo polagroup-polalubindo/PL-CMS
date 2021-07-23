@@ -26,9 +26,11 @@ function Routes() {
       <Switch>
         <Route path="/login" component={Login} />
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />
+        <AuthenticatedRoute path="/produk/:id" component={TambahProduk} />
         <AuthenticatedRoute path="/produk" component={DaftarProduk} />
         <AuthenticatedRoute path="/pesanan" component={Pesanan} />
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
+        <AuthenticatedRoute path="/member/:id" component={TambahMember} />
         <AuthenticatedRoute path="/member" component={DaftarMember} />
         <AuthenticatedRoute path="/transaksi/komisi" component={TransaksiKomisi} />
         <AuthenticatedRoute path="/transaksi" component={TransaksiPenjualan} />

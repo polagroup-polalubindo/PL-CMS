@@ -238,20 +238,20 @@ function Navsidebar(props) {
                 product ? (
                   <ExpandLess />
                 ) : (
-                    <ExpandMore />
-                  )
+                  <ExpandMore />
+                )
               ) : menu.value === "Member" ? (
                 member ? (
                   <ExpandLess />
                 ) : (
-                    <ExpandMore />
-                  )
+                  <ExpandMore />
+                )
               ) : menu.value === "Transaksi" ? (
                 transaksi ? (
                   <ExpandLess />
                 ) : (
-                    <ExpandMore />
-                  )
+                  <ExpandMore />
+                )
               ) : null}
             </ListItem>
             <Collapse

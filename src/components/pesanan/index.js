@@ -48,8 +48,6 @@ export default function Index() {
   const [checked, setChecked] = useState(false)
   const [Counter, setCounter] = useState(0)
 
-  //// console.log(transaksi);
-
   useEffect(() => {
     fetchTransaksi();
   }, []);
@@ -114,7 +112,6 @@ export default function Index() {
         if (pesananDitolak.length === dataSelected.length) selectAll = true
         else selectAll = false
       } else {
-        console.log(transaksi.length, dataSelected.length)
         if (transaksi.length === dataSelected.length) selectAll = true
         else selectAll = false
       }

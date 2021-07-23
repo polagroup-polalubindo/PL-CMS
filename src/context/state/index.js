@@ -100,12 +100,12 @@ export const Provider = ({ children }) => {
     await fetchProduk();
   };
 
-  const editProduk = async (id, newData) => {
+  const editProduk = async (id, input) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    await fetch(URL_SERVER + `/produk/${id}`, {
+    await Axios(URL_SERVER + `/produk/${id}`, {
       method: "PUT",
-      headers: { access_token, "Content-Type": "application/json" },
-      body: JSON.stringify(newData),
+      headers: { access_token },
+      data: input,
     });
     await fetchProduk();
   };
@@ -118,7 +118,6 @@ export const Provider = ({ children }) => {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    //// console.log(data, "<<<");
     data = await data.json();
     dispatch({ type: "FETCH_MEMBER", payload: data || [] });
   };
@@ -154,7 +153,6 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    //// console.log(data);
     fetchMember();
   };
 
@@ -165,7 +163,6 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    //// console.log(data);
     fetchMember();
   };
 
@@ -175,18 +172,23 @@ export const Provider = ({ children }) => {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    //// console.log(data);
     fetchMember();
   }
 
   const ubahMember = async (id, newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    await fetch(URL_SERVER + `/customer/${id}`, {
+    let data = await fetch(URL_SERVER + `/customer/${id}`, {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });;
-    fetchMember();
+    data = await data.json();
+    if (data.errMessage) {
+      throw data.errMessage;
+    } else {
+      fetchMember();
+      return { message: "success" };
+    }
   }
 
   // TRANSAKSI
@@ -278,7 +280,6 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    console.log(data)
     dispatch({ type: "FETCH_KOMISI", payload: data || [] });
   };
 

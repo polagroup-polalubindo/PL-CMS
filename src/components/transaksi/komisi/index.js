@@ -51,7 +51,7 @@ export default function Index(params) {
   const [Proses, setProses] = useState(true)
   const [Data, setData] = useState([])
   const [DataForDownload, setDataForDownload] = useState([])
-  //// console.log(transaksiKomisi);
+
   const labelValue = [
     {
       label: 'No.',

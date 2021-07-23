@@ -41,8 +41,6 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
 
   const handleInputResi = async (e) => {
     if (e.key === "Enter") {
-      //// console.log(resi);
-
       const response = await inputResi({
         noResi: resi,
         statusPengiriman: "dalam pengiriman",

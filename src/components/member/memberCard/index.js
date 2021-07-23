@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useHistory } from "react-router";
 
 import { CMSContext } from "../../../context/state";
 
@@ -23,6 +24,8 @@ import Swal from 'sweetalert2';
 
 export default function Index({ row }) {
   const classes = useStyles();
+  const history = useHistory();
+
   let newPhoneNumber = row.phone;
   if (newPhoneNumber[0] === ' ') newPhoneNumber = newPhoneNumber.slice(1)
 
@@ -45,7 +48,6 @@ export default function Index({ row }) {
   );
   const handlePremiereStatus = () => {
     setPremiereStatus(!statusPremier);
-    //// console.log(statusPremier);
     ubahStatusPremiere(
       !statusPremier === true
         ? { statusPremier: "aktif", referralStatus: 1, id: row.id }
@@ -73,7 +75,7 @@ export default function Index({ row }) {
 
   // AKSI
   const actions = [
-    // { value: "edit" },
+    { value: "edit" },
     { value: "hapus" },
     { value: "reset password" },
   ];
@@ -95,6 +97,8 @@ export default function Index({ row }) {
           Swal.fire('Berhasil dihapus!', '', 'success')
         }
       })
+    } else if (input === 'edit') {
+      history.push(`/member/${row.id}`, { data: row })
     }
   };
   return (
@@ -199,7 +203,7 @@ export default function Index({ row }) {
         />
       </TableCell>
       <TableCell>
-        <ListIcon onClick={openAction} />
+        <ListIcon onClick={openAction} style={{ cursor: 'pointer' }}/>
         <Popover
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

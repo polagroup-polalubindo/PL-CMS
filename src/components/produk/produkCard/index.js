@@ -36,7 +36,6 @@ const ProdukCard = ({ row, history }) => {
     setProdukStatus(row.statusProduk)
   }, [row])
 
-  //// console.log(row);
   const actions = [
     {
       value: "edit",
@@ -47,7 +46,6 @@ const ProdukCard = ({ row, history }) => {
   ];
 
   const handleAction = (input) => {
-    //// console.log(input);
     if (input === "hapus") {
       Swal.fire({
         title: 'Hapus produk permanen?',
@@ -61,13 +59,15 @@ const ProdukCard = ({ row, history }) => {
         }
       })
     } else {
-      // history.push('/produk/tambah', { data: row })
-      editProduk(row.id, { stock: data.stock, hargaSatuan: data.hargaSatuan })
+      history.push(`/produk/${row.id}`, { data: row })
     }
   };
 
-  const handleChange = (e) => {
-    if (!isNaN(e.target.value)) setData({ ...data, [e.target.name]: e.target.value })
+  const formatRupiah = (harga) => {
+    let reverse = harga.toString().split('').reverse().join('');
+    let ribuan = reverse.match(/\d{1,3}/g);
+
+    return `Rp. ${ribuan.join('.').split('').reverse().join('')}`;
   }
 
   return (
@@ -96,29 +96,8 @@ const ProdukCard = ({ row, history }) => {
           </Grid>
         </Grid>
       </TableCell>
-      <TableCell>
-        <TextField
-          variant="outlined"
-          size="small"
-          value={data.hargaSatuan}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">Rp.</InputAdornment>
-            ),
-          }}
-          name="hargaSatuan"
-          onChange={handleChange}
-        />
-      </TableCell>
-      <TableCell>
-        <TextField
-          variant="outlined"
-          size="small"
-          value={data.stock}
-          name="stock"
-          onChange={handleChange}
-        />
-      </TableCell>
+      <TableCell>{formatRupiah(row.hargaSatuan)}</TableCell>
+      <TableCell>{row.stock}</TableCell>
       <TableCell>
         <Switch checked={produkStatus} onChange={handleStatus} />
       </TableCell>
