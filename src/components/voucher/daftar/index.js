@@ -21,6 +21,7 @@ import {
 import useStyles from "./styles";
 
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
+import CreateIcon from "@material-ui/icons/Create";
 
 import { useHistory } from "react-router";
 
@@ -92,7 +93,7 @@ export default function Index(params) {
             <Typography variant="h6">
               <b>Overview:</b>
             </Typography>
-            Dari 22/03/2021 sampai 23/05/21
+            Dari 22/03/2021 sampai 23/05/21 <CreateIcon />
           </Grid>
 
           <Grid item xs={3} style={{ borderRight: "1px solid" }}>
