@@ -14,7 +14,7 @@ import useStyles from "../styles";
 import { CMSContext } from "../../../context/state";
 
 const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
-  const { konfirmasiTransaksi, tolakPesanan, fetchTransaksi, inputResi } =
+  const { konfirmasiTransaksi, tolakPesanan, fetchTransaksi, kirimPesanan } =
     useContext(CMSContext);
   const [openProduk, setOpenProduk] = useState(false);
   const [resi, setResi] = useState("");
@@ -39,16 +39,9 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
     }
   };
 
-  const handleInputResi = async (e) => {
-    if (e.key === "Enter") {
-      const response = await inputResi({
-        noResi: resi,
-        statusPengiriman: "dalam pengiriman",
-        expiredAt: null,
-        id: item.id,
-      });
-      if (response.message) fetchTransaksi();
-    }
+  const handleKirimPesanan = async () => {
+    const response = await kirimPesanan(item.id);
+    if (response.message) fetchTransaksi();
   };
 
   useEffect(() => {
@@ -66,6 +59,7 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
       await handleSelectedPesanan('remove', item)
     }
   }, [statusCheck])
+
 
   return (
     <>
@@ -145,7 +139,9 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
             <Typography variant="body2">
               {item.kurir === 'tiki'
                 ? `Kurir TIKI (${item.serviceKurir})`
-                : `Kurir JNE (${item.serviceKurir})`}
+                : item.kurir === 'jne'
+                  ? `Kurir JNE (${item.serviceKurir})`
+                  : `Kurir ID Express (${item.serviceKurir})`}
               <br />
               Rp {item.ongkosKirim}
             </Typography>
@@ -198,7 +194,7 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
 
           <hr style={{ width: "100%" }} />
 
-          <Grid item xs={8}>
+          <Grid item xs={item.tanggalPengiriman ? 7 : 8}>
             <Typography variant="body2"></Typography>
           </Grid>
 
@@ -229,31 +225,36 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
             </Grid>
           ) : item.statusPesanan === "pesanan di konfirmasi" &&
             item.statusPengiriman === "siap di kirim" ? (
-            <Grid
-              item
-              xs={4}
-              container
-              direction="row"
-              justify="flex-start"
-              alignItems="center"
-              style={{ textAlign: "right" }}
-            >
-              <Grid item xs={4}>
-                <Typography variant="body2">
-                  <b>Nomor Resi</b>
-                </Typography>
+            item.tanggalPengiriman
+              ? <Grid
+                item
+                xs={5}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center"
+                style={{ textAlign: "right", fontWeight: 'bold' }}
+              >
+                Pesanan akan dikirim pada tanggal {item.tanggalPengiriman.slice(0, 10)} pada jam 16.00 - 20.00
               </Grid>
-
-              <Grid item xs={8}>
-                <TextField
-                  value={resi}
-                  onChange={(e) => setResi(e.target.value)}
-                  size="small"
-                  variant="outlined"
-                  onKeyDown={handleInputResi}
-                />
+              : <Grid
+                item
+                xs={4}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center"
+                style={{ textAlign: "right" }}
+              >
+                <Button
+                  variant="contained"
+                  disableElevation
+                  style={{ color: "white", backgroundColor: "green" }}
+                  onClick={handleKirimPesanan}
+                >
+                  Kirim pesanan
+                </Button>
               </Grid>
-            </Grid>
           ) : null}
         </Grid>
       </Paper>

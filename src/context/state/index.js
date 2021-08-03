@@ -18,7 +18,6 @@ const initialState = {
 export const CMSContext = createContext(initialState);
 
 export const URL_SERVER = `http://157.230.248.17`;
-// const URL_SERVER = `http://localhost:80`;
 // export const URL_SERVER = `http://localhost:4000`;
 
 export const Provider = ({ children }) => {
@@ -248,12 +247,11 @@ export const Provider = ({ children }) => {
     fetchTransaksi();
   };
 
-  const inputResi = async (newData) => {
+  const kirimPesanan = async (id) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/input-resi`, {
-      method: "POST",
-      headers: { access_token, "Content-Type": "application/json" },
-      body: JSON.stringify(newData),
+    let data = await fetch(URL_SERVER + `/kirim-pesanan/${id}`, {
+      method: "GET",
+      headers: { access_token },
     });
     data = await data.json();
     return data;
@@ -328,7 +326,7 @@ export const Provider = ({ children }) => {
         konfirmasiTransaksi,
         tolakPesanan,
         ubahStatusPembayaran,
-        inputResi,
+        kirimPesanan,
 
         fetchAllKomisi,
         updateKomisi,
