@@ -36,7 +36,7 @@ export default function Index(props) {
         props.history.push('/produk')
       }
     } catch (err) {
-      if (err = "Not admin") {
+      if (err.message === "Not admin") {
         Swal.fire({
           title: "Anda bukan admin !",
           icon: "error",

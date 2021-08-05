@@ -10,7 +10,6 @@ import {
   TableRow,
   Paper,
   TableBody,
-  MenuItem,
   Grid,
   CircularProgress
 } from "@material-ui/core";
@@ -64,12 +63,10 @@ export default function Index(params) {
   ];
 
   const handleVerified = (data) => {
-    //// console.log(data);
     ubahStatusPembayaran({ statusPembayaran: "verified", id: data.id });
   };
 
   const handleTolak = async (data) => {
-    //// console.log(data);
     data.statusPesanan = "pesanan di tolak";
     data.statusPembayaran = "pesanan di tolak";
     data.statusPengiriman = "pesanan di tolak";

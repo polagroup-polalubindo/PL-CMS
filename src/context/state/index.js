@@ -11,13 +11,13 @@ const initialState = {
   transaksiKomisi: [],
   member: [],
   userData: null,
-  proses: false
+  proses: false,
+  dataKomisi: [],
 };
 
 export const CMSContext = createContext(initialState);
 
 export const URL_SERVER = `http://157.230.248.17`;
-// const URL_SERVER = `http://localhost:80`;
 // export const URL_SERVER = `http://localhost:4000`;
 
 export const Provider = ({ children }) => {
@@ -48,19 +48,19 @@ export const Provider = ({ children }) => {
     });
     data = await data.json();
 
-    if (data.data.role === 'admin') {
+    if (data.data.role === "admin") {
       if (data.access_token) {
         await dispatch({ type: "FETCH_USER_DATA", payload: data.data });
         localStorage.setItem("access_token_CMS", data.access_token);
       }
     } else {
-      throw "Not admin"
+      throw { message: "Not admin" };
     }
   };
 
   const setUserData = (payload) => {
     dispatch({ type: "FETCH_USER_DATA", payload });
-  }
+  };
 
   // PRODUK
   const fetchProduk = async () => {
@@ -72,42 +72,41 @@ export const Provider = ({ children }) => {
 
   const ubahStatusProduk = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-produk/${newData.id}`, {
+    await fetch(URL_SERVER + `/ubah-status-produk/${newData.id}`, {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    data = await data.json();
-    fetchProduk();
+    await fetchProduk();
   };
 
   const deleteproduk = async (id) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    const data = await fetch(URL_SERVER + `/produk/${id}`, {
+    await fetch(URL_SERVER + `/produk/${id}`, {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    fetchProduk();
+    await fetchProduk();
   };
 
   const tambahProduk = async (input) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    const data = await Axios(URL_SERVER + "/produk", {
+    await Axios(URL_SERVER + "/produk", {
       method: "POST",
       headers: { access_token },
       data: input,
     });
-    fetchProduk();
+    await fetchProduk();
   };
 
-  const editProduk = async (id, newData) => {
+  const editProduk = async (id, input) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    await fetch(URL_SERVER + `/produk/${id}`, {
+    await Axios(URL_SERVER + `/produk/${id}`, {
       method: "PUT",
-      headers: { access_token, "Content-Type": "application/json" },
-      body: JSON.stringify(newData),
+      headers: { access_token },
+      data: input,
     });
-    fetchProduk();
+    await fetchProduk();
   };
 
   // MEMBER
@@ -118,7 +117,6 @@ export const Provider = ({ children }) => {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    //// console.log(data, "<<<");
     data = await data.json();
     dispatch({ type: "FETCH_MEMBER", payload: data || [] });
   };
@@ -149,35 +147,32 @@ export const Provider = ({ children }) => {
 
   const ubahStatusPremiere = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-premier`, {
+    await fetch(URL_SERVER + `/ubah-status-premier`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    //// console.log(data);
     fetchMember();
   };
 
   const ubahStatus = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-customer`, {
+    await fetch(URL_SERVER + `/ubah-status-customer`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    //// console.log(data);
     fetchMember();
   };
 
   const deleteMember = async (id) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/customer/${id}`, {
+    await fetch(URL_SERVER + `/customer/${id}`, {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    //// console.log(data);
     fetchMember();
-  }
+  };
 
   const ubahMember = async (id, newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
@@ -185,9 +180,15 @@ export const Provider = ({ children }) => {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
-    });;
-    fetchMember();
-  }
+    });
+    data = await data.json();
+    if (data.errMessage) {
+      throw data.errMessage;
+    } else {
+      fetchMember();
+      return { message: "success" };
+    }
+  };
 
   // TRANSAKSI
   const fetchTransaksi = async () => {
@@ -238,7 +239,7 @@ export const Provider = ({ children }) => {
 
   const ubahStatusPembayaran = async (newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/ubah-status-pembayaran`, {
+    await fetch(URL_SERVER + `/ubah-status-pembayaran`, {
       method: "POST",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
@@ -246,12 +247,11 @@ export const Provider = ({ children }) => {
     fetchTransaksi();
   };
 
-  const inputResi = async (newData) => {
+  const kirimPesanan = async (id) => {
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/input-resi`, {
-      method: "POST",
-      headers: { access_token, "Content-Type": "application/json" },
-      body: JSON.stringify(newData),
+    let data = await fetch(URL_SERVER + `/kirim-pesanan/${id}`, {
+      method: "GET",
+      headers: { access_token },
     });
     data = await data.json();
     return data;
@@ -269,6 +269,103 @@ export const Provider = ({ children }) => {
     dispatch({ type: "FETCH_BRAND", payload: data || [] });
   };
 
+  // KOMISI
+  const fetchAllKomisi = async (payload) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(
+      URL_SERVER + `/all-komisi?month=${payload.month}&year=${payload.year}`,
+      {
+        method: "GET",
+        headers: { access_token, "Content-Type": "application/json" },
+      }
+    );
+    data = await data.json();
+    dispatch({ type: "FETCH_KOMISI", payload: data || [] });
+  };
+
+  const updateKomisi = async (payload) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/komisi/${payload.id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ status: payload.status }),
+    });
+  };
+
+  // VOUCHER
+  const tambahVoucher = async (input) => {
+    try {
+      const access_token = localStorage.getItem("access_token_CMS");
+      let data = await fetch(URL_SERVER + "/voucher", {
+        method: "POST",
+        headers: { access_token, "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      data = await data.json();
+      if (data.errMessage) {
+        throw data.errMessage;
+      } else {
+        fetchMember();
+        return { message: "success" };
+      }
+    } catch (error) {
+      Swal.fire({
+        title: error,
+        icon: "error",
+      });
+      return error;
+    }
+  };
+
+  const fetchVoucher = async () => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + "/voucher", {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+    dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
+  };
+
+  const ubahVoucher = async (id, newData) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/voucher/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+    data = await data.json();
+    if (data.errMessage) {
+      throw data.errMessage;
+    } else {
+      fetchVoucher();
+      return { message: "success" };
+    }
+  };
+
+  const fetchOneVoucher = async (id) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/voucher/${id}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+    dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
+  };
+
+  const deleteVoucher = async (id) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    await fetch(URL_SERVER + `/voucher/${id}`, {
+      method: "DELETE",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    fetchVoucher();
+  };
+
   return (
     <CMSContext.Provider
       value={{
@@ -280,6 +377,7 @@ export const Provider = ({ children }) => {
         userData: state.userData,
         isLogin: state.isLogin,
         proses: state.proses,
+        dataKomisi: state.dataKomisi,
 
         // PRODUK
         fetchProduk,
@@ -303,7 +401,10 @@ export const Provider = ({ children }) => {
         konfirmasiTransaksi,
         tolakPesanan,
         ubahStatusPembayaran,
-        inputResi,
+        kirimPesanan,
+
+        fetchAllKomisi,
+        updateKomisi,
 
         autoLogin,
         login,

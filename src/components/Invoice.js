@@ -165,7 +165,7 @@ export default function Invoice(props) {
                       </View>
                       <View style={styles.fieldHargaBarang}>
                         {
-                          cart.Produk.discount
+                          cart?.Produk?.discount
                             ? <Text>{formatRupiah(cart.Produk.hargaSatuan - ((cart.Produk.discount / 100) * cart.Produk.hargaSatuan))}</Text>
                             : <Text>{formatRupiah(cart.Produk?.hargaSatuan)}</Text>
                         }
@@ -193,7 +193,7 @@ export default function Invoice(props) {
                   </View>
 
                   <View style={{ ...styles.fieldSubtotal, color: 'black' }}>
-                    <Text>{formatRupiah(el.totalHarga)}</Text>
+                    <Text>{formatRupiah(el.totalHarga - el.ongkosKirim - el.insuranceFee)}</Text>
                   </View>
                 </View>
               </View>
@@ -203,19 +203,25 @@ export default function Invoice(props) {
               <View style={{ width: '60%' }} />
               <View style={{ width: '40%' }}>
                 <View id="ongkir" style={styles.container}>
-                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #a8a8a8', paddingBottom: 10, marginBottom: 10 }}>
-                    <Text style={{ fontSize: 9, color: '#565656', marginBottom: 2 }}>{el.kurir === 'tiki' ? 'TIKI' : 'JNE'} - {el.serviceKurir}</Text>
+                  <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 10, marginBottom: 10 }}>
+                    <Text style={{ fontSize: 9, color: '#565656', marginBottom: 2 }}>{el.kurir.toUpperCase()} - {el.serviceKurir}</Text>
                     <Text style={{ fontSize: 9, color: '#565656' }}>{formatRupiah(el.ongkosKirim)}</Text>
                   </View>
+                  {
+                    el.insurance && <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #a8a8a8', paddingBottom: 10, marginBottom: 10 }}>
+                      <Text style={{ fontSize: 9, color: '#565656', marginBottom: 2 }}>Asuransi</Text>
+                      <Text style={{ fontSize: 9, color: '#565656' }}>{formatRupiah(el.insuranceFee)}</Text>
+                    </View>
+                  }
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Text style={{ fontSize: 10, marginBottom: 2 }}>Subtotal Ongkos Kirim</Text>
-                    <Text style={{ fontSize: 10 }}>{formatRupiah(el.ongkosKirim)}</Text>
+                    <Text style={{ fontSize: 10 }}>{formatRupiah(el.ongkosKirim + el.insuranceFee)}</Text>
                   </View>
                 </View>
 
                 <View id="totalBelanja" style={{ border: '1px solid #a8a8a8', padding: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, borderRadius: 5 }}>
                   <Text style={{ fontSize: 10, marginBottom: 2 }}>Total Belanja</Text>
-                  <Text style={{ fontSize: 10 }}>{formatRupiah(el.ongkosKirim + el.totalHarga)}</Text>
+                  <Text style={{ fontSize: 10 }}>{formatRupiah(el.totalHarga)}</Text>
                 </View>
               </View>
             </View>

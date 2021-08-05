@@ -36,6 +36,12 @@ const CMSReducer = (state, action) => {
         userData: action.payload,
         proses: false,
       };
+    case "FETCH_KOMISI":
+      return {
+        ...state,
+        dataKomisi: action.payload || [],
+        proses: false,
+      };
     case "SET_PROSES":
       return {
         ...state,

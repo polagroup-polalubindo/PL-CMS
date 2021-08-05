@@ -16,29 +16,30 @@ import {
 } from "@material-ui/core";
 
 import useStyles from "./styles";
+import FieldSertifikasi from "./sertifikasi";
+import FieldHargaGrosir from "./hargaGrosir";
 
 import { CMSContext } from "../../../context/state";
 import { useHistory } from "react-router";
 import Swal from "sweetalert2";
 
-function Index() {
+function Index({ location }) {
+  const hiddenFileInputTDS = React.useRef(null);
+  const hiddenFileInputMSDS = React.useRef(null);
   const classes = useStyles();
   const history = useHistory();
-  const { brand, fetchBrand, tambahProduk } = useContext(CMSContext);
+  const { brand, fetchBrand, tambahProduk, editProduk, API } =
+    useContext(CMSContext);
+  const [produkId, setProdukId] = useState(null);
   const [file, setFile] = useState("/img/cms/photo-product-placeholder.png");
   const [image, setImage] = useState(null);
   const [weight, setWeight] = useState("gram");
 
-  const [openUrlVideo, setOpenUrlVideo] = useState(true);
-  const [openUrlTDS, setOpenUrlTDS] = useState(true);
-  const [openUrlMSDS, setOpenUrlMSDS] = useState(true);
-  const [openUrlSertifikasi, setOpenUrlSertifikasi] = useState(true);
-  const [newSertifikasi, setNewSertifikasi] = useState([]);
+  const [sertifikasi, setSertifikasi] = useState([]);
 
   const [asuransiPengiriman, setAsuransiPengiriman] = useState("Wajib");
   const [layananPengiriman, setLayananPengiriman] = useState("Standar");
 
-  const [openHargaGrosir, setOpenHargaGrosir] = useState(true);
   const [newHargaGrosir, setNewHargaGrosir] = useState([]);
 
   const [input, setInput] = useState({
@@ -48,14 +49,14 @@ function Index() {
     deskripsi: "",
     minPesanan: 1,
     hargaSatuan: 0,
-    hargaGrosir: 0,
+    diskon: "",
     statusProduk: false,
     stock: 0,
     sku: "",
     weight: 0,
-    panjang: 0,
-    lebar: 0,
-    tinggi: 0,
+    panjang: null,
+    lebar: null,
+    tinggi: null,
     komisiStatus: false,
     komisiLevel1: 0,
     komisiLevel2: 0,
@@ -63,31 +64,22 @@ function Index() {
     levelKomisi: 0,
 
     urlVideo: "",
-    urlTDS: "",
-    urlMSDS: "",
-    urlSertifikasi: "",
+    TDS: null,
+    MSDS: null,
 
     asuransiPengiriman: "Wajib",
     layananPengiriman: "Standar",
 
     preOrder: false,
-
-    banyaknya: "",
-    hargaSatuanGrosir: "",
   });
 
   useEffect(() => {
     fetchBrand();
+    if (location?.state && location?.state.data) {
+      setProdukId(location?.state.data.id);
+      fetchDataForEdit(location?.state.data);
+    }
   }, []);
-
-  const weights = [
-    {
-      value: "gram",
-    },
-    {
-      value: "kilogram",
-    },
-  ];
 
   const allAsuransiPengiriman = [
     {
@@ -108,32 +100,51 @@ function Index() {
   ];
 
   const send = async (e) => {
-    if (image === null) {
-      Swal.fire({
-        title: "photo belum di upload",
-        icon: "error",
-      });
-    } else if (input.sku === "" || input.sku === null) {
-      Swal.fire({
-        title: "data belum lengkap",
-        icon: "error",
-      });
-    } else if (input.deskripsi.length > 255) {
-      Swal.fire({
-        title: "deskripsi produk max 255 character",
-        icon: "error",
-      });
-    } else {
+    if (await !validateForm()) {
+      let newData = input;
+      newData.hargaGrosir = newHargaGrosir;
       const data = new FormData();
-      data.append("data", JSON.stringify(input, null, 2));
-      data.append("file", image);
 
       try {
-        await tambahProduk(data);
-        Swal.fire({
-          title: "Tambah produk berhasil",
-          icon: "success",
-        });
+        if (produkId) {
+          delete newData.Brand;
+          delete newData.BrandId;
+          delete newData.preOrder;
+          delete newData.HargaGrosirs;
+
+          data.append("data", JSON.stringify(newData, null, 2));
+
+          if (image && image.name) data.append("image", image);
+          if (input.MSDS && input.MSDS.name) data.append("MSDS", input.MSDS);
+          if (input.TDS && input.TDS.name) data.append("TDS", input.TDS);
+          if (sertifikasi.length > 0) {
+            sertifikasi.forEach((el) => {
+              data.append("sertifikasi", el);
+            });
+          }
+
+          await editProduk(produkId, data);
+          Swal.fire({
+            title: "Tambah produk berhasil",
+            icon: "success",
+          });
+        } else {
+          data.append("data", JSON.stringify(newData, null, 2));
+          data.append("image", image);
+          if (input.MSDS) data.append("MSDS", input.MSDS);
+          if (input.TDS) data.append("TDS", input.TDS);
+          if (sertifikasi.length > 0) {
+            sertifikasi.forEach((el) => {
+              data.append("sertifikasi", el);
+            });
+          }
+
+          await tambahProduk(data);
+          Swal.fire({
+            title: "Tambah produk berhasil",
+            icon: "success",
+          });
+        }
         history.push("/produk");
       } catch (err) {
         Swal.fire({
@@ -144,7 +155,44 @@ function Index() {
     }
   };
 
-  const handleInput = (e) => {
+  const validateForm = () => {
+    let isError = false;
+    if (image === null && !produkId) {
+      Swal.fire({
+        title: "photo belum di upload",
+        icon: "error",
+      });
+      isError = true;
+    } else if (
+      input.namaProduk === "" ||
+      input.brandId === null ||
+      input.deskripsi === "" ||
+      !input.minPesanan ||
+      !input.hargaSatuan ||
+      !input.weight ||
+      !input.weight ||
+      !input.panjang ||
+      !input.lebar ||
+      !input.tinggi ||
+      input.sku === ""
+    ) {
+      Swal.fire({
+        title: "data belum lengkap",
+        icon: "error",
+      });
+      isError = true;
+    } else if (input.deskripsi.length > 255) {
+      Swal.fire({
+        title: "deskripsi produk max 255 character",
+        icon: "error",
+      });
+      isError = true;
+    }
+
+    return isError;
+  };
+
+  const handleInput = async (e, index) => {
     if (
       e.target.name !== "namaProduk" &&
       e.target.name !== "brandId" &&
@@ -153,9 +201,7 @@ function Index() {
       e.target.name !== "urlVideo" &&
       e.target.name !== "urlTDS" &&
       e.target.name !== "urlMSDS" &&
-      e.target.name !== "urlSertifikasi" &&
-      e.target.name !== "banyaknya" &&
-      e.target.name !== "hargaSatuanGrosir"
+      e.target.name !== "urlSertifikasi"
     ) {
       if (!isNaN(e.target.value)) {
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -177,15 +223,67 @@ function Index() {
     setLayananPengiriman(event.target.value);
   };
 
-  const handleImage = (e) => {
+  const handleFile = (name, index) => async (e) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
-      let reader = new FileReader();
-      reader.onload = (e) => {
-        setFile(e.target.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
+      if (name === "image") {
+        setImage(e.target.files[0]);
+
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          setFile(e.target.result);
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      } else if (name === "tds") {
+        setInput({ ...input, TDS: e.target.files[0] });
+      } else if (name === "msds") {
+        setInput({ ...input, MSDS: e.target.files[0] });
+      } else if (name === "sertifikat") {
+        let newData = sertifikasi;
+        await setSertifikasi([]);
+        newData[index] = e.target.files[0];
+        await setSertifikasi(newData);
+      }
     }
+  };
+
+  const deleteSertifikasi = async (index) => {
+    let newData = sertifikasi;
+    await setSertifikasi([]);
+    newData.splice(index, 1);
+    setSertifikasi(newData);
+  };
+
+  const addSertifikasi = async () => {
+    let newData = sertifikasi;
+    await setSertifikasi([]);
+    newData.push(null);
+    setSertifikasi(newData);
+  };
+
+  const handleSetHargaGrosir = (data) => {
+    setNewHargaGrosir(data);
+  };
+
+  const fetchDataForEdit = (data) => {
+    let checkTDS = data.TDS && data.TDS.split("/");
+    let checkMSDS = data.MSDS && data.MSDS.split("/");
+
+    setFile(data.fotoProduk);
+    setInput({
+      ...data,
+      brandId: data.BrandId,
+      diskon: data.discount,
+      TDS: checkTDS ? checkTDS[checkTDS.length - 1] : null,
+      MSDS: checkMSDS ? checkMSDS[checkMSDS.length - 1] : null,
+      urlVideo: data.videoProduk,
+      preOrder: data.preorder,
+    });
+
+    setAsuransiPengiriman(data.asuransiPengiriman);
+    setLayananPengiriman(data.layananPengiriman);
+
+    setSertifikasi(data.Sertifikasis);
+    setNewHargaGrosir(data.HargaGrosirs);
   };
 
   return (
@@ -199,7 +297,7 @@ function Index() {
       <Grid item xs={12}>
         <Card className={classes.root} elevation={2}>
           <Grid container>
-            <Grid item xs={3}>
+            <Grid item xs={2}>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
                   <b>Upload Foto Produk</b>
@@ -209,22 +307,53 @@ function Index() {
                 </Typography>
               </CardContent>
             </Grid>
-            <Grid item xs={9} className={classes.imgInput}>
-              <label for="file-input">
-                <img
-                  src={file}
-                  alt="Placeholder"
-                  id="img"
-                  className={classes.imgTag}
+            {produkId ? (
+              <Grid item xs={10} className={classes.imgInput}>
+                <label for="file-input" style={{ cursor: "pointer" }}>
+                  <img
+                    src={file}
+                    alt="image"
+                    id="img"
+                    className={classes.imgTag}
+                  />
+                  <p
+                    className={classes.imgTag}
+                    style={{
+                      textAlign: "center",
+                      marginTop: 0,
+                      marginBottom: 0,
+                    }}
+                  >
+                    Change foto
+                  </p>
+                </label>
+
+                <input
+                  id="file-input"
+                  type="file"
+                  accept=".jpg"
+                  onChange={handleFile("image")}
                 />
-              </label>
-              <input
-                id="file-input"
-                type="file"
-                accept=".jpg"
-                onChange={handleImage}
-              />
-            </Grid>
+              </Grid>
+            ) : (
+              <Grid item xs={10} className={classes.imgInput}>
+                <label for="file-input">
+                  <img
+                    src={file}
+                    alt="image"
+                    id="img"
+                    className={classes.imgTag}
+                  />
+                </label>
+
+                <input
+                  id="file-input"
+                  type="file"
+                  accept=".jpg"
+                  onChange={handleFile("image")}
+                />
+              </Grid>
+            )}
           </Grid>
         </Card>
       </Grid>
@@ -246,9 +375,14 @@ function Index() {
                   variant="outlined"
                   size="small"
                   fullWidth
-                  helperText={`${input.namaProduk?.length}/255`}
+                  helperText={
+                    <p
+                      style={{ textAlign: "right", margin: 0 }}
+                    >{`${input.namaProduk?.length}/255`}</p>
+                  }
                   name="namaProduk"
                   onChange={handleInput}
+                  value={input.namaProduk}
                 />
               </Grid>
             </Grid>
@@ -266,6 +400,7 @@ function Index() {
                   className={classes.brandWidth}
                   name="brandId"
                   onChange={handleInput}
+                  value={input.brandId}
                 >
                   {brand &&
                     brand.length > 0 &&
@@ -303,6 +438,7 @@ function Index() {
                   rows={10}
                   name="deskripsi"
                   onChange={handleInput}
+                  value={input.deskripsi}
                 />
               </Grid>
             </Grid>
@@ -314,33 +450,15 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                {openUrlVideo ? (
-                  <Button
-                    variant="outlined"
-                    color="transparent"
-                    onClick={() => setOpenUrlVideo(false)}
-                  >
-                    + Tambah URL Video
-                  </Button>
-                ) : (
-                  <>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="urlVideo"
-                      onChange={handleInput}
-                    />{" "}
-                    <br /> <br />
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlVideo(true)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
+                <TextField
+                  placeholder="Url video"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  name="urlVideo"
+                  onChange={handleInput}
+                  value={input.urlVideo}
+                />
               </Grid>
             </Grid>
 
@@ -351,34 +469,33 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                {openUrlTDS ? (
-                  <Button
-                    variant="outlined"
-                    color="transparent"
-                    onClick={() => setOpenUrlTDS(false)}
-                  >
-                    + Tambah URL TDS
-                  </Button>
-                ) : (
-                  <>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="urlTDS"
-                      onChange={handleInput}
-                    />
-                    <br />
-                    <br />
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlTDS(true)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
+                <Button
+                  variant="outlined"
+                  color="transparent"
+                  onClick={() => hiddenFileInputTDS.current.click()}
+                >
+                  {input.TDS
+                    ? input.TDS.name
+                      ? `${input.TDS.name.slice(
+                          0,
+                          10
+                        )} ... ${input.TDS.name.slice(
+                          input.TDS.name.length - 8,
+                          input.TDS.name.length
+                        )}`
+                      : `${input.TDS.slice(0, 10)} ... ${input.TDS.slice(
+                          input.TDS.length - 8,
+                          input.TDS.length
+                        )}`
+                    : " + Tambah File TDS"}
+                </Button>
+                <input
+                  ref={hiddenFileInputTDS}
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFile("tds")}
+                  hidden
+                />
               </Grid>
               <Grid item xs={2}>
                 <Typography
@@ -391,127 +508,65 @@ function Index() {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                {openUrlMSDS ? (
-                  <Button
-                    variant="outlined"
-                    color="transparent"
-                    onClick={() => setOpenUrlMSDS(false)}
-                  >
-                    + Tambah URL MSDS
-                  </Button>
-                ) : (
-                  <>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      name="urlMSDS"
-                      onChange={handleInput}
-                    />
-                    <br />
-                    <br />
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlMSDS(true)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
+                <Button
+                  variant="outlined"
+                  color="transparent"
+                  onClick={() => hiddenFileInputMSDS.current.click()}
+                >
+                  {input.MSDS
+                    ? input.MSDS.name
+                      ? `${input.MSDS.name.slice(
+                          0,
+                          10
+                        )} ... ${input.MSDS.name.slice(
+                          input.MSDS.name.length - 8,
+                          input.MSDS.name.length
+                        )}`
+                      : `${input.MSDS.slice(0, 10)} ... ${input.MSDS.slice(
+                          input.MSDS.length - 8,
+                          input.MSDS.length
+                        )}`
+                    : " + Tambah File MSDS"}
+                </Button>
+                <input
+                  ref={hiddenFileInputMSDS}
+                  type="file"
+                  accept=".pdf"
+                  onChange={handleFile("msds")}
+                  hidden
+                />
               </Grid>
             </Grid>
 
-            <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5}>
               <Grid item xs={2}>
-                <Typography variant="body2" component="p" gutterBottom>
+                <Typography
+                  variant="body2"
+                  component="p"
+                  style={{ margin: "8px 0px" }}
+                >
                   Sertifikasi
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                <TextField variant="outlined" size="small" />
-                &emsp; &emsp;
-                {openUrlSertifikasi === true ? (
-                  <Button
-                    variant="outlined"
-                    color="transparent"
-                    onClick={() => setOpenUrlSertifikasi(false)}
-                  >
-                    + Tambah URL Sertifikasi
-                  </Button>
-                ) : (
-                  <>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      name="urlSertifikasi"
-                      onChange={handleInput}
+                <Grid style={{ display: "flex", flexDirection: "column" }}>
+                  {sertifikasi.map((el, index) => (
+                    <FieldSertifikasi
+                      key={("sertifikat", index)}
+                      data={el}
+                      lengthData={sertifikasi.length}
+                      deleteSertifikasi={deleteSertifikasi}
+                      sertifikasiIndex={index}
+                      handleFile={handleFile}
                     />
-                    &emsp; &emsp;
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      onClick={() => setOpenUrlSertifikasi(true)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
-              </Grid>
-            </Grid>
-
-            <Grid container spacing={5} alignItems="center">
-              <Grid item xs={2} />
-              <Grid item xs={10}>
-                <Typography
-                  variant="body2"
-                  component="p"
-                  gutterBottom
-                  style={{ cursor: "pointer" }}
-                  onClick={() =>
-                    setNewSertifikasi([...newSertifikasi, newSertifikasi])
-                  }
+                  ))}
+                </Grid>
+                <p
+                  style={{ margin: "8px 0px", cursor: "pointer" }}
+                  onClick={addSertifikasi}
                 >
-                  + Tambah Sertifikasi Baru
-                </Typography>
-                {newSertifikasi.map((id) => (
-                  <div key={id}>
-                    <TextField variant="outlined" size="small" />
-                    &emsp; &emsp;
-                    {openUrlSertifikasi === true ? (
-                      <Button
-                        variant="outlined"
-                        color="transparent"
-                        onClick={() => setOpenUrlSertifikasi(false)}
-                      >
-                        + Tambah URL Sertifikasi
-                      </Button>
-                    ) : (
-                      <>
-                        <TextField
-                          variant="outlined"
-                          size="small"
-                          name="urlSertifikasi"
-                          onChange={handleInput}
-                        />
-                        &emsp; &emsp;
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={() => setOpenUrlSertifikasi(true)}
-                        >
-                          Cancel
-                        </Button>
-                      </>
-                    )}
-                    &emsp; &emsp;
-                    <Button variant="outlined" color="secondary">
-                      Hapus Baris
-                    </Button>
-                    <br />
-                    <br />
-                  </div>
-                ))}
+                  + Sertifikasi Baru
+                </p>
               </Grid>
             </Grid>
           </CardContent>
@@ -602,110 +657,23 @@ function Index() {
               </Grid>
             </Grid>
 
-            <Grid container spacing={5} alignItems="center">
+            <Grid container spacing={5}>
               <Grid item xs={2}>
-                <Typography variant="body2" component="p" gutterBottom>
+                <Typography
+                  variant="body2"
+                  component="p"
+                  style={{ margin: "8px 0px" }}
+                >
                   Harga Grosir
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                {openHargaGrosir ? (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    className={classes.buttonOutlined}
-                    onClick={() => setOpenHargaGrosir(false)}
-                  >
-                    + Tambah Grosir
-                  </Button>
-                ) : (
-                  <>
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      name="banyaknya"
-                      onChange={handleInput}
-                      placeholder="Banyaknya"
-                    />
-                    &emsp;
-                    <TextField
-                      variant="outlined"
-                      size="small"
-                      name="hargaSatuanGrosir"
-                      onChange={handleInput}
-                      placeholder="Harga Satuan"
-                    />
-                    &emsp;
-                    <Button
-                      variant="outlined"
-                      color="secondary"
-                      className={classes.buttonOutlined}
-                      onClick={() => setOpenHargaGrosir(true)}
-                    >
-                      Cancel
-                    </Button>
-                  </>
-                )}
+                <FieldHargaGrosir
+                  handleSetHargaGrosir={handleSetHargaGrosir}
+                  data={newHargaGrosir}
+                />
               </Grid>
             </Grid>
-
-            {openHargaGrosir === false && (
-              <Grid container spacing={5} alignItems="center">
-                <Grid item xs={2} />
-                <Grid item xs={10}>
-                  <Typography
-                    variant="body2"
-                    component="p"
-                    gutterBottom
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      setNewHargaGrosir([...newHargaGrosir, newHargaGrosir])
-                    }
-                  >
-                    + Tambah Harga Grosir Baru
-                  </Typography>
-                  {newHargaGrosir.map((i) => (
-                    <>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        name="banyaknya"
-                        onChange={handleInput}
-                        placeholder="Banyaknya"
-                      />
-                      &emsp;
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        name="hargaSatuanGrosir"
-                        onChange={handleInput}
-                        placeholder="Harga Satuan"
-                      />
-                      &emsp;
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        className={classes.buttonOutlined}
-                        onClick={() => setOpenHargaGrosir(true)}
-                      >
-                        Cancel
-                      </Button>
-                      &emsp;
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        className={classes.buttonOutlined}
-                        onClick={() => setNewHargaGrosir(newHargaGrosir - 1)}
-                      >
-                        Hapus Baris
-                      </Button>
-                      <br />
-                      <br />
-                    </>
-                  ))}
-                </Grid>
-              </Grid>
-            )}
           </CardContent>
         </Card>
       </Grid>
@@ -780,6 +748,7 @@ function Index() {
                   fullWidth
                   name="sku"
                   onChange={handleInput}
+                  value={input.sku}
                 />
               </Grid>
             </Grid>
@@ -799,23 +768,7 @@ function Index() {
                   Berat Produk
                 </Typography>
               </Grid>
-              <Grid item xs={2}>
-                <TextField
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  select
-                  value={weight}
-                  onChange={handleChangeWeight}
-                >
-                  {weights.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.value}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={5}>
                 <TextField
                   variant="outlined"
                   size="small"
@@ -823,6 +776,19 @@ function Index() {
                   name="weight"
                   value={input.weight}
                   onChange={handleInput}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment
+                        position="end"
+                        className={classes.inputAdornment}
+                      >
+                        <p className={classes.colorTextWhite}>gram</p>
+                      </InputAdornment>
+                    ),
+                    style: {
+                      paddingRight: "0",
+                    },
+                  }}
                 />
               </Grid>
             </Grid>

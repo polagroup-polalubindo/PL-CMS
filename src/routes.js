@@ -33,10 +33,12 @@ function Routes() {
         <AuthenticatedRoute path="/voucher" component={DaftarVoucher} />
         <AuthenticatedRoute path="/produk/edit/:id" component={EditProduk} />
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />
+        <AuthenticatedRoute path="/produk/:id" component={TambahProduk} />
         <AuthenticatedRoute path="/produk" component={DaftarProduk} />
         <AuthenticatedRoute path="/pesanan" component={Pesanan} />
         <AuthenticatedRoute path="/member/edit/:id" component={EditMember} />
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
+        <AuthenticatedRoute path="/member/:id" component={TambahMember} />
         <AuthenticatedRoute path="/member" component={DaftarMember} />
         <AuthenticatedRoute
           path="/transaksi/komisi"

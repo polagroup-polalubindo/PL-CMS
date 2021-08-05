@@ -25,10 +25,25 @@ import Swal from "sweetalert2";
 
 export default function Index(props, { row }) {
   const classes = useStyles();
-  let newPhoneNumber = "+62";
-  for (let i = 1; i < props.row.phone.length; i++) {
-    newPhoneNumber += props.row.phone[i];
-  }
+  const history = useHistory();
+
+  let newPhoneNumber = row.phone;
+  if (newPhoneNumber[0] === " ") newPhoneNumber = newPhoneNumber.slice(1);
+
+  if (newPhoneNumber.slice(0, 1) === "0")
+    newPhoneNumber = `+62${newPhoneNumber.slice(1)}`;
+  else if (newPhoneNumber.slice(0, 2) === "62")
+    newPhoneNumber = `+${newPhoneNumber}`;
+  else if (newPhoneNumber.slice(0, 5) === "(+62)")
+    newPhoneNumber = `+62${newPhoneNumber.slice(6)}`;
+  else if (newPhoneNumber.slice(0, 6) === "(+62) ")
+    newPhoneNumber = `+62${newPhoneNumber.slice(7)}`;
+  else if (newPhoneNumber.slice(0, 4) === "(62)")
+    newPhoneNumber = `+62${newPhoneNumber.slice(5)}`;
+  else if (newPhoneNumber.slice(0, 5) === "(62) ")
+    newPhoneNumber = `+62${newPhoneNumber.slice(6)}`;
+  // else if (newPhoneNumber.slice(0, 3) === '+62') newPhoneNumber = newPhoneNumber
+  else newPhoneNumber = newPhoneNumber;
 
   const { ubahStatusPremiere, ubahStatus, deleteMember } =
     useContext(CMSContext);
@@ -41,7 +56,6 @@ export default function Index(props, { row }) {
   );
   const handlePremiereStatus = () => {
     setPremiereStatus(!statusPremier);
-    //// console.log(statusPremier);
     ubahStatusPremiere(
       !statusPremier === true
         ? { statusPremier: "aktif", referralStatus: 1, id: props.row.id }
@@ -80,8 +94,6 @@ export default function Index(props, { row }) {
     setAnchorEl(event.currentTarget);
   };
 
-  const history = useHistory();
-
   const closeAction = (input) => {
     setAnchorEl(null);
 
@@ -98,12 +110,7 @@ export default function Index(props, { row }) {
         }
       });
     } else if (input === "edit") {
-      history.push({
-        pathname: `/member/edit/${props.row.id}`,
-        state: props.row,
-      });
-    } else {
-      // HAPUS PASSWORD
+      history.push(`/member/${row.id}`, { data: row });
     }
   };
   return (
@@ -126,7 +133,17 @@ export default function Index(props, { row }) {
             <img src="/img/cms/WhatsApp.svg" alt="WhatsApp" width="30" />
           </Grid>
           <Grid item xs={9}>
-            {props.row.phone[0] === "+" ? props.row.phone : newPhoneNumber}
+            <p
+              onClick={() =>
+                window.open(
+                  `https://api.whatsapp.com/send?phone=${newPhoneNumber}&text=hi`,
+                  "_blank"
+                )
+              }
+              style={{ margin: 0, cursor: "pointer", color: "blue" }}
+            >
+              {row.phone[0] === "+" ? row.phone : newPhoneNumber}
+            </p>
           </Grid>
           <Grid item xs={3}>
             <MailOutlineIcon />
@@ -199,7 +216,7 @@ export default function Index(props, { row }) {
         />
       </TableCell>
       <TableCell>
-        <ListIcon onClick={openAction} />
+        <ListIcon onClick={openAction} style={{ cursor: "pointer" }} />
         <Popover
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

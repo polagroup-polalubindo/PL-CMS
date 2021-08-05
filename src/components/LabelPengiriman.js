@@ -5,7 +5,7 @@ import { Page, Text, View, Document, StyleSheet, PDFDownloadLink, Image, Font } 
 import LubindoImg from '../assets/lubindo.png';
 import TikiImg from '../assets/tiki.png';
 import JneImg from '../assets/jne.png';
-
+import IDExpressImg from '../assets/id-express.png';
 
 // Register Font
 Font.register({
@@ -68,15 +68,21 @@ export default function LabelPengiriman(props) {
                     <View style={{ display: 'flex', flexDirection: 'row', marginTop: 5 }}>
                       <View style={{ width: '20%' }}>
                         <View style={{ height: 30 }}>
-                          <Image source={el.kurir === 'tiki' ? TikiImg : JneImg} style={{ width: 40, height: 12, marginTop: 5 }} />
+                          <Image source={el.kurir === 'tiki' ? TikiImg : (el.kurir === 'jne' ? JneImg : IDExpressImg)} style={{ width: 40, height: el.kurir === 'ID Express' ? 17 : 12, marginTop: 5 }} />
                         </View>
+                        {
+                          el.kurir === 'ID Express' && <View style={{ height: 30 }}>
+                            <Text style={{ fontSize: 9, color: '#585858', marginBottom: 2 }}>Asuransi</Text>
+                          <Text style={{ fontSize: 9 }}>Rp. {el.insuranceFee}</Text>
+                          </View>
+                        }
                       </View>
                       <View style={{ width: '30%', paddingLeft: 3 }}>
-                        <View style={{ height: 28 }}>
-                          <Text style={{ fontSize: 9, color: '#585858', marginBottom: 2 }}>{el.kurir === 'tiki' ? 'TIKI' : 'JNE'}</Text>
+                        <View style={{ height: 30 }}>
+                          <Text style={{ fontSize: 9, color: '#585858', marginBottom: 2 }}>{el.kurir.toUpperCase()}</Text>
                           <Text style={{ fontSize: 9 }}>{el.serviceKurir}</Text>
                         </View>
-                        <View style={{ height: 28 }}>
+                        <View style={{ height: 30 }}>
                           <Text style={{ fontSize: 9, color: '#585858', marginBottom: 2 }}>Ongkir</Text>
                           <Text style={{ fontSize: 9 }}>Rp. {el.ongkosKirim}</Text>
                         </View>
@@ -96,7 +102,7 @@ export default function LabelPengiriman(props) {
                     <View style={{ width: '50%', paddingLeft: 10 }}>
                       <Text style={{ fontSize: 9, color: '#585858', marginBottom: 2 }}>Dari:</Text>
                       <Text style={{ fontSize: 9 }}>PT Pola Lubindo</Text>
-                      <Text style={{ fontSize: 9, color: '#585858'}}>Jl. Penjernihan I No. 40, Bendungan Hilir, Tanah Abang, Jakarta Pusat, 10210</Text>
+                      <Text style={{ fontSize: 9, color: '#585858' }}>Jl. Penjernihan I No. 40, Bendungan Hilir, Tanah Abang, Jakarta Pusat, 10210</Text>
                       <Text style={{ fontSize: 9, color: '#585858' }}>+6221 5712644</Text>
                     </View>
                   </View>

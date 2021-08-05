@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Grid,
   TextField,
@@ -16,10 +16,10 @@ import useStyles from "./styles";
 import { CMSContext } from "../../../context/state";
 import { useHistory } from "react-router";
 
-function Index() {
+function Index({ location }) {
   const classes = useStyles();
   const history = useHistory();
-  const { tambahMember } = useContext(CMSContext);
+  const { tambahMember, ubahMember } = useContext(CMSContext);
   const [input, setInput] = useState({
     nama: null,
     phone: null,
@@ -27,9 +27,37 @@ function Index() {
     noKtp: null,
     noNPWP: null,
   });
+  const [akunPremiere, setAkunPremiere] = React.useState({
+    checked: true,
+  });
+
+  useEffect(() => {
+    if (location.state?.data) {
+      setInput({
+        nama: location.state.data.nama,
+        phone: location.state.data.phone,
+        email: location.state.data.email,
+        noKtp: location.state.data.noKtp,
+        noNPWP: location.state.data.noNPWP,
+      })
+      setAkunPremiere({ checked: location.state.data.referralStatus })
+    }
+  }, [location.state])
 
   const send = async () => {
-    const response = await tambahMember(input);
+    let response, newData = {}
+    if (location.state?.data) {
+      if (input.nama !== location.state.data.nama) newData.nama = input.nama
+      if (input.phone !== location.state.data.phone) newData.phone = input.phone
+      if (input.email !== location.state.data.email) newData.email = input.email
+      if (input.noKtp !== location.state.data.noKtp) newData.noKtp = input.noKtp
+      if (input.noNPWP !== location.state.data.noNPWP) newData.noNPWP = input.noNPWP
+      newData.referralStatus = akunPremiere
+    } else {
+      newData = { ...input, referralStatus: akunPremiere }
+    }
+
+    response = location.state?.data ? await ubahMember(location.state.data.id, newData) : await tambahMember(newData);
     if (response.message === "success") {
       history.push("/member");
     }
@@ -92,10 +120,6 @@ function Index() {
     );
   });
 
-  const [akunPremiere, setAkunPremiere] = React.useState({
-    checked: true,
-  });
-
   const changeAkunPremiere = (event) => {
     setAkunPremiere({
       ...akunPremiere,
@@ -110,7 +134,7 @@ function Index() {
         <Card className={classes.root} elevation={2}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              <b>Biodata</b>
+              <b>{location.state?.data && 'Edit '}Biodata</b>
             </Typography>
             <Grid
               container
