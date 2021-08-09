@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { CMSContext } from "../../../context/state";
 import {
   Button,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -10,12 +9,11 @@ import {
   TableHead,
   TableRow,
   Paper,
-  CircularProgress,
   Grid,
   Typography,
-  TextField,
   MenuItem,
   Menu,
+  CircularProgress,
 } from "@material-ui/core";
 
 import useStyles from "./styles";
@@ -23,10 +21,18 @@ import useStyles from "./styles";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import CreateIcon from "@material-ui/icons/Create";
 
+import VoucherCard from "../voucherCard";
 import { useHistory } from "react-router";
 
 export default function Index(params) {
   const classes = useStyles();
+  const history = useHistory();
+
+  const { fetchVoucher, voucher, proses } = useContext(CMSContext);
+
+  useEffect(() => {
+    fetchVoucher();
+  }, []);
 
   const [view, setView] = React.useState("Semua");
 
@@ -163,78 +169,29 @@ export default function Index(params) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {bodyRows.map((row) => (
-                    <TableRow key={row.kode_voucher}>
-                      <TableCell>{row.kode_voucher}</TableCell>
-                      <TableCell>{row.tipe_voucher}</TableCell>
-                      <TableCell>{row.diskon}</TableCell>
-                      <TableCell>{row.batas_pemakaian}</TableCell>
-                      <TableCell>{row.diklaim}</TableCell>
-                      <TableCell>{row.digunakan}</TableCell>
-                      <TableCell>
-                        <div
-                          style={{
-                            backgroundColor:
-                              row.periode === "Akan Datang"
-                                ? "#ffdede"
-                                : "#deffe6",
-                            color:
-                              row.periode === "Akan Datang" ? "red" : "green",
-                            padding: 5,
-                          }}
-                        >
-                          {row.periode}
-                        </div>
-                        {row.waktu_periode}
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          aria-controls="simple-menu"
-                          aria-haspopup="true"
-                          onClick={(event) => {
-                            setAnchorEl(event.currentTarget);
-                          }}
-                          variant="outlined"
-                          endIcon={<ArrowDropDownIcon />}
-                        >
-                          Pilih Aksi
-                        </Button>
-                        <Menu
-                          id="simple-menu"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={() => {
-                            setAnchorEl(null);
-                          }}
-                        >
-                          <MenuItem
-                            onClick={() => {
-                              setAnchorEl(null);
-                            }}
-                          >
-                            Edit
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => {
-                              setAnchorEl(null);
-                            }}
-                          >
-                            Hapus/Hentikan
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => {
-                              setAnchorEl(null);
-                            }}
-                          >
-                            Duplikat
-                          </MenuItem>
-                        </Menu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {!proses &&
+                    voucher &&
+                    voucher.length > 0 &&
+                    voucher.map((row) => <VoucherCard row={row} />)}
                 </TableBody>
               </Table>
+              <Grid style={{ display: "flex", justifyContent: "center" }}>
+                {proses ? (
+                  <Grid
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: 80,
+                      height: 80,
+                    }}
+                  >
+                    <CircularProgress style={{ width: 50, height: 50 }} />
+                  </Grid>
+                ) : (
+                  voucher.length === 0 && <p>Tidak ada data yang tersedia</p>
+                )}
+              </Grid>
             </TableContainer>
           </Grid>
         </Grid>
