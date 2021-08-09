@@ -12,6 +12,7 @@ const initialState = {
   member: [],
   userData: null,
   proses: false,
+  voucher: [],
   dataKomisi: [],
 };
 
@@ -377,6 +378,7 @@ export const Provider = ({ children }) => {
         userData: state.userData,
         isLogin: state.isLogin,
         proses: state.proses,
+        voucher: state.voucher,
         dataKomisi: state.dataKomisi,
 
         // PRODUK
@@ -403,8 +405,16 @@ export const Provider = ({ children }) => {
         ubahStatusPembayaran,
         kirimPesanan,
 
+        // KOMISI
         fetchAllKomisi,
         updateKomisi,
+
+        // VOUCHER
+        fetchVoucher,
+        tambahVoucher,
+        fetchOneVoucher,
+        ubahVoucher,
+        deleteVoucher,
 
         autoLogin,
         login,
