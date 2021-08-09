@@ -1,13 +1,9 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Grid,
   TextField,
-  CardContent,
-  Card,
   Typography,
   Button,
-  Switch,
-  withStyles,
   FormControlLabel,
   Paper,
   Radio,
@@ -21,15 +17,87 @@ import useStyles from "./styles";
 import { CMSContext } from "../../../context/state";
 import { useHistory } from "react-router";
 
-function Index() {
+function Index({ location }) {
   const classes = useStyles();
+  const history = useHistory();
 
-  const [tipeVoucher, setTipeVoucher] = useState("Diskon");
+  const { tambahVoucher, ubahVoucher } = useContext(CMSContext);
+  const [input, setInput] = useState({
+    name: null,
+    code: null,
+    periodeStart: null,
+    periodeEnd: null,
+    typeVoucher: "Diskon",
+    discountMax: "Atur Maksimal Diskon",
+    minimumPurchase: null,
+    usageQuota: null,
+    forAll: null,
+    listProduct: null,
+  });
+
+  const [typeVoucher, setTypeVoucher] = useState("Diskon");
   const [maksimalDiskon, setMaksimalDiskon] = useState("Atur Maksimal Diskon");
   const [minimalPembelian, setMinimalPembelian] = useState(
     "Atur Minimal Pembelian"
   );
   const [berlakuUntuk, setBerlakuUntuk] = useState("Semua Produk");
+
+  useEffect(() => {
+    if (location.state?.data) {
+      setInput({
+        name: location.state.data.name,
+        code: location.state.data.code,
+        periodeStart: location.state.data.periodeStart,
+        periodeEnd: location.state.data.periodeEnd,
+        typeVoucher: location.state.data.typeVoucher,
+        discountMax: location.state.data.discountMax,
+        minimumPurchase: location.state.data.minimumPurchase,
+        usageQuota: location.state.data.usageQuota,
+        forAll: location.state.data.forAll,
+        listProduct: location.state.data.listProduct,
+      });
+    }
+  }, [location.state]);
+
+  const send = async () => {
+    let response,
+      newData = {};
+    if (location.state?.data) {
+      if (input.name !== location.state.data.name) newData.name = input.name;
+      if (input.code !== location.state.data.code) newData.code = input.code;
+      if (input.periodeStart !== location.state.data.periodeStart)
+        newData.periodeStart = input.periodeStart;
+      if (input.periodeEnd !== location.state.data.periodeEnd)
+        newData.periodeEnd = input.periodeEnd;
+      if (input.typeVoucher !== location.state.data.typeVoucher)
+        newData.typeVoucher = input.typeVoucher;
+      if (input.discountMax !== location.state.data.discountMax)
+        newData.discountMax = input.discountMax;
+      if (input.discountMax !== location.state.data.discountMax)
+        newData.discountMax = input.discountMax;
+      if (input.minimumPurchase !== location.state.data.minimumPurchase)
+        newData.minimumPurchase = input.minimumPurchase;
+      if (input.usageQuota !== location.state.data.usageQuota)
+        newData.usageQuota = input.usageQuota;
+      if (input.forAll !== location.state.data.forAll)
+        newData.forAll = input.forAll;
+      if (input.listProduct !== location.state.data.listProduct)
+        newData.listProduct = input.listProduct;
+    } else {
+      newData = { ...input };
+    }
+
+    response = location.state?.data
+      ? await ubahVoucher(location.state.data.id, newData)
+      : await tambahVoucher(newData);
+    if (response.message === "success") {
+      history.push("/voucher");
+    }
+  };
+
+  const handleInput = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  };
 
   return (
     <Grid container spacing={3}>
@@ -48,7 +116,14 @@ function Index() {
               </Typography>
             </Grid>
             <Grid item xs={10}>
-              <TextField variant="outlined" size="small" fullWidth />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                name="name"
+                value={input.name}
+                onChange={handleInput}
+              />
             </Grid>
 
             <Grid item xs={2}>
@@ -66,6 +141,9 @@ function Index() {
                     <InputAdornment position="end">0/10</InputAdornment>
                   ),
                 }}
+                name="code"
+                value={input.code}
+                onChange={handleInput}
               />
             </Grid>
 
@@ -87,6 +165,9 @@ function Index() {
                     </InputAdornment>
                   ),
                 }}
+                name="periodeStart"
+                value={input.periodeStart}
+                onChange={handleInput}
               />
             </Grid>
             <Grid item xs={2}>
@@ -105,6 +186,9 @@ function Index() {
                     </InputAdornment>
                   ),
                 }}
+                name="periodeEnd"
+                value={input.periodeEnd}
+                onChange={handleInput}
               />
             </Grid>
 
@@ -115,7 +199,6 @@ function Index() {
             </Grid>
             <Grid item xs={3}>
               <FormControlLabel
-                value="Diskon"
                 control={
                   <Radio
                     classes={{
@@ -125,13 +208,14 @@ function Index() {
                   />
                 }
                 label="Diskon"
-                checked={tipeVoucher === "Diskon"}
-                onChange={(event) => setTipeVoucher(event.target.value)}
+                checked={typeVoucher === "Diskon"}
+                name="typeVoucher"
+                value="Diskon"
+                onChange={(event) => setTypeVoucher(event.target.value)}
               />
             </Grid>
             <Grid item xs={7}>
               <FormControlLabel
-                value="Nominal"
                 control={
                   <Radio
                     classes={{
@@ -141,8 +225,10 @@ function Index() {
                   />
                 }
                 label="Nominal"
-                checked={tipeVoucher === "Nominal"}
-                onChange={(event) => setTipeVoucher(event.target.value)}
+                checked={typeVoucher === "Nominal"}
+                name="typeVoucher"
+                value="Nominal"
+                onChange={(event) => setTypeVoucher(event.target.value)}
               />
             </Grid>
 
@@ -153,7 +239,6 @@ function Index() {
             </Grid>
             <Grid item xs={3}>
               <FormControlLabel
-                value="Atur Maksimal Diskon"
                 control={
                   <Radio
                     classes={{
@@ -164,6 +249,8 @@ function Index() {
                 }
                 label="Atur Maksimal Diskon"
                 checked={maksimalDiskon === "Atur Maksimal Diskon"}
+                name="discountMax"
+                value="Atur Maksimal Diskon"
                 onChange={(event) => setMaksimalDiskon(event.target.value)}
               />
               {maksimalDiskon === "Atur Maksimal Diskon" && (
@@ -184,7 +271,6 @@ function Index() {
             </Grid>
             <Grid item xs={7}>
               <FormControlLabel
-                value="Tanpa Batas"
                 control={
                   <Radio
                     classes={{
@@ -195,6 +281,8 @@ function Index() {
                 }
                 label="Tanpa Batas"
                 checked={maksimalDiskon === "Tanpa Batas"}
+                name="discountMax"
+                value="Tanpa Batas"
                 onChange={(event) => setMaksimalDiskon(event.target.value)}
               />
             </Grid>
@@ -206,7 +294,6 @@ function Index() {
             </Grid>
             <Grid item xs={3}>
               <FormControlLabel
-                value="Atur Minimal Pembelian"
                 control={
                   <Radio
                     classes={{
@@ -217,6 +304,8 @@ function Index() {
                 }
                 label="Atur Minimal Pembelian"
                 checked={minimalPembelian === "Atur Minimal Pembelian"}
+                name="minimumPurchase"
+                value={input.minimumPurchase}
                 onChange={(event) => setMinimalPembelian(event.target.value)}
               />
               {minimalPembelian === "Atur Minimal Pembelian" && (
@@ -237,7 +326,6 @@ function Index() {
             </Grid>
             <Grid item xs={7}>
               <FormControlLabel
-                value="Tanpa Batas"
                 control={
                   <Radio
                     classes={{
@@ -248,6 +336,8 @@ function Index() {
                 }
                 label="Tanpa Batas"
                 checked={minimalPembelian === "Tanpa Batas"}
+                name="minimumPurchase"
+                value={input.minimumPurchase}
                 onChange={(event) => setMinimalPembelian(event.target.value)}
               />
             </Grid>
@@ -258,7 +348,14 @@ function Index() {
               </Typography>
             </Grid>
             <Grid item xs={5}>
-              <TextField variant="outlined" size="small" fullWidth />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                name="usageQuota"
+                value={input.usageQuota}
+                onChange={handleInput}
+              />
             </Grid>
             <Grid item xs={5} />
 
@@ -269,7 +366,6 @@ function Index() {
             </Grid>
             <Grid item xs={3}>
               <FormControlLabel
-                value="Semua Produk"
                 control={
                   <Radio
                     classes={{
@@ -280,12 +376,13 @@ function Index() {
                 }
                 label="Semua Produk"
                 checked={berlakuUntuk === "Semua Produk"}
+                name="forAll"
+                value={input.forAll}
                 onChange={(event) => setBerlakuUntuk(event.target.value)}
               />
             </Grid>
             <Grid item xs={7}>
               <FormControlLabel
-                value="Produk Tertentu"
                 control={
                   <Radio
                     classes={{
@@ -296,6 +393,8 @@ function Index() {
                 }
                 label="Produk Tertentu"
                 checked={berlakuUntuk === "Produk Tertentu"}
+                name="listProduct"
+                value={input.listProduct}
                 onChange={(event) => setBerlakuUntuk(event.target.value)}
               />
             </Grid>
@@ -303,13 +402,16 @@ function Index() {
         </Paper>
       </Grid>
       <Grid item xs={12} className={classes.button}>
-        <Button variant="outlined">Batal</Button>
+        <Button variant="outlined" onClick={() => history.push("/voucher")}>
+          Batal
+        </Button>
         <Button variant="outlined">Simpan & Tambah Baru</Button>
         <Button
           variant="contained"
           color="primary"
           disableElevation
           className={classes.button_simpan}
+          onClick={send}
         >
           Simpan
         </Button>
