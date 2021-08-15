@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { CMSContext } from "../../../context/state";
 import {
   Button,
@@ -11,22 +11,17 @@ import {
   Paper,
   Grid,
   Typography,
-  MenuItem,
-  Menu,
   CircularProgress,
 } from "@material-ui/core";
 
 import useStyles from "./styles";
 
-import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import CreateIcon from "@material-ui/icons/Create";
 
 import VoucherCard from "../voucherCard";
-import { useHistory } from "react-router";
 
-export default function Index(params) {
+export default function Index() {
   const classes = useStyles();
-  const history = useHistory();
 
   const { fetchVoucher, voucher, proses } = useContext(CMSContext);
 
@@ -53,43 +48,6 @@ export default function Index(params) {
     { value: "Periode" },
     { value: "Aksi" },
   ];
-
-  const bodyRows = [
-    {
-      kode_voucher: "SVC71236",
-      tipe_voucher: "Voucher Disc",
-      diskon: 30,
-      batas_pemakaian: "399",
-      diklaim: 0,
-      digunakan: 1,
-      periode: "Akan Datang",
-      waktu_periode: (
-        <>
-          05/05/2021 00:00
-          <br />
-          07/08/2021 14:23
-        </>
-      ),
-    },
-    {
-      kode_voucher: "SVC71236",
-      tipe_voucher: "Voucher Disc",
-      diskon: 30,
-      batas_pemakaian: "399",
-      diklaim: 0,
-      digunakan: 1,
-      periode: "Sedang Berjalan",
-      waktu_periode: (
-        <>
-          05/05/2021 00:00
-          <br />
-          07/08/2021 14:23
-        </>
-      ),
-    },
-  ];
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   return (
     <>
