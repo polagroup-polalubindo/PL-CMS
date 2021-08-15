@@ -12,6 +12,12 @@ const CMSReducer = (state, action) => {
         member: action.payload || [],
         proses: false,
       };
+    case "FETCH_VOUCHER":
+      return {
+        ...state,
+        voucher: action.payload || [],
+        proses: false,
+      };
     case "FETCH_TRANSAKSI":
       return {
         ...state,
