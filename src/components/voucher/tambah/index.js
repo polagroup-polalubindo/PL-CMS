@@ -10,7 +10,9 @@ import {
   InputAdornment,
 } from "@material-ui/core";
 
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import Swal from "sweetalert2";
+
+// import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 
 import useStyles from "./styles";
 
@@ -21,26 +23,27 @@ function Index({ location }) {
   const classes = useStyles();
   const history = useHistory();
 
-  const { tambahVoucher, ubahVoucher } = useContext(CMSContext);
+  const { addVoucher, editVoucher } = useContext(CMSContext);
   const [input, setInput] = useState({
-    name: null,
-    code: null,
-    periodeStart: null,
-    periodeEnd: null,
+    name: "",
+    code: "",
+    periodeStart: "",
+    periodeEnd: "",
     typeVoucher: "Diskon",
-    discountMax: "Atur Maksimal Diskon",
-    minimumPurchase: null,
-    usageQuota: null,
-    forAll: null,
-    listProduct: null,
+    discountMax: 0,
+    minimumPurchase: 0,
+    usageQuota: 0,
+    forAll: true,
   });
 
   const [typeVoucher, setTypeVoucher] = useState("Diskon");
-  const [maksimalDiskon, setMaksimalDiskon] = useState("Atur Maksimal Diskon");
-  const [minimalPembelian, setMinimalPembelian] = useState(
-    "Atur Minimal Pembelian"
-  );
-  const [berlakuUntuk, setBerlakuUntuk] = useState("Semua Produk");
+  const [discountMax, setDiscountMax] = useState("Tanpa Batas");
+  const [minimumPurchase, setMinimumPurchase] = useState("Tanpa Batas");
+  const [forAll, setForAll] = useState(true);
+
+  const handleInput = async (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  };
 
   useEffect(() => {
     if (location.state?.data) {
@@ -49,19 +52,18 @@ function Index({ location }) {
         code: location.state.data.code,
         periodeStart: location.state.data.periodeStart,
         periodeEnd: location.state.data.periodeEnd,
-        typeVoucher: location.state.data.typeVoucher,
         discountMax: location.state.data.discountMax,
         minimumPurchase: location.state.data.minimumPurchase,
         usageQuota: location.state.data.usageQuota,
-        forAll: location.state.data.forAll,
-        listProduct: location.state.data.listProduct,
       });
+
+      setForAll(location.state.data.forAll);
+      setTypeVoucher(location.state.data.typeVoucher);
     }
   }, [location.state]);
 
   const send = async () => {
-    let response,
-      newData = {};
+    let newData = {};
     if (location.state?.data) {
       if (input.name !== location.state.data.name) newData.name = input.name;
       if (input.code !== location.state.data.code) newData.code = input.code;
@@ -69,34 +71,21 @@ function Index({ location }) {
         newData.periodeStart = input.periodeStart;
       if (input.periodeEnd !== location.state.data.periodeEnd)
         newData.periodeEnd = input.periodeEnd;
-      if (input.typeVoucher !== location.state.data.typeVoucher)
-        newData.typeVoucher = input.typeVoucher;
       if (input.discountMax !== location.state.data.discountMax)
-        newData.discountMax = input.discountMax;
-      if (input.discountMax !== location.state.data.discountMax)
-        newData.discountMax = input.discountMax;
+        newData.discountMax = input.name;
       if (input.minimumPurchase !== location.state.data.minimumPurchase)
         newData.minimumPurchase = input.minimumPurchase;
       if (input.usageQuota !== location.state.data.usageQuota)
         newData.usageQuota = input.usageQuota;
-      if (input.forAll !== location.state.data.forAll)
-        newData.forAll = input.forAll;
-      if (input.listProduct !== location.state.data.listProduct)
-        newData.listProduct = input.listProduct;
+      newData.forAll = forAll;
+      newData.typeVoucher = typeVoucher;
     } else {
-      newData = { ...input };
+      newData = { ...input, forAll: forAll, typeVoucher: typeVoucher };
     }
 
-    response = location.state?.data
-      ? await ubahVoucher(location.state.data.id, newData)
-      : await tambahVoucher(newData);
-    if (response.message === "success") {
-      history.push("/voucher");
-    }
-  };
-
-  const handleInput = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    location.state?.data
+      ? await editVoucher(location.state.data.id, newData)
+      : await addVoucher(newData);
   };
 
   return (
@@ -157,13 +146,16 @@ function Index({ location }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                placeholder="26/03/2020 00:00"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CalendarTodayIcon />
-                    </InputAdornment>
-                  ),
+                type="datetime-local"
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <CalendarTodayIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
+                InputLabelProps={{
+                  shrink: true,
                 }}
                 name="periodeStart"
                 value={input.periodeStart}
@@ -178,14 +170,14 @@ function Index({ location }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                placeholder="26/03/2020 00:00"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CalendarTodayIcon />
-                    </InputAdornment>
-                  ),
-                }}
+                type="datetime-local"
+                // InputProps={{
+                //   startAdornment: (
+                //     <InputAdornment position="start">
+                //       <CalendarTodayIcon />
+                //     </InputAdornment>
+                //   ),
+                // }}
                 name="periodeEnd"
                 value={input.periodeEnd}
                 onChange={handleInput}
@@ -247,26 +239,19 @@ function Index({ location }) {
                     }}
                   />
                 }
-                label="Atur Maksimal Diskon"
-                checked={maksimalDiskon === "Atur Maksimal Diskon"}
-                name="discountMax"
-                value="Atur Maksimal Diskon"
-                onChange={(event) => setMaksimalDiskon(event.target.value)}
+                label="Tanpa Batas"
+                checked={discountMax === "Tanpa Batas"}
+                value="Tanpa Batas"
+                onChange={(event) => setDiscountMax(event.target.value)}
               />
-              {maksimalDiskon === "Atur Maksimal Diskon" && (
-                <>
-                  <br />
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    placeholder="Masukkan Angka"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">Rp |</InputAdornment>
-                      ),
-                    }}
-                  />
-                </>
+              {discountMax === "Tanpa Batas" && (
+                <input
+                  type="text"
+                  value="0"
+                  name="discountMax"
+                  onChange={handleInput}
+                  hidden
+                />
               )}
             </Grid>
             <Grid item xs={7}>
@@ -279,12 +264,29 @@ function Index({ location }) {
                     }}
                   />
                 }
-                label="Tanpa Batas"
-                checked={maksimalDiskon === "Tanpa Batas"}
-                name="discountMax"
-                value="Tanpa Batas"
-                onChange={(event) => setMaksimalDiskon(event.target.value)}
+                label="Atur Maksimal Diskon"
+                checked={discountMax === "Atur Maksimal Diskon"}
+                value="Atur Maksimal Diskon"
+                onChange={(event) => setDiscountMax(event.target.value)}
               />
+              {discountMax === "Atur Maksimal Diskon" && (
+                <>
+                  <br />
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    placeholder="Masukkan Angka"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">Rp |</InputAdornment>
+                      ),
+                    }}
+                    name="discountMax"
+                    value={input.discountMax}
+                    onChange={handleInput}
+                  />
+                </>
+              )}
             </Grid>
 
             <Grid item xs={2}>
@@ -302,26 +304,20 @@ function Index({ location }) {
                     }}
                   />
                 }
-                label="Atur Minimal Pembelian"
-                checked={minimalPembelian === "Atur Minimal Pembelian"}
+                label="Tanpa Batas"
+                checked={minimumPurchase === "Tanpa Batas"}
                 name="minimumPurchase"
-                value={input.minimumPurchase}
-                onChange={(event) => setMinimalPembelian(event.target.value)}
+                value="Tanpa Batas"
+                onChange={(event) => setMinimumPurchase(event.target.value)}
               />
-              {minimalPembelian === "Atur Minimal Pembelian" && (
-                <>
-                  <br />
-                  <TextField
-                    variant="outlined"
-                    size="small"
-                    placeholder="Masukkan Angka"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">Rp |</InputAdornment>
-                      ),
-                    }}
-                  />
-                </>
+              {minimumPurchase === "Tanpa Batas" && (
+                <input
+                  type="text"
+                  value="0"
+                  name="minimumPurchase"
+                  onChange={handleInput}
+                  hidden
+                />
               )}
             </Grid>
             <Grid item xs={7}>
@@ -334,12 +330,29 @@ function Index({ location }) {
                     }}
                   />
                 }
-                label="Tanpa Batas"
-                checked={minimalPembelian === "Tanpa Batas"}
-                name="minimumPurchase"
-                value={input.minimumPurchase}
-                onChange={(event) => setMinimalPembelian(event.target.value)}
+                label="Atur Minimal Pembelian"
+                checked={minimumPurchase === "Atur Minimal Pembelian"}
+                value="Atur Minimal Pembelian"
+                onChange={(event) => setMinimumPurchase(event.target.value)}
               />
+              {minimumPurchase === "Atur Minimal Pembelian" && (
+                <>
+                  <br />
+                  <TextField
+                    variant="outlined"
+                    size="small"
+                    placeholder="Masukkan Angka"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">Rp |</InputAdornment>
+                      ),
+                    }}
+                    name="minimumPurchase"
+                    value={input.minimumPurchase}
+                    onChange={handleInput}
+                  />
+                </>
+              )}
             </Grid>
 
             <Grid item xs={2}>
@@ -347,7 +360,7 @@ function Index({ location }) {
                 Kouta Pemakaian
               </Typography>
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={3}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -357,7 +370,7 @@ function Index({ location }) {
                 onChange={handleInput}
               />
             </Grid>
-            <Grid item xs={5} />
+            <Grid item xs={7} />
 
             <Grid item xs={2}>
               <Typography variant="body2" component="p">
@@ -375,10 +388,9 @@ function Index({ location }) {
                   />
                 }
                 label="Semua Produk"
-                checked={berlakuUntuk === "Semua Produk"}
+                checked={forAll === true}
                 name="forAll"
-                value={input.forAll}
-                onChange={(event) => setBerlakuUntuk(event.target.value)}
+                onChange={() => setForAll(true)}
               />
             </Grid>
             <Grid item xs={7}>
@@ -392,10 +404,9 @@ function Index({ location }) {
                   />
                 }
                 label="Produk Tertentu"
-                checked={berlakuUntuk === "Produk Tertentu"}
-                name="listProduct"
-                value={input.listProduct}
-                onChange={(event) => setBerlakuUntuk(event.target.value)}
+                checked={forAll === false}
+                name="forAll"
+                onChange={() => setForAll(false)}
               />
             </Grid>
           </Grid>
