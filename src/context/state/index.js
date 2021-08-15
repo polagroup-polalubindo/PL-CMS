@@ -18,8 +18,8 @@ const initialState = {
 
 export const CMSContext = createContext(initialState);
 
-export const URL_SERVER = `http://157.230.248.17`;
-// export const URL_SERVER = `http://localhost:4000`;
+// export const URL_SERVER = `http://157.230.248.17`;
+export const URL_SERVER = `http://localhost:4000`;
 
 export const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(CMSReducer, initialState);
@@ -296,30 +296,6 @@ export const Provider = ({ children }) => {
   };
 
   // VOUCHER
-  const tambahVoucher = async (input) => {
-    try {
-      const access_token = localStorage.getItem("access_token_CMS");
-      let data = await fetch(URL_SERVER + "/voucher", {
-        method: "POST",
-        headers: { access_token, "Content-Type": "application/json" },
-        body: JSON.stringify(input),
-      });
-      data = await data.json();
-      if (data.errMessage) {
-        throw data.errMessage;
-      } else {
-        fetchMember();
-        return { message: "success" };
-      }
-    } catch (error) {
-      Swal.fire({
-        title: error,
-        icon: "error",
-      });
-      return error;
-    }
-  };
-
   const fetchVoucher = async () => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
@@ -331,7 +307,26 @@ export const Provider = ({ children }) => {
     dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
   };
 
-  const ubahVoucher = async (id, newData) => {
+  const addVoucher = async (input) => {
+    try {
+      const access_token = localStorage.getItem("access_token_CMS");
+      await Axios(URL_SERVER + "/voucher", {
+        method: "POST",
+        headers: { access_token },
+        data: input,
+      });
+      await fetchVoucher();
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        title: error,
+        icon: "error",
+      });
+      return error;
+    }
+  };
+
+  const editVoucher = async (id, newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + `/voucher/${id}`, {
       method: "PUT",
@@ -411,9 +406,9 @@ export const Provider = ({ children }) => {
 
         // VOUCHER
         fetchVoucher,
-        tambahVoucher,
+        addVoucher,
         fetchOneVoucher,
-        ubahVoucher,
+        editVoucher,
         deleteVoucher,
 
         autoLogin,
