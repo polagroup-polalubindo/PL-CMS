@@ -297,14 +297,19 @@ export const Provider = ({ children }) => {
 
   // VOUCHER
   const fetchVoucher = async () => {
-    dispatch({ type: "SET_PROSES" });
-    const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + "/voucher", {
-      method: "GET",
-      headers: { access_token, "Content-Type": "application/json" },
-    });
-    data = await data.json();
-    dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
+    try {
+      dispatch({ type: "SET_PROSES" });
+      const access_token = localStorage.getItem("access_token_CMS");
+      let data = await fetch(URL_SERVER + "/voucher", {
+        method: "GET",
+        headers: { access_token, "Content-Type": "application/json" },
+      });
+      console.log(data);
+      data = await data.json();
+      dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const addVoucher = async (input) => {
@@ -368,12 +373,12 @@ export const Provider = ({ children }) => {
         produk: state.produk,
         brand: state.brand,
         member: state.member,
+        voucher: state.voucher,
         transaksi: state.transaksi,
         transaksiKomisi: state.transaksiKomisi,
         userData: state.userData,
         isLogin: state.isLogin,
         proses: state.proses,
-        voucher: state.voucher,
         dataKomisi: state.dataKomisi,
 
         // PRODUK

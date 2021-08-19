@@ -18,7 +18,7 @@ import useStyles from "./styles";
 
 import CreateIcon from "@material-ui/icons/Create";
 
-import VoucherCard from "../voucherCard";
+import { VoucherCard } from "../voucherCard";
 
 export default function Index() {
   const classes = useStyles();
@@ -130,7 +130,7 @@ export default function Index() {
                   {!proses &&
                     voucher &&
                     voucher.length > 0 &&
-                    voucher.map((row) => <VoucherCard row={row} />)}
+                    voucher.map((item) => <VoucherCard item={item} />)}
                 </TableBody>
               </Table>
               <Grid style={{ display: "flex", justifyContent: "center" }}>
