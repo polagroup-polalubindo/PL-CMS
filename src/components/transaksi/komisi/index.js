@@ -14,8 +14,8 @@ import {
   Select,
   MenuItem,
   Grid,
-  InputLabel,
-  CircularProgress
+  CircularProgress,
+  TablePagination
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 
@@ -43,7 +43,7 @@ const months = [
 
 export default function Index(params) {
   const classes = useStyles();
-  const { fetchAllKomisi, dataKomisi } = useContext(CMSContext);
+  const { fetchAllKomisi, dataKomisi, totalKomisi } = useContext(CMSContext);
   const [MonthOption, setMonthOption] = useState([])
   const [YearOption, setYearOption] = useState([])
   const [MonthSelected, setMonthSelected] = useState(new Date().getMonth() + 1)
@@ -51,6 +51,10 @@ export default function Index(params) {
   const [Proses, setProses] = useState(true)
   const [Data, setData] = useState([])
   const [DataForDownload, setDataForDownload] = useState([])
+  const [status, setStatus] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [page, setPage] = useState(0)
+  const [keyword, setKeyword] = useState('')
 
   const labelValue = [
     {
@@ -100,18 +104,15 @@ export default function Index(params) {
 
   useEffect(() => {
     async function fetch() {
-      setProses(true)
-      await fetchAllKomisi({ month: MonthSelected, year: YearSelected });
+      await fetchData(MonthSelected, YearSelected, rowsPerPage, page, keyword, status)
       await fetchMonthOption();
       await fetchYearOption();
-      setProses(false)
     }
     fetch()
   }, []);
 
-  const [filter, setFilter] = React.useState("");
   const allFilter = [
-    { value: "", label: "Semua" },
+    { value: null, label: "Semua" },
     { value: "Menunggu Transfer", label: "Menunggu Transfer" },
     { value: "Sudah Transfer", label: "Sudah Transfer" },
     { value: "Verified", label: "Verified" },
@@ -135,62 +136,90 @@ export default function Index(params) {
 
   useEffect(() => {
     async function fetch() {
-      setProses(true)
-      await fetchAllKomisi({ month: MonthSelected, year: YearSelected });
-      setProses(false)
+      setData(dataKomisi)
+      let data = [], counter = 1
+      await dataKomisi.forEach(async (el) => {
+        await el.TransaksiKomisis.forEach((element) => {
+          let hasNPWP = true, pphNominal = 0;
+          let komisi = Math.round((element.Transaksi?.totalHarga - element.Transaksi?.ongkosKirim) * 0.1)
+          if (el.User?.noNPWP) pphNominal = Math.round(komisi * 0.5 * 0.05)
+          else {
+            pphNominal = Math.round(komisi * 0.5 * 0.06)
+            hasNPWP = false
+          }
+          data.push({
+            no: counter,
+            userKomisi: el.User?.nama,
+            npwp: el.User?.noNPWP || '-',
+            ktp: el.User?.noKtp || '-',
+            invoice: element.Transaksi?.invoice,
+            userCust: element.User?.nama,
+            totalBelanja: element.Transaksi?.totalHarga - element.Transaksi?.ongkosKirim,
+            komisi: komisi,
+            pphNpwp: hasNPWP ? pphNominal : '',
+            pphNoNpwp: !hasNPWP ? pphNominal : '',
+            setelahPph: komisi - pphNominal,
+            bank: el.User?.bank,
+            noRek: el.User?.noRekening,
+            ket: el.status
+          })
+          counter++
+        })
+      })
+      setDataForDownload(data)
     }
     fetch()
-  }, [MonthSelected, setYearSelected])
-
-  useEffect(() => {
-    async function fetchData() {
-      if (filter === '') {
-        setData(dataKomisi)
-        let data = [], counter = 1
-        await dataKomisi.forEach(async (el) => {
-          await el.TransaksiKomisis.forEach((element) => {
-            let hasNPWP = true, pphNominal = 0;
-            let komisi = Math.round((element.Transaksi?.totalHarga - element.Transaksi?.ongkosKirim) * 0.1)
-            if (el.User?.noNPWP) pphNominal = Math.round(komisi * 0.5 * 0.05)
-            else {
-              pphNominal = Math.round(komisi * 0.5 * 0.06)
-              hasNPWP = false
-            }
-            data.push({
-              no: counter,
-              userKomisi: el.User?.nama,
-              npwp: el.User?.noNPWP || '-',
-              ktp: el.User?.noKtp || '-',
-              invoice: element.Transaksi?.invoice,
-              userCust: element.User?.nama,
-              totalBelanja: element.Transaksi?.totalHarga - element.Transaksi?.ongkosKirim,
-              komisi: komisi,
-              pphNpwp: hasNPWP ? pphNominal : '',
-              pphNoNpwp: !hasNPWP ? pphNominal : '',
-              setelahPph: komisi - pphNominal,
-              bank: el.User?.bank,
-              noRek: el.User?.noRekening,
-              ket: el.status
-            })
-            counter++
-          })
-        })
-        setDataForDownload(data)
-      }
-      else {
-        let data = [], dataKomisiAfterFilter = await dataKomisi.filter(el => el.status === filter)
-        setData(dataKomisiAfterFilter)
-        await dataKomisi.forEach(el => {
-
-        })
-        setDataForDownload(data)
-      }
-    }
-    fetchData()
-  }, [filter, dataKomisi])
+  }, [dataKomisi])
 
   const refresh = async () => {
-    await fetchAllKomisi({ month: MonthSelected, year: YearSelected });
+    fetchData(MonthSelected, YearSelected, rowsPerPage, page, keyword, status)
+  }
+
+  const fetchData = async (month, year, limit, page, keyword, status) => {
+    setProses(true)
+
+    let query = `?month=${month}&year=${year}&limit=${limit}&page=${page}&keyword=${keyword}`
+    if (status !== null) {
+      query += `&status=${status}`
+    }
+
+    await fetchAllKomisi(query);
+    setProses(false)
+  }
+
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(e.target.value)
+    setPage(0)
+    fetchData(MonthSelected, YearSelected, e.target.value, 0, keyword, status)
+  }
+
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage)
+    fetchData(MonthSelected, YearSelected, rowsPerPage, newPage, keyword, status)
+  }
+
+  const handleChangeStatus = (args) => {
+    setStatus(args)
+    setPage(0)
+    fetchData(MonthSelected, YearSelected, rowsPerPage, 0, keyword, args)
+  }
+
+  const handleChangeKeyword = (e) => {
+    setKeyword(e.target.value)
+    setPage(0)
+    fetchData(MonthSelected, YearSelected, rowsPerPage, 0, e.target.value, status)
+  }
+
+  const handleChangeMonth = (e) => {
+    setMonthSelected(e.target.value)
+    setPage(0)
+    fetchData(e.target.value, YearSelected, rowsPerPage, 0, keyword, status)
+  }
+
+  const handleChangeYear = (e) => {
+    setYearSelected(e.target.value)
+    setPage(0)
+    fetchData(MonthSelected, e.target.value, rowsPerPage, 0, keyword, status)
   }
 
   return (
@@ -205,6 +234,8 @@ export default function Index(params) {
             endAdornment: <SearchIcon />,
           }}
           style={{ minWidth: 300 }}
+          onChange={handleChangeKeyword}
+          value={keyword}
         />
         <Grid style={{ display: 'flex', alignItems: 'center' }}>
           <Download style={{ marginRight: 20 }} data={DataForDownload} labelValue={labelValue} month={months[MonthSelected - 1]} />
@@ -214,7 +245,7 @@ export default function Index(params) {
               variant="outlined"
               value={MonthSelected}
               style={{ width: 150, marginRight: 20 }}
-              onChange={(e) => setMonthSelected(e.target.value)}>
+              onChange={handleChangeMonth}>
               {
                 MonthOption.map(month =>
                   <MenuItem value={month + 1}>{months[month]}</MenuItem>
@@ -228,7 +259,7 @@ export default function Index(params) {
               variant="outlined"
               value={YearSelected}
               style={{ width: 100 }}
-              onChange={(e) => setYearSelected(e.target.value)}>
+              onChange={handleChangeYear}>
               {
                 YearOption.map(year =>
                   <MenuItem value={year}>{year}</MenuItem>
@@ -244,10 +275,10 @@ export default function Index(params) {
           <Chip
             key={option.value}
             label={option.label}
-            onClick={() => setFilter(option.value)}
+            onClick={() => handleChangeStatus(option.value)}
             style={{
-              backgroundColor: filter === option.value ? "red" : null,
-              color: filter === option.value ? "#fff" : null,
+              backgroundColor: status === option.value ? "red" : null,
+              color: status === option.value ? "#fff" : null,
             }}
           />
         ))}
@@ -275,6 +306,26 @@ export default function Index(params) {
               ))}
           </TableBody>
         </Table>
+        <Grid style={{ display: 'flex', justifyContent: 'center' }}>
+          {
+            !Proses && Data.length === 0 && <p>Tidak ada data</p>
+          }
+        </Grid>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}
+          component="div"
+          count={totalKomisi}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          backIconButtonProps={{
+            'aria-label': 'previous page'
+          }}
+          nextIconButtonProps={{
+            'aria-label': 'next page'
+          }}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </>
   );

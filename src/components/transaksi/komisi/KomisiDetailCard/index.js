@@ -23,7 +23,7 @@ const DetailCard = ({ item, refresh }) => {
   const [Status, setStatus] = useState(item.status)
   const { updateKomisi } = useContext(CMSContext);
 
-  const formatRupiah = (harga) => {
+  const formatRupiah = (harga = 0) => {
     let reverse = harga.toString().split('').reverse().join('');
     let ribuan = reverse.match(/\d{1,3}/g);
 
@@ -88,7 +88,7 @@ const DetailCard = ({ item, refresh }) => {
                       <TableCell>{el.Transaksi?.invoice}</TableCell>
                       <TableCell>{formatRupiah(el.Transaksi?.totalHarga)}</TableCell>
                       <TableCell>
-                        {el.Transaksi.createdAt.split("T")[0]}
+                        {el.Transaksi.createdAt}
                       </TableCell>
                     </TableRow>
                   ))}

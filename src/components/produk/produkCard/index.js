@@ -1,9 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import {
-  Checkbox,
   Grid,
-  InputAdornment,
   MenuItem,
   TextField,
   TableCell,
@@ -15,7 +13,7 @@ import Swal from 'sweetalert2';
 
 const ProdukCard = ({ row, history }) => {
   const { ubahStatusProduk, deleteproduk, editProduk } = useContext(CMSContext);
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
 
   const [produkStatus, setProdukStatus] = useState(false);
 
@@ -63,7 +61,7 @@ const ProdukCard = ({ row, history }) => {
     }
   };
 
-  const formatRupiah = (harga) => {
+  const formatRupiah = (harga = 0) => {
     let reverse = harga.toString().split('').reverse().join('');
     let ribuan = reverse.match(/\d{1,3}/g);
 
@@ -72,13 +70,13 @@ const ProdukCard = ({ row, history }) => {
 
   return (
     <TableRow key={row.id}>
-      <TableCell>
+      {/* <TableCell>
         <Checkbox
           checked={checked}
           onChange={(e) => setChecked(e.target.value)}
           inputProps={{ "aria-label": "Checkbox" }}
         />
-      </TableCell>
+      </TableCell> */}
       <TableCell>
         <Grid container spacing={3}>
           <Grid item xs={3}>

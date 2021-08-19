@@ -14,6 +14,7 @@ import {
   Typography,
   CircularProgress,
   Grid,
+  TablePagination,
 } from "@material-ui/core";
 
 import ImportExportOutlinedIcon from "@material-ui/icons/ImportExportOutlined";
@@ -24,15 +25,44 @@ import useStyles from "./styles";
 import MemberCard from "../memberCard";
 import { useHistory } from "react-router";
 
+import Download from "./export";
+
 export default function Index() {
   const classes = useStyles();
   const history = useHistory();
 
-  const { fetchMember, member, proses } = useContext(CMSContext);
+  const { fetchMember, member, proses, totalMember } = useContext(CMSContext);
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [page, setPage] = useState(0)
+  const [keyword, setKeyword] = useState('')
 
   useEffect(() => {
-    fetchMember();
+    fetchData(rowsPerPage, page, keyword)
   }, []);
+
+  const fetchData = async (limit, page, keyword) => {
+    let query = `?limit=${limit}&page=${page}`
+    if (keyword !== null) query += `&keyword=${keyword}`
+
+    await fetchMember(query);
+  }
+
+  const handleChangeKeyword = (event) => {
+    setKeyword(event.target.value)
+    setPage(0)
+    fetchData(rowsPerPage, 0, event.target.value)
+  }
+
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(e.target.value)
+    setPage(0)
+    fetchData(e.target.value, 0, keyword)
+  }
+
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage)
+    fetchData(rowsPerPage, newPage, keyword)
+  }
 
   return (
     <>
@@ -47,26 +77,25 @@ export default function Index() {
             </InputAdornment>
           ),
         }}
+        value={keyword}
+        onChange={handleChangeKeyword}
       />
 
       <br />
       <br />
 
-      <div className={classes.option}>
+      <div>
         <Button
           variant="contained"
           disableElevation
           color="secondary"
-          className={classes.button}
           onClick={() => history.push("/member/tambah")}
         >
           + Tambah Member
         </Button>
-        <Button variant="outlined" disableElevation>
-          unduh laporan penjualan
-        </Button>
+        <Download keyword={keyword}/>
         <Typography style={{ textAlign: "right" }}>
-          jumlah member: {member.length}
+          jumlah member: {totalMember}
         </Typography>
       </div>
 
@@ -111,6 +140,21 @@ export default function Index() {
               <p>Tidak ada data member</p>
           }
         </Grid>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}
+          component="div"
+          count={totalMember}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          backIconButtonProps={{
+            'aria-label': 'previous page'
+          }}
+          nextIconButtonProps={{
+            'aria-label': 'next page'
+          }}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </>
   );

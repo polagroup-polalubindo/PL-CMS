@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Grid,
   CircularProgress,
+  TablePagination,
 } from "@material-ui/core";
 import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined";
 import useStyles from "./styles";
@@ -17,71 +18,32 @@ import { CMSContext } from "../../context/state";
 import PenjualanCard from "./penjualanCard";
 import LabelPengiriman from '../LabelPengiriman';
 import Invoice from '../Invoice';
+import Download from './export';
 
 export default function Index() {
   const classes = useStyles();
-  let { transaksi, fetchTransaksi, proses } = useContext(CMSContext);
-  const pesananDitolak = transaksi.filter(
-    (el) => el.statusPesanan === "pesanan di tolak"
-  );
-  transaksi = transaksi.filter((el) => el.statusPembayaran === "verified");
-  const pesananBaru = transaksi.filter(
-    (el) =>
-      el.statusPesanan === "menunggu konfirmasi" ||
-      ("menunggu pembayaran" &&
-        el.statusPengiriman !== "siap di kirim" &&
-        el.statusPengiriman !== "dalam pengiriman" &&
-        el.statusPengiriman !== "pesanan selesai" &&
-        el.statusPesanan === "pesanan di tolak")
-  );
-  const siapDikirim = transaksi.filter(
-    (el) => el.statusPengiriman === "siap di kirim"
-  );
-  const dalamPengiriman = transaksi.filter(
-    (el) => el.statusPengiriman === "dalam pengiriman"
-  );
-  const pesananSelesai = transaksi.filter(
-    (el) => el.statusPengiriman === "pesanan selesai"
-  );
+  let { transaksi, fetchTransaksi, proses, totalTransaksi } = useContext(CMSContext);
+  const [status, setStatus] = useState('semua pesanan')
+
   const [dataSelected, setDataSelected] = useState([])
   const [statusCheckAll, setStatusCheckAll] = useState(false)
   const [checked, setChecked] = useState(false)
-  const [Counter, setCounter] = useState(0)
 
-  useEffect(() => {
-    fetchTransaksi();
-  }, []);
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [page, setPage] = useState(0)
+  const [keyword, setKeyword] = useState('')
+  const [dateSelected, setDateSelected] = useState(`${new Date().getFullYear()}-${new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : new Date().getMonth() + 1}-${new Date().getDate() < 10 ? `0${new Date().getDate()}` : new Date().getDate()}`)
 
-  const [filter, setFilter] = React.useState("");
-
-  const handleFilter = (event) => {
-    setFilter(event.target.value);
-  };
-
-  // const [pilih, setPilih] = React.useState({
-  //   checkedA: true,
-  //   checkedB: true,
-  //   checkedF: true,
-  //   checkedG: true,
-  // });
-
-  // const handlePilih = (event) => {
-  //   setPilih({ ...pilih, [event.target.name]: event.target.checked });
-  // };
-
-  // const RedCheckbox = () => (
-  //   <Checkbox color="default" className={classes.checkbox} />
-  // );
+  const [range, setRange] = useState('bulan');
 
   const views = [
     { value: "semua pesanan" },
     { value: "pesanan baru" },
-    { value: "siap dikirim" },
+    { value: "siap di kirim" },
     { value: "dalam pengiriman" },
     { value: "pesanan selesai" },
-    { value: "pesanan ditolak" },
+    { value: "pesanan di tolak" },
   ];
-  const [view, setView] = React.useState("semua pesanan");
 
   const handleSelectedPesanan = async (flag, data) => {
     if (flag === "add") {
@@ -93,36 +55,19 @@ export default function Index() {
   }
 
   useEffect(() => {
+    fetchData(rowsPerPage, page, keyword, status, range, dateSelected);
+  }, []);
+
+  useEffect(() => {
     let selectAll = false;
 
     if (transaksi.length > 0) {
-      if (view === "pesanan baru") {
-        if (pesananBaru.length === dataSelected.length) selectAll = true
-        else selectAll = false
-      } else if (view === "siap dikirim") {
-        if (siapDikirim.length === dataSelected.length) selectAll = true
-        else selectAll = false
-      } else if (view === "dalam pengiriman") {
-        if (dalamPengiriman.length === dataSelected.length) selectAll = true
-        else selectAll = false
-      } else if (view === "pesanan selesai") {
-        if (pesananSelesai.length === dataSelected.length) selectAll = true
-        else selectAll = false
-      } else if (view === "pesanan ditolak") {
-        if (pesananDitolak.length === dataSelected.length) selectAll = true
-        else selectAll = false
-      } else {
-        if (transaksi.length === dataSelected.length) selectAll = true
-        else selectAll = false
-      }
-
-      if (selectAll) {
-        // setStatusCheckAll(true)
-        setChecked(true)
-      } else {
-        setChecked(false)
-      }
+      if (transaksi.length === dataSelected.length) selectAll = true
+      else selectAll = false
     }
+
+    if (selectAll) setChecked(true)
+    else setChecked(false)
   }, [dataSelected])
 
   const handleCheck = (e) => {
@@ -147,28 +92,78 @@ export default function Index() {
     // }
   }
 
+  const fetchData = (limit, page, keyword, status, range, date) => {
+    let query = `?limit=${limit}&page=${page}&keyword=${keyword}&range=${range}&date=${date}&status=verified`
+    if (status !== 'semua pesanan') {
+      if (status === "pesanan di tolak") {
+        query += `&statusPesanan=${status}`
+      } else if (status === "pesanan baru") {
+        query += `&statusPesanan=menunggu konfirmasi`
+      } else {
+        query += `&statusPengiriman=${status}`
+      }
+    }
+
+    fetchTransaksi(query);
+  }
+
+  const handleChangeKeyword = (e) => {
+    setKeyword(e.target.value)
+    setPage(0)
+    fetchData(rowsPerPage, 0, e.target.value, status, range, dateSelected)
+  }
+
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(e.target.value)
+    setPage(0)
+    fetchData(e.target.value, 0, keyword, status, range, dateSelected)
+  }
+
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage)
+    fetchData(rowsPerPage, newPage, keyword, status, range, dateSelected)
+  }
+
+  const handleChangeStatus = (args) => {
+    setStatus(args)
+    setPage(0)
+    fetchData(rowsPerPage, 0, keyword, args, range, dateSelected)
+  }
+
+  const handleChangeRange = (event) => {
+    setRange(event.target.value);
+    setPage(0)
+    fetchData(rowsPerPage, 0, keyword, status, event.target.value, dateSelected)
+  }
+
+  const handleChangeDate = (date) => {
+    setDateSelected(date)
+    setPage(0)
+    fetchData(rowsPerPage, 0, keyword, status, range, date)
+  }
+
   return (
     <>
       {views.map((option) => (
         <Button
           key={option.value}
-          onClick={() => setView(option.value)}
+          onClick={() => handleChangeStatus(option.value)}
           style={{
             borderBottom:
-              view === option.value ? "2px solid red" : "2px solid black",
+              status === option.value ? "2px solid red" : "2px solid black",
             borderRadius: 0,
-            color: view === option.value ? "red" : null,
+            color: status === option.value ? "red" : null,
           }}
           className={classes.form_daftar_btn}
         >
           <b>{option.value}</b>
         </Button>
       ))}
-      <form className={classes.form_kategori} noValidate autoComplete="off">
+      <form className={classes.form_kategori} noValidate autoComplete="off" style={{ display: 'flex', alignItems: 'center' }}>
         <TextField
           variant="outlined"
           size="small"
-          label="Cari nama, produk, nomor resi, invoice"
+          label="Cari nama member, nomor resi, invoice"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -176,34 +171,42 @@ export default function Index() {
               </InputAdornment>
             ),
           }}
+          onChange={handleChangeKeyword}
         />
-        <TextField
-          variant="outlined"
-          size="small"
-          select
-          value={filter}
-          onChange={handleFilter}
-          label="pilih filter"
-          style={{ width: 120 }}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </TextField>
         <TextField
           id="date"
           type="date"
-          defaultValue="2017-05-24"
+          defaultValue={`${new Date().getFullYear()}-${new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : new Date().getMonth() + 1}-${new Date().getDate() < 10 ? `0${new Date().getDate()}` : new Date().getDate()}`}
+          // defaultValue="2021-08-08"
           className={classes.textField}
           InputLabelProps={{
             shrink: true,
           }}
           variant="outlined"
           size="small"
+          onChange={(e) => handleChangeDate(e.target.value)}
+          value={dateSelected}
         />
-        <Button variant="outlined" disableElevation className={classes.button}>
+        <TextField
+          variant="outlined"
+          size="small"
+          select
+          value={range}
+          onChange={handleChangeRange}
+          label="data per-"
+          style={{ width: 120 }}
+        >
+          <MenuItem value='hari'>Hari</MenuItem>
+          <MenuItem value='minggu'>Minggu</MenuItem>
+          <MenuItem value='bulan'>Bulan</MenuItem>
+          <MenuItem value='tahun'>Tahun</MenuItem>
+        </TextField>
+
+
+        <Download keyword={keyword} status={status} range={range} date={dateSelected} />
+        {/* <Button variant="outlined" disableElevation className={classes.button}>
           unduh laporan penjualan
-        </Button>
+        </Button> */}
       </form>
 
       {/* <form className={classes.form_daftar} noValidate autoComplete="off">
@@ -243,17 +246,7 @@ export default function Index() {
         <LabelPengiriman data={dataSelected} />
       </Grid>
 
-      {!proses && (view === "pesanan baru"
-        ? pesananBaru && pesananBaru.length > 0 && pesananBaru.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
-        : view === "siap dikirim"
-          ? siapDikirim && siapDikirim.length > 0 && siapDikirim.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
-          : view === "dalam pengiriman"
-            ? dalamPengiriman && dalamPengiriman.length > 0 && dalamPengiriman.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
-            : view === "pesanan selesai"
-              ? pesananSelesai && pesananSelesai.length > 0 && pesananSelesai.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
-              : view === "pesanan ditolak"
-                ? pesananDitolak && pesananDitolak.length > 0 && pesananDitolak.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)
-                : transaksi && transaksi.length > 0 && transaksi.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />))}
+      {!proses && transaksi.map((item) => <PenjualanCard item={item} statusCheckAll={statusCheckAll} handleSelectedPesanan={handleSelectedPesanan} />)}
 
       <Grid style={{ display: 'flex', justifyContent: 'center' }}>
         {
@@ -261,16 +254,24 @@ export default function Index() {
             ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 80, height: 80 }}>
               <CircularProgress style={{ width: 50, height: 50 }} />
             </Grid>
-            : (
-              ((view === "pesanan baru" && pesananBaru.length === 0) ||
-                (view === "siap dikirim" && siapDikirim.length === 0) ||
-                (view === "dalam pengiriman" && dalamPengiriman.length === 0) ||
-                (view === "pesanan selesai" && pesananSelesai.length === 0) ||
-                (view === "pesanan ditolak" && pesananDitolak.length === 0) ||
-                transaksi.length === 0) &&
-              <p>Tidak ada data</p>)
+            : (transaksi.length === 0 && <p>Tidak ada data</p>)
         }
       </Grid>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 20]}
+        component="div"
+        count={totalTransaksi}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        backIconButtonProps={{
+          'aria-label': 'previous page'
+        }}
+        nextIconButtonProps={{
+          'aria-label': 'next page'
+        }}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </>
   );
 }
