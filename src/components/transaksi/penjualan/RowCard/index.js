@@ -4,7 +4,7 @@ import { TextField, TableCell, TableRow, MenuItem } from "@material-ui/core";
 export const RowCard = ({ item, handleVerified, handleTolak }) => {
   return (
     <TableRow>
-      <TableCell>{item.createdAt.split("T")[0]}</TableCell>
+      <TableCell>{item.createdAt}</TableCell>
       <TableCell>{item.id}</TableCell>
       <TableCell>{item.Carts[0]?.User?.nama}</TableCell>
       <TableCell>{item.invoice}</TableCell>

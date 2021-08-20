@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { CMSContext } from "../../../context/state";
 import {
   Button,
-  Checkbox,
   Table,
   TableBody,
   TableCell,
@@ -12,11 +11,12 @@ import {
   Paper,
   CircularProgress,
   Grid,
+  TablePagination,
 } from "@material-ui/core";
 
 import useStyles from "./styles";
 
-import ImportExportOutlinedIcon from "@material-ui/icons/ImportExportOutlined";
+// import ImportExportOutlinedIcon from "@material-ui/icons/ImportExportOutlined";
 
 import ProdukCard from "../produkCard";
 import { useHistory } from "react-router";
@@ -24,27 +24,44 @@ import { useHistory } from "react-router";
 export default function Index(params) {
   const classes = useStyles();
   const history = useHistory();
-  const { autoLogin, fetchProduk, produk, proses } = useContext(CMSContext);
-  const [view, setView] = React.useState("semua produk");
+  const { fetchProduk, produk, proses, totalProduk } = useContext(CMSContext);
 
-  const [aktif, setAktif] = useState([])
-  const [tidakAktif, setTidakAktif] = useState([])
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [page, setPage] = useState(0)
+  const [status, setStatus] = useState(null)
 
   useEffect(() => {
-    // autoLogin();
-    fetchProduk();
+    fetchData(rowsPerPage, page, status)
   }, []);
 
-  useEffect(() => {
-    setAktif(produk.filter((el) => el.statusProduk === true))
-    setTidakAktif(produk.filter((el) => el.statusProduk === false))
-  }, [produk]);
-
   const views = [
-    { value: "semua produk" },
-    { value: "aktif" },
-    { value: "tidak aktif" },
+    { value: "semua produk", status: null },
+    { value: "aktif", status: 1 },
+    { value: "tidak aktif", status: 0 },
   ];
+
+  const fetchData = (limit, page, status) => {
+    let query = `?limit=${limit}&page=${page}`
+    if (status !== null) query += `&status=${status}`
+    fetchProduk(query);
+  }
+
+  const handleChangeStatus = (args) => {
+    setStatus(args)
+    setPage(0)
+    fetchData(rowsPerPage, 0, args)
+  }
+
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(e.target.value)
+    setPage(0)
+    fetchData(e.target.value, 0, status)
+  }
+
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage)
+    fetchData(rowsPerPage, newPage, status)
+  }
 
   return (
     <>
@@ -63,12 +80,12 @@ export default function Index(params) {
       {views.map((option) => (
         <Button
           key={option.value}
-          onClick={() => setView(option.value)}
+          onClick={() => handleChangeStatus(option.status)}
           style={{
             borderBottom:
-              view === option.value ? "2px solid red" : "2px solid black",
+              status === option.status ? "2px solid red" : "2px solid black",
             borderRadius: 0,
-            color: view === option.value ? "red" : null,
+            color: status === option.status ? "red" : null,
           }}
         >
           <b>{option.value}</b>
@@ -83,56 +100,50 @@ export default function Index(params) {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>
+              {/* <TableCell>
                 <Checkbox
                   color="primary"
                   inputProps={{ "aria-label": "secondary checkbox" }}
                 />
-              </TableCell>
+              </TableCell> */}
               <TableCell>
-                <Button
+                {/* <Button
                   className={classes.button}
                   endIcon={<ImportExportOutlinedIcon />}
-                >
-                  INFO PRODUK
-                </Button>
+                > */}
+                INFO PRODUK
+                {/* </Button> */}
               </TableCell>
               <TableCell>
-                <Button
+                {/* <Button
                   className={classes.button}
                   endIcon={<ImportExportOutlinedIcon />}
-                >
-                  HARGA
-                </Button>
+                > */}
+                HARGA
+                {/* </Button> */}
               </TableCell>
               <TableCell>
-                <Button
+                {/* <Button
                   className={classes.button}
                   endIcon={<ImportExportOutlinedIcon />}
-                >
-                  STOK
-                </Button>
+                > */}
+                STOK
+                {/* </Button> */}
               </TableCell>
               <TableCell>
-                <Button
+                {/* <Button
                   className={classes.button}
-                  endIcon={<ImportExportOutlinedIcon />}
-                >
-                  AKTIF
-                </Button>
+                  // endIcon={<ImportExportOutlinedIcon />}
+                > */}
+                AKTIF
+                {/* </Button> */}
               </TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {
-              !proses &&
-              (view === "semua produk"
-                ? produk && produk.length > 0 && produk.map((row) => <ProdukCard row={row} />)
-                : view === "aktif"
-                  ? aktif && aktif.length > 0 && aktif.map((row) => <ProdukCard row={row} />)
-                  : tidakAktif && tidakAktif.length > 0 && tidakAktif.map((row) => <ProdukCard row={row} />)
-              )
+              !proses && produk && produk.length > 0 && produk.map((row) => <ProdukCard row={row} />)
             }
           </TableBody>
         </Table>
@@ -142,15 +153,25 @@ export default function Index(params) {
               ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: 80, height: 80 }}>
                 <CircularProgress style={{ width: 50, height: 50 }} />
               </Grid>
-              : (
-                ((view === "aktif" && aktif.length === 0) ||
-                  (view === "tidak aktif" && tidakAktif.length === 0) ||
-                  produk.length === 0) && <p> Tidak ada data produk</p>
-              )
-              
+              : produk.length === 0 && <p> Tidak ada data produk</p>
           }
         </Grid>
-    </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 20]}
+          component="div"
+          count={totalProduk}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          backIconButtonProps={{
+            'aria-label': 'previous page'
+          }}
+          nextIconButtonProps={{
+            'aria-label': 'next page'
+          }}
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </TableContainer>
     </>
   );
 }

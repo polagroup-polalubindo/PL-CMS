@@ -6,14 +6,19 @@ import Swal from "sweetalert2";
 const initialState = {
   isLogin: false,
   produk: [],
+  totalProduk: 0,
   brand: [],
   transaksi: [],
+  totalTransaksi: 0,
+  dataTransaksiForDownload: [],
   transaksiKomisi: [],
   member: [],
+  totalMember: 0,
+  dataMemberForDownload: [],
   userData: null,
   proses: false,
-  voucher: [],
   dataKomisi: [],
+  totalKomisi: 0,
 };
 
 export const CMSContext = createContext(initialState);
@@ -64,11 +69,14 @@ export const Provider = ({ children }) => {
   };
 
   // PRODUK
-  const fetchProduk = async () => {
+  const fetchProduk = async (query) => {
     dispatch({ type: "SET_PROSES" });
-    let data = await fetch(URL_SERVER + "/produk?all=true");
+    let data = await fetch(URL_SERVER + `/produk${query}`);
     data = await data.json();
-    dispatch({ type: "FETCH_PRODUK", payload: data || [] });
+    dispatch({
+      type: "FETCH_PRODUK",
+      payload: { data: data.data || [], totalProduk: data.totalProduk },
+    });
   };
 
   const ubahStatusProduk = async (newData) => {
@@ -111,15 +119,54 @@ export const Provider = ({ children }) => {
   };
 
   // MEMBER
-  const fetchMember = async () => {
+  const fetchMember = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + "/customer", {
+    let data = await fetch(URL_SERVER + `/customer${query}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_MEMBER", payload: data || [] });
+    dispatch({
+      type: "FETCH_MEMBER",
+      payload: { data: data.data, totalMember: data.totalMember },
+    });
+  };
+
+  const fetchDataMemberForDownload = async (keyword) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/customer?keyword=${keyword}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+
+    let newData = [];
+    data.data.forEach((el, index) => {
+      let totalKomisi = 0;
+
+      el.Komisis &&
+        el.Komisis.forEach((element) => {
+          totalKomisi += element.totalKomisi;
+        });
+
+      newData.push({
+        no: index + 1,
+        member: el.nama,
+        join: el.createdAt.slice(0, 10),
+        email: el.email,
+        hp: el.phone,
+        ktp: el.noKtp,
+        npwp: el.noNPWP,
+        totalBelanja: el.totalPembelian,
+        premier: el.referralStatus ? "Premier" : "Tidak Premier",
+        status: el.status ? "Aktif" : "Tidak Aktif",
+        namaPenerimaKomisi: el.namaRekening,
+        totalKomisi,
+      });
+    });
+    dispatch({ type: "FETCH_MEMBER_FOR_DOWNLOAD", payload: { data: newData } });
   };
 
   const tambahMember = async (input) => {
@@ -192,15 +239,18 @@ export const Provider = ({ children }) => {
   };
 
   // TRANSAKSI
-  const fetchTransaksi = async () => {
+  const fetchTransaksi = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/transaksi`, {
+    let data = await fetch(URL_SERVER + `/transaksi${query}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_TRANSAKSI", payload: data || [] });
+    dispatch({
+      type: "FETCH_TRANSAKSI",
+      payload: { data: data.data, totalTransaksi: data.totalTransaksi },
+    });
   };
 
   const fetchTransaksiKomisi = async () => {
@@ -258,6 +308,41 @@ export const Provider = ({ children }) => {
     return data;
   };
 
+  const fetchDataTransaksiForDownload = async (query) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/transaksi${query}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+
+    let newData = [];
+    await data.data.forEach((el, index) => {
+      newData.push({
+        no: index + 1,
+        orderId: el.orderNo,
+        status: el.statusPengiriman,
+        transactionDate: el.createdAt,
+        recipient: el.namaPenerima,
+        recipientNumber: el.telfonPenerima,
+        recipientAddress: el.alamatPengiriman,
+        invoice: el.invoice,
+        resi: el.noResi || "",
+        tanggalPembelian: el.createdAt,
+        kurir: el.kurir,
+        jenisLayanan: el.serviceKurir,
+        totalShipping: el.ongkosKirim,
+        insuranceFee: el.insuranceFee,
+        total: el.totalHarga,
+      });
+    });
+    dispatch({
+      type: "FETCH_TRANSAKSI_FOR_DOWNLOAD",
+      payload: { data: newData },
+    });
+  };
+
   // BRAND
   const fetchBrand = async () => {
     dispatch({ type: "SET_PROSES" });
@@ -271,16 +356,13 @@ export const Provider = ({ children }) => {
   };
 
   // KOMISI
-  const fetchAllKomisi = async (payload) => {
+  const fetchAllKomisi = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(
-      URL_SERVER + `/all-komisi?month=${payload.month}&year=${payload.year}`,
-      {
-        method: "GET",
-        headers: { access_token, "Content-Type": "application/json" },
-      }
-    );
+    let data = await fetch(URL_SERVER + `/all-komisi${query}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
     data = await data.json();
     dispatch({ type: "FETCH_KOMISI", payload: data || [] });
   };
@@ -288,7 +370,7 @@ export const Provider = ({ children }) => {
   const updateKomisi = async (payload) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/komisi/${payload.id}`, {
+    await fetch(URL_SERVER + `/komisi/${payload.id}`, {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify({ status: payload.status }),
@@ -371,15 +453,20 @@ export const Provider = ({ children }) => {
     <CMSContext.Provider
       value={{
         produk: state.produk,
+        totalProduk: state.totalProduk,
         brand: state.brand,
         member: state.member,
-        voucher: state.voucher,
+        totalMember: state.totalMember,
+        dataMemberForDownload: state.dataMemberForDownload,
         transaksi: state.transaksi,
+        dataTransaksiForDownload: state.dataTransaksiForDownload,
+        totalTransaksi: state.totalTransaksi,
         transaksiKomisi: state.transaksiKomisi,
         userData: state.userData,
         isLogin: state.isLogin,
         proses: state.proses,
         dataKomisi: state.dataKomisi,
+        totalKomisi: state.totalKomisi,
 
         // PRODUK
         fetchProduk,
@@ -395,6 +482,7 @@ export const Provider = ({ children }) => {
         ubahStatus,
         deleteMember,
         ubahMember,
+        fetchDataMemberForDownload,
 
         // TRANSAKSI
         fetchTransaksi,
@@ -404,6 +492,7 @@ export const Provider = ({ children }) => {
         tolakPesanan,
         ubahStatusPembayaran,
         kirimPesanan,
+        fetchDataTransaksiForDownload,
 
         // KOMISI
         fetchAllKomisi,

@@ -3,13 +3,21 @@ const CMSReducer = (state, action) => {
     case "FETCH_PRODUK":
       return {
         ...state,
-        produk: action.payload || [],
+        produk: action.payload.data || [],
+        totalProduk: action.payload.totalProduk,
         proses: false,
       };
     case "FETCH_MEMBER":
       return {
         ...state,
-        member: action.payload || [],
+        member: action.payload.data,
+        totalMember: action.payload.totalMember,
+        proses: false,
+      };
+    case "FETCH_MEMBER_FOR_DOWNLOAD":
+      return {
+        ...state,
+        dataMemberForDownload: action.payload.data,
         proses: false,
       };
     case "FETCH_VOUCHER":
@@ -21,7 +29,14 @@ const CMSReducer = (state, action) => {
     case "FETCH_TRANSAKSI":
       return {
         ...state,
-        transaksi: action.payload || [],
+        transaksi: action.payload.data,
+        totalTransaksi: action.payload.totalTransaksi,
+        proses: false,
+      };
+    case "FETCH_TRANSAKSI_FOR_DOWNLOAD":
+      return {
+        ...state,
+        dataTransaksiForDownload: action.payload.data,
         proses: false,
       };
     case "FETCH_BRAND":

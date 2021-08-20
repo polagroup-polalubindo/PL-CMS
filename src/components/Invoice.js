@@ -98,9 +98,9 @@ export default function Invoice(props) {
     return `${args.getDate()} ${months[args.getMonth()]} ${args.getFullYear()}`;
   }
 
-  function formatRupiah(harga) {
-    let reverse = harga.toString().split('').reverse().join('');
-    let ribuan = reverse.match(/\d{1,3}/g);
+  function formatRupiah(harga = 0) {
+    let reverse = harga.toString().split('').reverse().join('') || '0';
+    let ribuan = reverse.match(/\d{1,3}/g) || ['0'];
 
     return `Rp. ${ribuan.join('.').split('').reverse().join('')}`;
   }
@@ -166,15 +166,15 @@ export default function Invoice(props) {
                       <View style={styles.fieldHargaBarang}>
                         {
                           cart?.Produk?.discount
-                            ? <Text>{formatRupiah(cart.Produk.hargaSatuan - ((cart.Produk.discount / 100) * cart.Produk.hargaSatuan))}</Text>
-                            : <Text>{formatRupiah(cart.Produk?.hargaSatuan)}</Text>
+                            ? <Text>{cart.Produk.hargaSatuan && formatRupiah(cart.Produk.hargaSatuan - ((cart.Produk.discount / 100) * cart.Produk.hargaSatuan))}</Text>
+                            : <Text>{cart.Produk.hargaSatuan && formatRupiah(cart.Produk?.hargaSatuan)}</Text>
                         }
                       </View>
                       <View style={styles.fieldSubtotal}>
                         {
-                          cart.Produk.discount
-                            ? <Text>{formatRupiah((cart.Produk.hargaSatuan - ((cart.Produk.discount / 100) * cart.Produk.hargaSatuan)) * cart.qty)}</Text>
-                            : <Text>{formatRupiah(cart.Produk?.hargaSatuan * cart.qty)}</Text>
+                          cart?.Produk?.discount
+                            ? <Text>{cart.Produk.hargaSatuan && formatRupiah((cart.Produk.hargaSatuan - ((cart.Produk.discount / 100) * cart.Produk.hargaSatuan)) * cart.qty)}</Text>
+                            : <Text>{cart.Produk.hargaSatuan && formatRupiah(cart.Produk?.hargaSatuan * cart.qty)}</Text>
                         }
                       </View>
                     </View>

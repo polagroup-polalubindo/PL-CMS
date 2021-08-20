@@ -28,12 +28,11 @@ function Index({ location }) {
   const hiddenFileInputMSDS = React.useRef(null);
   const classes = useStyles();
   const history = useHistory();
-  const { brand, fetchBrand, tambahProduk, editProduk, API } =
+  const { brand, fetchBrand, tambahProduk, editProduk } =
     useContext(CMSContext);
   const [produkId, setProdukId] = useState(null);
   const [file, setFile] = useState("/img/cms/photo-product-placeholder.png");
   const [image, setImage] = useState(null);
-  const [weight, setWeight] = useState("gram");
 
   const [sertifikasi, setSertifikasi] = useState([]);
 
@@ -209,10 +208,6 @@ function Index({ location }) {
     } else {
       setInput({ ...input, [e.target.name]: e.target.value });
     }
-  };
-
-  const handleChangeWeight = (event) => {
-    setWeight(event.target.value);
   };
 
   const handleAsuransiPengiriman = (event) => {

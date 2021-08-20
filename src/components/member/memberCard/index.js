@@ -6,13 +6,11 @@ import { CMSContext } from "../../../context/state";
 
 // MATERIAL UI
 import {
-  Button,
   Grid,
   Switch,
   TableCell,
   TableRow,
   MenuItem,
-  TextField,
   Popover,
 } from "@material-ui/core";
 

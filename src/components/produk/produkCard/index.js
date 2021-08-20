@@ -1,9 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { withRouter, Link, useHistory } from "react-router-dom";
 import {
-  Checkbox,
   Grid,
-  InputAdornment,
   MenuItem,
   TextField,
   TableCell,
@@ -17,7 +15,7 @@ const ProdukCard = (props, { row }) => {
   const history = useHistory();
 
   const { ubahStatusProduk, deleteproduk, editProduk } = useContext(CMSContext);
-  const [checked, setChecked] = useState(false);
+  // const [checked, setChecked] = useState(false);
 
   const [produkStatus, setProdukStatus] = useState(false);
 
@@ -73,20 +71,22 @@ const ProdukCard = (props, { row }) => {
     }
   };
 
-  const handleChange = (e) => {
-    if (!isNaN(e.target.value))
-      setData({ ...data, [e.target.name]: e.target.value });
+  const formatRupiah = (harga = 0) => {
+    let reverse = harga.toString().split("").reverse().join("");
+    let ribuan = reverse.match(/\d{1,3}/g);
+
+    return `Rp. ${ribuan.join(".").split("").reverse().join("")}`;
   };
 
   return (
-    <TableRow key={props.row.id}>
-      <TableCell>
+    <TableRow key={row.id}>
+      {/* <TableCell>
         <Checkbox
           checked={checked}
           onChange={(e) => setChecked(e.target.value)}
           inputProps={{ "aria-label": "Checkbox" }}
         />
-      </TableCell>
+      </TableCell> */}
       <TableCell>
         <Grid container spacing={3}>
           <Grid item xs={3}>

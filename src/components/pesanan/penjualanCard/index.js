@@ -2,14 +2,11 @@ import React, { useContext, useState, useEffect } from "react";
 import {
   Button,
   Paper,
-  TextField,
   Typography,
   Checkbox,
   FormControlLabel,
   Grid,
 } from "@material-ui/core";
-import AccessTimeIcon from "@material-ui/icons/AccessTime";
-import useStyles from "../styles";
 
 import { CMSContext } from "../../../context/state";
 
@@ -17,7 +14,6 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
   const { konfirmasiTransaksi, tolakPesanan, fetchTransaksi, kirimPesanan } =
     useContext(CMSContext);
   const [openProduk, setOpenProduk] = useState(false);
-  const [resi, setResi] = useState("");
   const [statusCheck, setStatusCheck] = useState(false);
 
   const handleKonfirmasi = async () => {
@@ -87,8 +83,7 @@ const PenjualanCard = ({ item, statusCheckAll, handleSelectedPesanan }) => {
                   <br />
                   <span style={{ color: "red" }}>{item.invoice}</span> /
                   {item.namaPenerima} {item.telfonPenerima} /{" "}
-                  {item.createdAt.split("T")[0]} |{" "}
-                  {item.createdAt.split("T")[1].split(".")[0]}
+                  {item.createdAt}
                 </>
               }
             />
