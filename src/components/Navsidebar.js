@@ -175,6 +175,10 @@ function Navsidebar(props) {
           value: "Voucher",
           sub: [
             {
+              value: "Edit Voucher",
+              link: "voucher/edit/:id",
+            },
+            {
               value: "Tambah Voucher",
               link: "voucher/tambah",
             },
@@ -184,7 +188,7 @@ function Navsidebar(props) {
             },
           ],
           expand: true,
-          icon: "/img/cms/sidebar/transaction-icon.png",
+          icon: "/img/cms/sidebar/voucher-icon.png",
         },
         {
           value: "Logout",
@@ -276,7 +280,7 @@ function Navsidebar(props) {
               <List component="div" disablePadding>
                 {menu.sub.map((submenu) => (
                   <>
-                    {submenu.value === "Edit Produk" ? null : (
+                    {submenu.value.includes("Edit") ? null : (
                       <ListItem
                         button
                         key={submenu.value}
@@ -326,12 +330,8 @@ function Navsidebar(props) {
               <Typography variant="h5" noWrap>
                 {menus.map((menu) => (
                   <Switch>
-                    <Route
-                      path={`/${
-                        menu.link === "produk/edit/:id" ? null : menu.link
-                      }`}
-                    >
-                      <b>{menu.value === "Edit Produk" ? null : menu.value}</b>
+                    <Route path={`/${menu.link}`}>
+                      <b>{menu.value.includes("Edit") ? null : menu.value}</b>
                     </Route>
                     {menu.sub.map((submenu) => (
                       <Route path={`/${submenu.link}`}>

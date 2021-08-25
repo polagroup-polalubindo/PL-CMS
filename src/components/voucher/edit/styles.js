@@ -1,22 +1,33 @@
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
+  // member
+  tambah_member: { marginBottom: 20, backgroundColor: "red" },
+
+  // card
   root: {
+    minWidth: 275,
+    borderRadius: 20,
+    padding: "20px 25px",
+  },
+  bullet: {
+    display: "inline-block",
+    margin: "0 2px",
+    transform: "scale(0.8)",
+  },
+  title: {
+    fontSize: 14,
+  },
+  pos: {
+    marginBottom: 12,
+  },
+
+  // switch
+  switchRoot: {
     width: 42,
     height: 26,
     padding: 0,
     margin: theme.spacing(1),
-  },
-  detil: {
-    position: "absolute",
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
   },
   switchBase: {
     padding: 1,
@@ -47,6 +58,31 @@ const useStyles = makeStyles((theme) => ({
   },
   checked: {},
   focusVisible: {},
+
+  // table
+  table: {
+    minWidth: 650,
+  },
+  table_container: { borderRadius: 20 },
+  table_head: { backgroundColor: "#A9A9A9" },
+
+  //   Radio
+  checkbox: {
+    "&$checkedBox": {
+      color: "red",
+    },
+  },
+  checkedBox: {},
+
+  // button
+  button: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    textAlign: "right",
+  },
+
+  button_simpan: { backgroundColor: "red" },
 }));
 
 export default useStyles;

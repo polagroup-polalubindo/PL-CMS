@@ -10,15 +10,12 @@ import {
   TableRow,
   Paper,
   Grid,
-  Typography,
   CircularProgress,
 } from "@material-ui/core";
 
 import useStyles from "./styles";
 
-import CreateIcon from "@material-ui/icons/Create";
-
-import { VoucherCard } from "../voucherCard";
+import VoucherCard from "../voucherCard";
 
 export default function Index() {
   const classes = useStyles();
@@ -39,19 +36,16 @@ export default function Index() {
   ];
 
   const headRows = [
+    { value: "Nama Voucher" },
     { value: "Kode Voucher" },
     { value: "Tipe Voucher" },
-    { value: "Diskon" },
-    { value: "Batas Pemakaian" },
-    { value: "Diklaim" },
-    { value: "Digunakan" },
     { value: "Periode" },
     { value: "Aksi" },
   ];
 
   return (
     <>
-      <Paper style={{ padding: 10 }}>
+      {/* <Paper style={{ padding: 10 }}>
         <Grid container spacing={4} style={{ paddingBottom: 20 }}>
           <Grid item xs={12}>
             <Typography variant="h6">
@@ -86,15 +80,9 @@ export default function Index() {
           </Grid>
         </Grid>
       </Paper>
-      <br />
+      <br /> */}
       <Paper style={{ padding: 10 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography variant="h6">
-              <b>Daftar Voucher</b>
-            </Typography>
-          </Grid>
-
           <Grid item xs={12}>
             {views.map((option) => (
               <Button
@@ -130,7 +118,7 @@ export default function Index() {
                   {!proses &&
                     voucher &&
                     voucher.length > 0 &&
-                    voucher.map((item) => <VoucherCard item={item} />)}
+                    voucher.map((row) => <VoucherCard row={row} />)}
                 </TableBody>
               </Table>
               <Grid style={{ display: "flex", justifyContent: "center" }}>

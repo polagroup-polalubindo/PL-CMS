@@ -1,6 +1,7 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
+import EditVoucher from "./components/voucher/edit";
 import TambahVoucher from "./components/voucher/tambah";
 import DaftarVoucher from "./components/voucher/daftar";
 
@@ -30,6 +31,7 @@ function Routes() {
       <Switch>
         <Route path="/login" component={Login} />
         <AuthenticatedRoute path="/voucher/tambah" component={TambahVoucher} />
+        <AuthenticatedRoute path="/voucher/:id" component={TambahVoucher} />
         <AuthenticatedRoute path="/voucher" component={DaftarVoucher} />
         <AuthenticatedRoute path="/produk/edit/:id" component={EditProduk} />
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />

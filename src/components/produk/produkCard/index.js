@@ -61,11 +61,9 @@ const ProdukCard = (props, { row }) => {
         }
       });
     } else {
-      history.push({
-        pathname: `/produk/edit/${props.row.id}`,
-        state: props.row,
-      });
       console.log(props.row);
+      history.push(`/produk/${props.row.id}`, { data: props.row });
+
       // history.push('/produk/tambah', { data: row })
       // editProduk(props.row.id, { stock: data.stock, hargaSatuan: data.hargaSatuan });
     }
@@ -79,7 +77,7 @@ const ProdukCard = (props, { row }) => {
   };
 
   return (
-    <TableRow key={row.id}>
+    <TableRow key={props.row.id}>
       {/* <TableCell>
         <Checkbox
           checked={checked}

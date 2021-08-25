@@ -19,6 +19,7 @@ const initialState = {
   proses: false,
   dataKomisi: [],
   totalKomisi: 0,
+  voucher: [],
 };
 
 export const CMSContext = createContext(initialState);
@@ -386,9 +387,10 @@ export const Provider = ({ children }) => {
         method: "GET",
         headers: { access_token, "Content-Type": "application/json" },
       });
-      console.log(data);
+
       data = await data.json();
-      dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
+      console.log(data);
+      dispatch({ type: "FETCH_VOUCHER", payload: data.data || [] });
     } catch (error) {
       console.log(error);
     }
@@ -467,6 +469,7 @@ export const Provider = ({ children }) => {
         proses: state.proses,
         dataKomisi: state.dataKomisi,
         totalKomisi: state.totalKomisi,
+        voucher: state.voucher,
 
         // PRODUK
         fetchProduk,
