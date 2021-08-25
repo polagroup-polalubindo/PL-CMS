@@ -72,6 +72,7 @@ export const Provider = ({ children }) => {
   // PRODUK
   const fetchProduk = async (query) => {
     dispatch({ type: "SET_PROSES" });
+    console.log(query)
     let data = await fetch(URL_SERVER + `/produk${query}`);
     data = await data.json();
     dispatch({
@@ -87,7 +88,6 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
     });
-    await fetchProduk();
   };
 
   const deleteproduk = async (id) => {
@@ -96,7 +96,6 @@ export const Provider = ({ children }) => {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    await fetchProduk();
   };
 
   const tambahProduk = async (input) => {
@@ -106,7 +105,6 @@ export const Provider = ({ children }) => {
       headers: { access_token },
       data: input,
     });
-    await fetchProduk();
   };
 
   const editProduk = async (id, input) => {
@@ -116,7 +114,7 @@ export const Provider = ({ children }) => {
       headers: { access_token },
       data: input,
     });
-    await fetchProduk();
+    console.log("MASUK")
   };
 
   // MEMBER
@@ -182,7 +180,6 @@ export const Provider = ({ children }) => {
       if (data.errMessage) {
         throw data.errMessage;
       } else {
-        fetchMember();
         return { message: "success" };
       }
     } catch (error) {
@@ -234,7 +231,6 @@ export const Provider = ({ children }) => {
     if (data.errMessage) {
       throw data.errMessage;
     } else {
-      fetchMember();
       return { message: "success" };
     }
   };

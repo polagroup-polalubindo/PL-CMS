@@ -43,7 +43,7 @@ export default function Index(props) {
         });
       } else {
         Swal.fire({
-          title: "Anda bukan admin !",
+          title: "Email/Password anda salah !",
           icon: "error",
         });
       }
@@ -60,7 +60,7 @@ export default function Index(props) {
         <form noValidate autoComplete="off" onSubmit={signin} style={{ display: 'flex', flexDirection: 'column' }}>
           <TextField
             id="username"
-            label="Username"
+            label="Email"
             value={Username}
             onChange={(e) => setUsername(e.target.value)}
             margin="normal"
