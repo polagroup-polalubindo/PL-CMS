@@ -24,7 +24,8 @@ const CMSReducer = (state, action) => {
     case "FETCH_VOUCHER":
       return {
         ...state,
-        voucher: action.payload || [],
+        voucher: action.payload.data,
+        totalVoucher: action.payload.totalVoucher,
         proses: false,
       };
     case "FETCH_TRANSAKSI":

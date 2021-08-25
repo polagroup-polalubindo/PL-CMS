@@ -49,11 +49,12 @@ function Index({ location }) {
 
   useEffect(() => {
     if (location.state?.data) {
+      console.log(location.state.data)
       setInput({
         name: location.state.data.name,
         code: location.state.data.code,
-        periodeStart: location.state.data.periodeStart,
-        periodeEnd: location.state.data.periodeEnd,
+        periodeStart: location.state.data.periodeStart.slice(0, 10),
+        periodeEnd: location.state.data.periodeEnd.slice(0, 10),
         discountMax: location.state.data.discountMax,
         statusDiscountMax:
           location.state.data.discountMax === 0
@@ -101,22 +102,22 @@ function Index({ location }) {
 
     location.state?.data
       ? await editVoucher(
-          location.state.data.id,
-          newData,
-          Swal.fire({
-            title: "edit voucher berhasil",
-            icon: "success",
-          }),
-          history.push("/voucher")
-        )
+        location.state.data.id,
+        newData,
+        Swal.fire({
+          title: "edit voucher berhasil",
+          icon: "success",
+        }),
+        history.push("/voucher")
+      )
       : await addVoucher(
-          newData,
-          Swal.fire({
-            title: "Tambah voucher berhasil",
-            icon: "success",
-          }),
-          history.push("/voucher")
-        );
+        newData,
+        Swal.fire({
+          title: "Tambah voucher berhasil",
+          icon: "success",
+        }),
+        history.push("/voucher")
+      );
   };
 
   const handleChangeMaksimalDiskon = (event) => {
@@ -172,11 +173,11 @@ function Index({ location }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">0/10</InputAdornment>
-                  ),
-                }}
+                // InputProps={{
+                //   endAdornment: (
+                //     <InputAdornment position="end">0/10</InputAdornment>
+                //   ),
+                // }}
                 name="code"
                 value={input.code}
                 onChange={handleInput}
@@ -201,14 +202,13 @@ function Index({ location }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                type="datetime-local"
+                type="date"
                 InputLabelProps={{
                   shrink: true,
                 }}
                 name="periodeStart"
-                value={moment(new Date(input.periodeStart)).format(
-                  "YYYY-MM-DDTHH:mm"
-                )}
+                value={input.periodeStart}
+                defaultValue={input.periodeStart}
                 onChange={handleInput}
               />
             </Grid>
@@ -220,11 +220,9 @@ function Index({ location }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                type="datetime-local"
+                type="date"
                 name="periodeEnd"
-                value={moment(new Date(input.periodeEnd)).format(
-                  "YYYY-MM-DDTHH:mm"
-                )}
+                value={input.periodeEnd}
                 onChange={handleInput}
               />
             </Grid>
@@ -329,7 +327,7 @@ function Index({ location }) {
                     placeholder="Masukkan Angka"
                     InputProps={{
                       startAdornment: (
-                        <InputAdornment position="start">Rp |</InputAdornment>
+                        <InputAdornment position="start">{typeVoucher === "Diskon" ? '%' : 'Rp'} |</InputAdornment>
                       ),
                     }}
                     name="discountMax"

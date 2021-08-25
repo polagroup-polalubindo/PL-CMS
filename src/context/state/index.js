@@ -20,6 +20,7 @@ const initialState = {
   dataKomisi: [],
   totalKomisi: 0,
   voucher: [],
+  totalVoucher: 0
 };
 
 export const CMSContext = createContext(initialState);
@@ -375,18 +376,17 @@ export const Provider = ({ children }) => {
   };
 
   // VOUCHER
-  const fetchVoucher = async () => {
+  const fetchVoucher = async (query) => {
     try {
       dispatch({ type: "SET_PROSES" });
       const access_token = localStorage.getItem("access_token_CMS");
-      let data = await fetch(URL_SERVER + "/voucher", {
+      let data = await fetch(URL_SERVER + `/voucher${query}`, {
         method: "GET",
         headers: { access_token, "Content-Type": "application/json" },
       });
-
       data = await data.json();
-      console.log(data);
-      dispatch({ type: "FETCH_VOUCHER", payload: data.data || [] });
+
+      dispatch({ type: "FETCH_VOUCHER", payload: { data: data.data || [], totalVoucher: data.totalVoucher } });
     } catch (error) {
       console.log(error);
     }
@@ -422,7 +422,6 @@ export const Provider = ({ children }) => {
     if (data.errMessage) {
       throw data.errMessage;
     } else {
-      fetchVoucher();
       return { message: "success" };
     }
   };
@@ -444,7 +443,7 @@ export const Provider = ({ children }) => {
       method: "DELETE",
       headers: { access_token, "Content-Type": "application/json" },
     });
-    fetchVoucher();
+    return { message: "success" };
   };
 
   return (
@@ -466,6 +465,7 @@ export const Provider = ({ children }) => {
         dataKomisi: state.dataKomisi,
         totalKomisi: state.totalKomisi,
         voucher: state.voucher,
+        totalVoucher: state.totalVoucher,
 
         // PRODUK
         fetchProduk,

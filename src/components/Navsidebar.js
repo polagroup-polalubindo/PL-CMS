@@ -260,6 +260,12 @@ function Navsidebar(props) {
                 ) : (
                   <ExpandMore />
                 )
+              ) : menu.value === "Voucher" ? (
+                voucher ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )
               ) : null}
             </ListItem>
             <Collapse

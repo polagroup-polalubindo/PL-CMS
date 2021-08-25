@@ -56,6 +56,7 @@ export default function VoucherCard(props) {
         if (result.isConfirmed) {
           await deleteVoucher(props.row.id);
           Swal.fire("Berhasil dihapus!", "", "success");
+          await props.refresh()
         }
       });
     } else if (input === "edit") {
@@ -73,9 +74,9 @@ export default function VoucherCard(props) {
       <TableCell>{props.row.code}</TableCell>
       <TableCell>{props.row.typeVoucher}</TableCell>
       <TableCell>
-        {moment(new Date(props.row.periodeStart)).format("YYYY-MM-DD HH:mm")}
+        {props.row.periodeStart}
         <br />
-        {moment(new Date(props.row.periodeEnd)).format("YYYY-MM-DD HH:mm")}
+        {props.row.periodeEnd}
       </TableCell>
       <TableCell>
         <TextField

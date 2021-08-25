@@ -21,11 +21,11 @@ import useStyles from "./styles";
 
 import Swal from "sweetalert2";
 
-export default function Index(props, { row }) {
+export default function Index(props) {
   const classes = useStyles();
   const history = useHistory();
-
-  let newPhoneNumber = row.phone;
+console.log(props.row)
+  let newPhoneNumber = props.row.phone;
   if (newPhoneNumber[0] === " ") newPhoneNumber = newPhoneNumber.slice(1);
 
   if (newPhoneNumber.slice(0, 1) === "0")
@@ -108,7 +108,7 @@ export default function Index(props, { row }) {
         }
       });
     } else if (input === "edit") {
-      history.push(`/member/${row.id}`, { data: row });
+      history.push(`/member/${props.row.id}`, { data: props.row });
     }
   };
   return (
@@ -140,7 +140,7 @@ export default function Index(props, { row }) {
               }
               style={{ margin: 0, cursor: "pointer", color: "blue" }}
             >
-              {row.phone[0] === "+" ? row.phone : newPhoneNumber}
+              {props.row.phone[0] === "+" ? props.row.phone : newPhoneNumber}
             </p>
           </Grid>
           <Grid item xs={3}>

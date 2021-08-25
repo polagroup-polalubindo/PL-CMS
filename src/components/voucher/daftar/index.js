@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CMSContext } from "../../../context/state";
 import {
   Button,
@@ -11,28 +11,35 @@ import {
   Paper,
   Grid,
   CircularProgress,
+  TablePagination,
+  TextField,
+  InputAdornment
 } from "@material-ui/core";
 
 import useStyles from "./styles";
+import SearchIcon from "@material-ui/icons/Search";
 
 import VoucherCard from "../voucherCard";
 
 export default function Index() {
   const classes = useStyles();
 
-  const { fetchVoucher, voucher, proses } = useContext(CMSContext);
+  const { fetchVoucher, voucher, proses, totalVoucher } = useContext(CMSContext);
+
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [page, setPage] = useState(0)
+  const [status, setStatus] = useState(null)
+  const [keyword, setKeyword] = useState(null)
 
   useEffect(() => {
-    fetchVoucher();
+    fetchData(rowsPerPage, page, status, keyword);
   }, []);
 
-  const [view, setView] = React.useState("Semua");
-
   const views = [
-    { value: "Semua" },
-    { value: "Sedang Berjalan" },
-    { value: "Akan Datang" },
-    { value: "Telah Berakhir" },
+    { value: null, label: "Semua" },
+    { value: "Sedang Berjalan", label: "Sedang Berjalan" },
+    { value: "Akan Datang", label: "Akan Datang" },
+    { value: "Telah Berakhir", label: "Telah Berakhir" },
   ];
 
   const headRows = [
@@ -42,6 +49,42 @@ export default function Index() {
     { value: "Periode" },
     { value: "Aksi" },
   ];
+
+  const fetchData = (limit, page, status, ) => {
+    let query = `?limit=${limit}&page=${page}`
+    if (status !== null) query += `&status=${status}`
+    if (keyword !== null) query += `&keyword=${keyword}`
+
+    fetchVoucher(query);
+  }
+
+  const handleChangeStatus = (args) => {
+    setStatus(args)
+    setPage(0)
+    fetchData(rowsPerPage, 0, args, keyword)
+  }
+
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(e.target.value)
+    setPage(0)
+    fetchData(e.target.value, 0, status, keyword)
+  }
+
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage)
+    fetchData(rowsPerPage, newPage, status, keyword)
+  }
+
+  const handleChangeKeyword = (event) => {
+    setKeyword(event.target.value)
+    setPage(0)
+    fetchData(rowsPerPage, 0, status, event.target.value)
+  }
+
+  const refresh = () => {
+    setPage(0)
+    fetchData(rowsPerPage, 0, status, keyword)
+  }
 
   return (
     <>
@@ -83,21 +126,36 @@ export default function Index() {
       <br /> */}
       <Paper style={{ padding: 10 }}>
         <Grid container spacing={2}>
+          <TextField
+            label="Cari nama/code"
+            variant="outlined"
+            size="small"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            value={keyword}
+            onChange={handleChangeKeyword}
+          />
+
           <Grid item xs={12}>
             {views.map((option) => (
               <Button
                 key={option.value}
-                onClick={() => setView(option.value)}
+                onClick={() => handleChangeStatus(option.value)}
                 style={{
                   borderBottom:
-                    view === option.value
+                    status === option.value
                       ? "2px solid red"
                       : "1px solid #6e6d6d",
                   borderRadius: 0,
-                  color: view === option.value ? "red" : "#6e6d6d",
+                  color: status === option.value ? "red" : "#6e6d6d",
                 }}
               >
-                <b>{option.value}</b>
+                <b>{option.label}</b>
               </Button>
             ))}
           </Grid>
@@ -118,7 +176,7 @@ export default function Index() {
                   {!proses &&
                     voucher &&
                     voucher.length > 0 &&
-                    voucher.map((row) => <VoucherCard row={row} />)}
+                    voucher.map((row) => <VoucherCard row={row} refresh={refresh}/>)}
                 </TableBody>
               </Table>
               <Grid style={{ display: "flex", justifyContent: "center" }}>
@@ -138,6 +196,21 @@ export default function Index() {
                   voucher.length === 0 && <p>Tidak ada data yang tersedia</p>
                 )}
               </Grid>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 20]}
+                component="div"
+                count={totalVoucher}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                backIconButtonProps={{
+                  'aria-label': 'previous page'
+                }}
+                nextIconButtonProps={{
+                  'aria-label': 'next page'
+                }}
+                onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+              />
             </TableContainer>
           </Grid>
         </Grid>
