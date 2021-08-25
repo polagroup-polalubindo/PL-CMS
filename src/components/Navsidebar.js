@@ -35,6 +35,7 @@ function Navsidebar(props) {
   const [product, setProduct] = React.useState(false);
   const [member, setMember] = React.useState(false);
   const [transaksi, setTransaksi] = React.useState(false);
+  const [voucher, setVoucher] = React.useState(false);
   const [menus, setMenus] = React.useState([]);
   const { userData, setUserData } = useContext(CMSContext);
 
@@ -49,48 +50,27 @@ function Navsidebar(props) {
             headers: { access_token, "Content-Type": "application/json" },
           });
 
-          data = await data.json()
+          data = await data.json();
           if (data.message === "user not found") {
-            throw 'error'
+            throw "error";
           } else {
-            await setUserData(data.data)
-            if (userData) fetchMenu()
+            await setUserData(data.data);
+            if (userData) fetchMenu();
           }
         } else {
-          throw 'error'
+          throw "error";
         }
       } catch (err) {
         localStorage.removeItem("access_token_CMS");
-        props.history.push('/login')
+        props.history.push("/login");
       }
     }
-    checkToken()
-  }, [])
+    checkToken();
+  }, []);
 
   useEffect(() => {
-    if (userData) fetchMenu()
-  }, [userData])
-
-  const handleClickProduct = () => {
-    setProduct(!product);
-  };
-
-  const handleClickMember = () => {
-    setMember(!member);
-  };
-
-  const handleClickTransaksi = () => {
-    setTransaksi(!transaksi);
-  };
-
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token_CMS')
-    props.history.push('/login')
-  }
+    if (userData) fetchMenu();
+  }, [userData]);
 
   const fetchMenu = () => {
     if (userData.nama.toLowerCase() === "ss") {
@@ -100,17 +80,17 @@ function Navsidebar(props) {
           sub: [],
           link: "pesanan",
           icon: "/img/cms/sidebar/sales-icon.png",
-        }, ,
+        },
         {
           value: "Logout",
           sub: [],
           link: "login",
           icon: "/img/cms/sidebar/logout-icon.png",
-        }
-      ])
-      props.history.push('/pesanan')
+        },
+      ]);
+      props.history.push("/pesanan");
     } else if (userData.nama.toLowerCase() === "sae") {
-      props.history.push('/transaksi')
+      props.history.push("/transaksi");
       setMenus([
         {
           value: "Transaksi",
@@ -132,69 +112,92 @@ function Navsidebar(props) {
           sub: [],
           link: "login",
           icon: "/img/cms/sidebar/logout-icon.png",
-        }
-      ])
-    } else setMenus([
-      {
-        value: "Produk",
-        sub: [
-          {
-            value: "Tambah Produk",
-            link: "produk/tambah",
-          },
-          {
-            value: "Daftar Produk",
-            link: "produk",
-          },
-        ],
-        expand: true,
-        icon: "/img/cms/sidebar/product-icon.png",
-      },
-      {
-        value: "Pesanan",
-        sub: [],
-        link: "pesanan",
-        icon: "/img/cms/sidebar/sales-icon.png",
-      },
-      {
-        value: "Member",
-        sub: [
-          {
-            value: "Tambah Member",
-            link: "member/tambah",
-          },
-          {
-            value: "Daftar Member",
-            link: "member",
-          },
-        ],
-        expand: true,
-        icon: "/img/cms/sidebar/member-icon.png",
-      },
-      {
-        value: "Transaksi",
-        sub: [
-          {
-            value: "Komisi",
-            link: "transaksi/komisi",
-          },
-          {
-            value: "Penjualan",
-            link: "transaksi",
-          },
-        ],
-        expand: true,
-        icon: "/img/cms/sidebar/transaction-icon.png",
-      },
-      {
-        value: "Logout",
-        sub: [],
-        link: "login",
-        icon: "/img/cms/sidebar/logout-icon.png",
-      }
-    ])
-  }
-
+        },
+      ]);
+    } else
+      setMenus([
+        {
+          value: "Produk",
+          sub: [
+            {
+              value: "Edit Produk",
+              link: "produk/edit/:id",
+            },
+            {
+              value: "Tambah Produk",
+              link: "produk/tambah",
+            },
+            {
+              value: "Daftar Produk",
+              link: "produk",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/product-icon.png",
+        },
+        {
+          value: "Pesanan",
+          sub: [],
+          link: "pesanan",
+          icon: "/img/cms/sidebar/sales-icon.png",
+        },
+        {
+          value: "Member",
+          sub: [
+            {
+              value: "Tambah Member",
+              link: "member/tambah",
+            },
+            {
+              value: "Daftar Member",
+              link: "member",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/member-icon.png",
+        },
+        {
+          value: "Transaksi",
+          sub: [
+            {
+              value: "Komisi",
+              link: "transaksi/komisi",
+            },
+            {
+              value: "Penjualan",
+              link: "transaksi",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/transaction-icon.png",
+        },
+        {
+          value: "Voucher",
+          sub: [
+            {
+              value: "Edit Voucher",
+              link: "voucher/edit/:id",
+            },
+            {
+              value: "Tambah Voucher",
+              link: "voucher/tambah",
+            },
+            {
+              value: "Daftar Voucher",
+              link: "voucher",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/voucher-icon.png",
+        },
+        {
+          value: "Logout",
+          sub: [],
+          link: "login",
+          icon: "/img/cms/sidebar/logout-icon.png",
+        },
+      ]);
+  };
 
   const drawer = (
     <div>
@@ -218,14 +221,19 @@ function Navsidebar(props) {
               key={menu.value}
               onClick={
                 menu.value === "Produk"
-                  ? handleClickProduct
+                  ? () => setProduct(!product)
                   : menu.value === "Member"
-                    ? handleClickMember
-                    : menu.value === "Transaksi"
-                      ? handleClickTransaksi
-                      : menu.value === "Logout"
-                        ? handleLogout
-                        : null
+                  ? () => setMember(!member)
+                  : menu.value === "Transaksi"
+                  ? () => setTransaksi(!transaksi)
+                  : menu.value === "Voucher"
+                  ? () => setVoucher(!voucher)
+                  : menu.value === "Logout"
+                  ? () => {
+                      localStorage.removeItem("access_token_CMS");
+                      props.history.push("/login");
+                    }
+                  : null
               }
               component={menu.expand === true ? null : Link}
               to={menu.expand === true ? null : `/${menu.link}`}
@@ -259,32 +267,38 @@ function Navsidebar(props) {
                 menu.value === "Produk"
                   ? product
                   : menu.value === "Member"
-                    ? member
-                    : menu.value === "Transaksi"
-                      ? transaksi
-                      : null
+                  ? member
+                  : menu.value === "Transaksi"
+                  ? transaksi
+                  : menu.value === "Voucher"
+                  ? voucher
+                  : null
               }
               timeout="auto"
               unmountOnExit
             >
               <List component="div" disablePadding>
                 {menu.sub.map((submenu) => (
-                  <ListItem
-                    button
-                    key={submenu.value}
-                    className={classes.nested}
-                    component={Link}
-                    to={`/${submenu.link}`}
-                  >
-                    <ListItemText primary={submenu.value} />
-                  </ListItem>
+                  <>
+                    {submenu.value.includes("Edit") ? null : (
+                      <ListItem
+                        button
+                        key={submenu.value}
+                        className={classes.nested}
+                        component={Link}
+                        to={`/${submenu.link}`}
+                      >
+                        <ListItemText primary={submenu.value} />
+                      </ListItem>
+                    )}
+                  </>
                 ))}
               </List>
             </Collapse>
           </>
         ))}
       </List>
-    </div >
+    </div>
   );
 
   const container =
@@ -293,8 +307,8 @@ function Navsidebar(props) {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      {
-        localStorage.getItem("access_token_CMS") && <>
+      {localStorage.getItem("access_token_CMS") && (
+        <>
           <AppBar
             position="fixed"
             className={classes.appBar}
@@ -306,7 +320,9 @@ function Navsidebar(props) {
                 color="inherit"
                 aria-label="open drawer"
                 edge="start"
-                onClick={handleDrawerToggle}
+                onClick={() => {
+                  setMobileOpen(!mobileOpen);
+                }}
                 className={classes.menuButton}
               >
                 <MenuIcon />
@@ -315,7 +331,7 @@ function Navsidebar(props) {
                 {menus.map((menu) => (
                   <Switch>
                     <Route path={`/${menu.link}`}>
-                      <b>{menu.value}</b>
+                      <b>{menu.value.includes("Edit") ? null : menu.value}</b>
                     </Route>
                     {menu.sub.map((submenu) => (
                       <Route path={`/${submenu.link}`}>
@@ -334,7 +350,7 @@ function Navsidebar(props) {
                 variant="temporary"
                 anchor={theme.direction === "rtl" ? "right" : "left"}
                 open={mobileOpen}
-                onClose={handleDrawerToggle}
+                onClose={() => setMobileOpen(!mobileOpen)}
                 classes={{
                   paper: classes.drawerPaper,
                 }}
@@ -358,7 +374,7 @@ function Navsidebar(props) {
             </Hidden>
           </nav>
         </>
-      }
+      )}
     </div>
   );
 }

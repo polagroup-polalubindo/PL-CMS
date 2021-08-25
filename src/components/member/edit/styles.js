@@ -1,33 +1,14 @@
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
-  // Upload Image
-  imgInput: {
-    "& > input": {
-      visibility: "hidden",
-      width: 0,
-      height: 0,
-    },
-  },
-  imgTag: { width: "180px", height: "auto" },
+  // member
+  tambah_member: { marginBottom: 20, backgroundColor: "red" },
 
-  // Brand
-  brandWidth: { width: "40%" },
-
-  // Button
-  buttonGroup: {
-    "& > *": {
-      margin: theme.spacing(1),
-    },
-    textAlign: "right",
-  },
-  buttonContained: { backgroundColor: "red" },
-  buttonOutlined: { color: "red", border: "1px solid red" },
-
-  //   Cards
+  // card
   root: {
     minWidth: 275,
     borderRadius: 20,
+    padding: "20px 25px",
   },
   bullet: {
     display: "inline-block",
@@ -41,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 12,
   },
 
-  //   Switch
-  switch: {
+  // switch
+  switchRoot: {
     width: 42,
     height: 26,
     padding: 0,
@@ -78,28 +59,30 @@ const useStyles = makeStyles((theme) => ({
   checked: {},
   focusVisible: {},
 
-  //   Radio
+  // table
+  table: {
+    minWidth: 650,
+  },
+  table_container: { borderRadius: 20 },
+  table_head: { backgroundColor: "#A9A9A9" },
+
+  // checkbox
   checkbox: {
-    "&$checkedBox": {
+    color: "red",
+    "&$checked": {
       color: "red",
     },
   },
-  inputAdornment: {
-    backgroundColor: "#acacac",
-    height: "2.5rem",
-    maxHeight: "3rem",
-    padding: 15,
-  },
-  colorTextWhite: { color: "white" },
 
-  brandWidth: {
-    maxWidth: 250,
-    width: "100%",
+  // button
+  button: {
+    "& > *": {
+      margin: theme.spacing(1),
+    },
+    textAlign: "right",
   },
-  imgTag: {
-    maxWidth: 150,
-    margin: 20,
-  },
+
+  button_simpan: { backgroundColor: "red" },
 }));
 
 export default useStyles;

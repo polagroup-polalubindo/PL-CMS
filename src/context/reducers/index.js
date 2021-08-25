@@ -21,6 +21,12 @@ const CMSReducer = (state, action) => {
         dataMemberForDownload: action.payload.data,
         proses: false,
       };
+    case "FETCH_VOUCHER":
+      return {
+        ...state,
+        voucher: action.payload || [],
+        proses: false,
+      };
     case "FETCH_TRANSAKSI":
       return {
         ...state,

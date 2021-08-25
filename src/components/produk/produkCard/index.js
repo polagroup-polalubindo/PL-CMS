@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link, useHistory } from "react-router-dom";
 import {
   Grid,
   MenuItem,
@@ -9,31 +9,34 @@ import {
   Switch,
 } from "@material-ui/core";
 import { CMSContext } from "../../../context/state";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
-const ProdukCard = ({ row, history }) => {
+const ProdukCard = (props, { row }) => {
+  const history = useHistory();
+
   const { ubahStatusProduk, deleteproduk, editProduk } = useContext(CMSContext);
   // const [checked, setChecked] = useState(false);
 
   const [produkStatus, setProdukStatus] = useState(false);
 
   const [data, setData] = useState({
-    hargaSatuan: row.hargaSatuan,
-    stock: row.stock,
-  })
+    hargaSatuan: props.row.hargaSatuan,
+    stock: props.row.stock,
+  });
 
   const handleStatus = () => {
     setProdukStatus(!produkStatus);
     ubahStatusProduk({
       statusProduk: !produkStatus,
-      id: row.id,
+      id: props.row.id,
     });
   };
 
   useEffect(() => {
-    setProdukStatus(row.statusProduk)
-  }, [row])
+    setProdukStatus(props.row.statusProduk);
+  }, [props.row]);
 
+  //// console.log(row);
   const actions = [
     {
       value: "edit",
@@ -44,32 +47,37 @@ const ProdukCard = ({ row, history }) => {
   ];
 
   const handleAction = (input) => {
+    //// console.log(input);
     if (input === "hapus") {
       Swal.fire({
-        title: 'Hapus produk permanen?',
+        title: "Hapus produk permanen?",
         showCancelButton: true,
         confirmButtonText: `Hapus`,
         cancelButtonText: `Batal`,
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await deleteproduk(row.id);
-          Swal.fire('Berhasil dihapus!', '', 'success')
+          await deleteproduk(props.row.id);
+          Swal.fire("Berhasil dihapus!", "", "success");
         }
-      })
+      });
     } else {
-      history.push(`/produk/${row.id}`, { data: row })
+      console.log(props.row);
+      history.push(`/produk/${props.row.id}`, { data: props.row });
+
+      // history.push('/produk/tambah', { data: row })
+      // editProduk(props.row.id, { stock: data.stock, hargaSatuan: data.hargaSatuan });
     }
   };
 
   const formatRupiah = (harga = 0) => {
-    let reverse = harga.toString().split('').reverse().join('');
+    let reverse = harga.toString().split("").reverse().join("");
     let ribuan = reverse.match(/\d{1,3}/g);
 
-    return `Rp. ${ribuan.join('.').split('').reverse().join('')}`;
-  }
+    return `Rp. ${ribuan.join(".").split("").reverse().join("")}`;
+  };
 
   return (
-    <TableRow key={row.id}>
+    <TableRow key={props.row.id}>
       {/* <TableCell>
         <Checkbox
           checked={checked}
@@ -81,21 +89,21 @@ const ProdukCard = ({ row, history }) => {
         <Grid container spacing={3}>
           <Grid item xs={3}>
             <img
-              src={row.fotoProduk}
-              alt={row.namaProduk}
+              src={props.row.fotoProduk}
+              alt={props.row.namaProduk}
               width="50"
               height="50"
             />
           </Grid>
           <Grid item xs={9}>
-            {row.namaProduk}
+            {props.row.namaProduk}
             <br />
-            SKU: {row.sku}
+            SKU: {props.row.sku}
           </Grid>
         </Grid>
       </TableCell>
-      <TableCell>{formatRupiah(row.hargaSatuan)}</TableCell>
-      <TableCell>{row.stock}</TableCell>
+      <TableCell>{props.row.hargaSatuan}</TableCell>
+      <TableCell>{props.row.stock}</TableCell>
       <TableCell>
         <Switch checked={produkStatus} onChange={handleStatus} />
       </TableCell>

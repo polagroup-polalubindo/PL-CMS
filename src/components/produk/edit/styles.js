@@ -84,6 +84,9 @@ const useStyles = makeStyles((theme) => ({
       color: "red",
     },
   },
+  checkedBox: {},
+
+  // Input Adornment
   inputAdornment: {
     backgroundColor: "#acacac",
     height: "2.5rem",
@@ -91,15 +94,6 @@ const useStyles = makeStyles((theme) => ({
     padding: 15,
   },
   colorTextWhite: { color: "white" },
-
-  brandWidth: {
-    maxWidth: 250,
-    width: "100%",
-  },
-  imgTag: {
-    maxWidth: 150,
-    margin: 20,
-  },
 }));
 
 export default useStyles;

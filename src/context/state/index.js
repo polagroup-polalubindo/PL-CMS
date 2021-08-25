@@ -18,13 +18,14 @@ const initialState = {
   userData: null,
   proses: false,
   dataKomisi: [],
-  totalKomisi: 0
+  totalKomisi: 0,
+  voucher: [],
 };
 
 export const CMSContext = createContext(initialState);
 
-export const URL_SERVER = `http://157.230.248.17`;
-// export const URL_SERVER = `http://localhost:4000`;
+// export const URL_SERVER = `http://157.230.248.17`;
+export const URL_SERVER = `http://localhost:4000`;
 
 export const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(CMSReducer, initialState);
@@ -54,19 +55,19 @@ export const Provider = ({ children }) => {
     });
     data = await data.json();
 
-    if (data.data.role === 'admin') {
+    if (data.data.role === "admin") {
       if (data.access_token) {
         await dispatch({ type: "FETCH_USER_DATA", payload: data.data });
         localStorage.setItem("access_token_CMS", data.access_token);
       }
     } else {
-      throw { message: "Not admin" }
+      throw { message: "Not admin" };
     }
   };
 
   const setUserData = (payload) => {
     dispatch({ type: "FETCH_USER_DATA", payload });
-  }
+  };
 
   // PRODUK
   const fetchProduk = async (query) => {
@@ -74,7 +75,10 @@ export const Provider = ({ children }) => {
     console.log(query)
     let data = await fetch(URL_SERVER + `/produk${query}`);
     data = await data.json();
-    dispatch({ type: "FETCH_PRODUK", payload: { data: data.data || [], totalProduk: data.totalProduk } });
+    dispatch({
+      type: "FETCH_PRODUK",
+      payload: { data: data.data || [], totalProduk: data.totalProduk },
+    });
   };
 
   const ubahStatusProduk = async (newData) => {
@@ -122,7 +126,10 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_MEMBER", payload: { data: data.data, totalMember: data.totalMember } });
+    dispatch({
+      type: "FETCH_MEMBER",
+      payload: { data: data.data, totalMember: data.totalMember },
+    });
   };
 
   const fetchDataMemberForDownload = async (keyword) => {
@@ -134,13 +141,14 @@ export const Provider = ({ children }) => {
     });
     data = await data.json();
 
-    let newData = []
+    let newData = [];
     data.data.forEach((el, index) => {
-      let totalKomisi = 0
+      let totalKomisi = 0;
 
-      el.Komisis && el.Komisis.forEach(element => {
-        totalKomisi += element.totalKomisi
-      })
+      el.Komisis &&
+        el.Komisis.forEach((element) => {
+          totalKomisi += element.totalKomisi;
+        });
 
       newData.push({
         no: index + 1,
@@ -151,12 +159,12 @@ export const Provider = ({ children }) => {
         ktp: el.noKtp,
         npwp: el.noNPWP,
         totalBelanja: el.totalPembelian,
-        premier: el.referralStatus ? 'Premier' : 'Tidak Premier',
-        status: el.status ? 'Aktif' : 'Tidak Aktif',
+        premier: el.referralStatus ? "Premier" : "Tidak Premier",
+        status: el.status ? "Aktif" : "Tidak Aktif",
         namaPenerimaKomisi: el.namaRekening,
-        totalKomisi
-      })
-    })
+        totalKomisi,
+      });
+    });
     dispatch({ type: "FETCH_MEMBER_FOR_DOWNLOAD", payload: { data: newData } });
   };
 
@@ -210,7 +218,7 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     fetchMember();
-  }
+  };
 
   const ubahMember = async (id, newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
@@ -218,14 +226,14 @@ export const Provider = ({ children }) => {
       method: "PUT",
       headers: { access_token, "Content-Type": "application/json" },
       body: JSON.stringify(newData),
-    });;
+    });
     data = await data.json();
     if (data.errMessage) {
       throw data.errMessage;
     } else {
       return { message: "success" };
     }
-  }
+  };
 
   // TRANSAKSI
   const fetchTransaksi = async (query) => {
@@ -236,7 +244,10 @@ export const Provider = ({ children }) => {
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_TRANSAKSI", payload: { data: data.data, totalTransaksi: data.totalTransaksi } });
+    dispatch({
+      type: "FETCH_TRANSAKSI",
+      payload: { data: data.data, totalTransaksi: data.totalTransaksi },
+    });
   };
 
   const fetchTransaksiKomisi = async () => {
@@ -303,7 +314,7 @@ export const Provider = ({ children }) => {
     });
     data = await data.json();
 
-    let newData = []
+    let newData = [];
     await data.data.forEach((el, index) => {
       newData.push({
         no: index + 1,
@@ -314,16 +325,19 @@ export const Provider = ({ children }) => {
         recipientNumber: el.telfonPenerima,
         recipientAddress: el.alamatPengiriman,
         invoice: el.invoice,
-        resi: el.noResi || '',
+        resi: el.noResi || "",
         tanggalPembelian: el.createdAt,
         kurir: el.kurir,
         jenisLayanan: el.serviceKurir,
         totalShipping: el.ongkosKirim,
         insuranceFee: el.insuranceFee,
         total: el.totalHarga,
-      })
-    })
-    dispatch({ type: "FETCH_TRANSAKSI_FOR_DOWNLOAD", payload: { data: newData } });
+      });
+    });
+    dispatch({
+      type: "FETCH_TRANSAKSI_FOR_DOWNLOAD",
+      payload: { data: newData },
+    });
   };
 
   // BRAND
@@ -360,6 +374,79 @@ export const Provider = ({ children }) => {
     });
   };
 
+  // VOUCHER
+  const fetchVoucher = async () => {
+    try {
+      dispatch({ type: "SET_PROSES" });
+      const access_token = localStorage.getItem("access_token_CMS");
+      let data = await fetch(URL_SERVER + "/voucher", {
+        method: "GET",
+        headers: { access_token, "Content-Type": "application/json" },
+      });
+
+      data = await data.json();
+      console.log(data);
+      dispatch({ type: "FETCH_VOUCHER", payload: data.data || [] });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addVoucher = async (input) => {
+    try {
+      const access_token = localStorage.getItem("access_token_CMS");
+      await Axios(URL_SERVER + "/voucher", {
+        method: "POST",
+        headers: { access_token },
+        data: input,
+      });
+      await fetchVoucher();
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        title: error,
+        icon: "error",
+      });
+      return error;
+    }
+  };
+
+  const editVoucher = async (id, newData) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/voucher/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+    data = await data.json();
+    if (data.errMessage) {
+      throw data.errMessage;
+    } else {
+      fetchVoucher();
+      return { message: "success" };
+    }
+  };
+
+  const fetchOneVoucher = async (id) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/voucher/${id}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+    dispatch({ type: "FETCH_VOUCHER", payload: data || [] });
+  };
+
+  const deleteVoucher = async (id) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    await fetch(URL_SERVER + `/voucher/${id}`, {
+      method: "DELETE",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    fetchVoucher();
+  };
+
   return (
     <CMSContext.Provider
       value={{
@@ -378,6 +465,7 @@ export const Provider = ({ children }) => {
         proses: state.proses,
         dataKomisi: state.dataKomisi,
         totalKomisi: state.totalKomisi,
+        voucher: state.voucher,
 
         // PRODUK
         fetchProduk,
@@ -405,8 +493,16 @@ export const Provider = ({ children }) => {
         kirimPesanan,
         fetchDataTransaksiForDownload,
 
+        // KOMISI
         fetchAllKomisi,
         updateKomisi,
+
+        // VOUCHER
+        fetchVoucher,
+        addVoucher,
+        fetchOneVoucher,
+        editVoucher,
+        deleteVoucher,
 
         autoLogin,
         login,

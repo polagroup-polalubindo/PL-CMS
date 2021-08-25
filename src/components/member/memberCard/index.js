@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router";
+
+import { useHistory } from "react-router-dom";
 
 import { CMSContext } from "../../../context/state";
 
@@ -18,43 +19,52 @@ import ListIcon from "@material-ui/icons/List";
 
 import useStyles from "./styles";
 
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
-export default function Index({ row }) {
+export default function Index(props, { row }) {
   const classes = useStyles();
   const history = useHistory();
 
   let newPhoneNumber = row.phone;
-  if (newPhoneNumber[0] === ' ') newPhoneNumber = newPhoneNumber.slice(1)
+  if (newPhoneNumber[0] === " ") newPhoneNumber = newPhoneNumber.slice(1);
 
-  if (newPhoneNumber.slice(0, 1) === '0') newPhoneNumber = `+62${newPhoneNumber.slice(1)}`
-  else if (newPhoneNumber.slice(0, 2) === '62') newPhoneNumber = `+${newPhoneNumber}`
-  else if (newPhoneNumber.slice(0, 5) === '(+62)') newPhoneNumber = `+62${newPhoneNumber.slice(6)}`
-  else if (newPhoneNumber.slice(0, 6) === '(+62) ') newPhoneNumber = `+62${newPhoneNumber.slice(7)}`
-  else if (newPhoneNumber.slice(0, 4) === '(62)') newPhoneNumber = `+62${newPhoneNumber.slice(5)}`
-  else if (newPhoneNumber.slice(0, 5) === '(62) ') newPhoneNumber = `+62${newPhoneNumber.slice(6)}`
+  if (newPhoneNumber.slice(0, 1) === "0")
+    newPhoneNumber = `+62${newPhoneNumber.slice(1)}`;
+  else if (newPhoneNumber.slice(0, 2) === "62")
+    newPhoneNumber = `+${newPhoneNumber}`;
+  else if (newPhoneNumber.slice(0, 5) === "(+62)")
+    newPhoneNumber = `+62${newPhoneNumber.slice(6)}`;
+  else if (newPhoneNumber.slice(0, 6) === "(+62) ")
+    newPhoneNumber = `+62${newPhoneNumber.slice(7)}`;
+  else if (newPhoneNumber.slice(0, 4) === "(62)")
+    newPhoneNumber = `+62${newPhoneNumber.slice(5)}`;
+  else if (newPhoneNumber.slice(0, 5) === "(62) ")
+    newPhoneNumber = `+62${newPhoneNumber.slice(6)}`;
   // else if (newPhoneNumber.slice(0, 3) === '+62') newPhoneNumber = newPhoneNumber
-  else newPhoneNumber = newPhoneNumber
-
+  else newPhoneNumber = newPhoneNumber;
 
   const { ubahStatusPremiere, ubahStatus, deleteMember } =
     useContext(CMSContext);
 
   // PREMIERE
   const [statusPremier, setPremiereStatus] = useState(
-    row.statusPremier === "aktif" && row.referralStatus ? true : false
+    props.row.statusPremier === "aktif" && props.row.referralStatus
+      ? true
+      : false
   );
   const handlePremiereStatus = () => {
     setPremiereStatus(!statusPremier);
     ubahStatusPremiere(
       !statusPremier === true
-        ? { statusPremier: "aktif", referralStatus: 1, id: row.id }
-        : { statusPremier: null, referralStatus: null, id: row.id }
+        ? { statusPremier: "aktif", referralStatus: 1, id: props.row.id }
+        : { statusPremier: null, referralStatus: null, id: props.row.id }
     );
   };
 
   // STATUS
-  const [status, setStatus] = useState(row.status === true ? true : false);
+  const [status, setStatus] = useState(
+    props.row.status === true ? true : false
+  );
   const handleStatus = () => {
     setStatus(!status);
     ubahStatus({ status: !status });
@@ -81,28 +91,30 @@ export default function Index({ row }) {
   const openAction = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const closeAction = (input) => {
     setAnchorEl(null);
+
     if (input === "hapus") {
       Swal.fire({
-        title: 'Hapus user permanen?',
+        title: "Hapus user permanen?",
         showCancelButton: true,
         confirmButtonText: `Hapus`,
         cancelButtonText: `Batal`,
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await deleteMember(row.id);
-          Swal.fire('Berhasil dihapus!', '', 'success')
+          await deleteMember(props.row.id);
+          Swal.fire("Berhasil dihapus!", "", "success");
         }
-      })
-    } else if (input === 'edit') {
-      history.push(`/member/${row.id}`, { data: row })
+      });
+    } else if (input === "edit") {
+      history.push(`/member/${row.id}`, { data: row });
     }
   };
   return (
-    <TableRow key={row.nama}>
-      <TableCell>{row.nama}</TableCell>
-      <TableCell>{row.createdAt.split("T")[0]}</TableCell>
+    <TableRow key={props.row.nama}>
+      <TableCell>{props.row.nama}</TableCell>
+      <TableCell>{props.row.createdAt.split("T")[0]}</TableCell>
       <TableCell>
         <Grid container alignItems="center">
           <Grid
@@ -126,7 +138,8 @@ export default function Index({ row }) {
                   "_blank"
                 )
               }
-              style={{ margin: 0, cursor: "pointer", color: 'blue' }}>
+              style={{ margin: 0, cursor: "pointer", color: "blue" }}
+            >
               {row.phone[0] === "+" ? row.phone : newPhoneNumber}
             </p>
           </Grid>
@@ -134,17 +147,17 @@ export default function Index({ row }) {
             <MailOutlineIcon />
           </Grid>
           <Grid item xs={9}>
-            {row.email}
+            {props.row.email}
           </Grid>
         </Grid>
       </TableCell>
-      <TableCell>{row.noKtp}</TableCell>
-      <TableCell>{row.noNPWP}</TableCell>
-      <TableCell>Rp.{row.Komisis[0]?.totalKomisi}</TableCell>
+      <TableCell>{props.row.noKtp}</TableCell>
+      <TableCell>{props.row.noNPWP}</TableCell>
+      <TableCell>Rp.{props.row.Komisis[0]?.totalKomisi}</TableCell>
       <TableCell>
-        Rp.{row.totalPembelian === null ? 0 : row.totalPembelian}
+        Rp.{props.row.totalPembelian === null ? 0 : props.row.totalPembelian}
       </TableCell>
-      <TableCell>{row.statusPremier}</TableCell>
+      <TableCell>{props.row.statusPremier}</TableCell>
       {/* <TableCell>
         <TextField
           select
@@ -163,7 +176,7 @@ export default function Index({ row }) {
       <TableCell>
         <Grid container alignItems="center">
           <Grid item xs={12}>
-            {row.discount} produk
+            {props.row.discount} produk
           </Grid>
           <Grid item xs={12}>
             <Button variant="outlined">ubah</Button>
@@ -201,7 +214,7 @@ export default function Index({ row }) {
         />
       </TableCell>
       <TableCell>
-        <ListIcon onClick={openAction} style={{ cursor: 'pointer' }}/>
+        <ListIcon onClick={openAction} style={{ cursor: "pointer" }} />
         <Popover
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
