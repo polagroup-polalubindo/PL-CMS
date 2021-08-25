@@ -19,7 +19,6 @@ import useStyles from "./styles";
 
 import { CMSContext } from "../../../context/state";
 import { useHistory } from "react-router";
-import moment from "moment";
 
 function Index({ location }) {
   const classes = useStyles();

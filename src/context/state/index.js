@@ -25,8 +25,8 @@ const initialState = {
 
 export const CMSContext = createContext(initialState);
 
-// export const URL_SERVER = `http://157.230.248.17`;
-export const URL_SERVER = `http://localhost:4000`;
+export const URL_SERVER = `http://157.230.248.17`;
+// export const URL_SERVER = `http://localhost:4000`;
 
 export const Provider = ({ children }) => {
   const [state, dispatch] = useReducer(CMSReducer, initialState);

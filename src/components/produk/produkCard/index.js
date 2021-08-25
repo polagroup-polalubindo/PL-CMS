@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { withRouter, Link, useHistory } from "react-router-dom";
+import { withRouter, useHistory } from "react-router-dom";
 import {
   Grid,
   MenuItem,
@@ -14,15 +14,10 @@ import Swal from "sweetalert2";
 const ProdukCard = (props, { row }) => {
   const history = useHistory();
 
-  const { ubahStatusProduk, deleteproduk, editProduk } = useContext(CMSContext);
+  const { ubahStatusProduk, deleteproduk } = useContext(CMSContext);
   // const [checked, setChecked] = useState(false);
 
   const [produkStatus, setProdukStatus] = useState(false);
-
-  const [data, setData] = useState({
-    hargaSatuan: props.row.hargaSatuan,
-    stock: props.row.stock,
-  });
 
   const handleStatus = () => {
     setProdukStatus(!produkStatus);
@@ -102,7 +97,7 @@ const ProdukCard = (props, { row }) => {
           </Grid>
         </Grid>
       </TableCell>
-      <TableCell>{props.row.hargaSatuan}</TableCell>
+      <TableCell>{formatRupiah(props.row.hargaSatuan || 0)}</TableCell>
       <TableCell>{props.row.stock}</TableCell>
       <TableCell>
         <Switch checked={produkStatus} onChange={handleStatus} />

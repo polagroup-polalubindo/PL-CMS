@@ -9,10 +9,10 @@ const useStyles = makeStyles((theme) => ({
       height: 0,
     },
   },
-  imgTag: { width: "180px", height: "auto" },
+  // imgTag: { width: "180px", height: "auto" },
 
   // Brand
-  brandWidth: { width: "40%" },
+  // brandWidth: { width: "40%" },
 
   // Button
   buttonGroup: {
