@@ -1,7 +1,6 @@
 const CMSReducer = (state, action) => {
   switch (action.type) {
     case "FETCH_PRODUK":
-      console.log(action.payload)
       return {
         ...state,
         produk: action.payload.data || [],

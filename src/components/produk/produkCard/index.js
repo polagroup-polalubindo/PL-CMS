@@ -56,7 +56,6 @@ const ProdukCard = (props, { row }) => {
         }
       });
     } else {
-      console.log(props.row);
       history.push(`/produk/${props.row.id}`, { data: props.row });
 
       // history.push('/produk/tambah', { data: row })

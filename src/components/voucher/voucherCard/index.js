@@ -9,6 +9,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Divider
 } from "@material-ui/core";
 import { CMSContext } from "../../../context/state";
 import Swal from "sweetalert2";
@@ -102,6 +103,8 @@ export default function VoucherCard(props) {
           aria-describedby="simple-modal-description"
         >
           <div className={classes.detil}>
+            <p style={{ margin: '0px 0px 5px', fontWeight:'bold', fontSize: 18 }}>Detail</p>
+            <Divider/>
             <List>
               <ListItem alignItems="flex-start">
                 <ListItemText

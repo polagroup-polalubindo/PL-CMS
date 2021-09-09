@@ -73,8 +73,7 @@ export const Provider = ({ children }) => {
   // PRODUK
   const fetchProduk = async (query) => {
     dispatch({ type: "SET_PROSES" });
-    console.log(query)
-    let data = await fetch(URL_SERVER + `/produk${query}`);
+    let data = await fetch(URL_SERVER + `/produk${query || ''}`);
     data = await data.json();
     dispatch({
       type: "FETCH_PRODUK",
@@ -115,14 +114,13 @@ export const Provider = ({ children }) => {
       headers: { access_token },
       data: input,
     });
-    console.log("MASUK")
   };
 
   // MEMBER
   const fetchMember = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/customer${query}`, {
+    let data = await fetch(URL_SERVER + `/customer${query || ''}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
@@ -240,7 +238,7 @@ export const Provider = ({ children }) => {
   const fetchTransaksi = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/transaksi${query}`, {
+    let data = await fetch(URL_SERVER + `/transaksi${query || ''}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
@@ -309,7 +307,7 @@ export const Provider = ({ children }) => {
   const fetchDataTransaksiForDownload = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/transaksi${query}`, {
+    let data = await fetch(URL_SERVER + `/transaksi${query || ''}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
@@ -357,7 +355,7 @@ export const Provider = ({ children }) => {
   const fetchAllKomisi = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/all-komisi${query}`, {
+    let data = await fetch(URL_SERVER + `/all-komisi${query || ''}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
@@ -380,7 +378,7 @@ export const Provider = ({ children }) => {
     try {
       dispatch({ type: "SET_PROSES" });
       const access_token = localStorage.getItem("access_token_CMS");
-      let data = await fetch(URL_SERVER + `/voucher${query}`, {
+      let data = await fetch(URL_SERVER + `/voucher${query || ''}`, {
         method: "GET",
         headers: { access_token, "Content-Type": "application/json" },
       });
@@ -388,7 +386,7 @@ export const Provider = ({ children }) => {
 
       dispatch({ type: "FETCH_VOUCHER", payload: { data: data.data || [], totalVoucher: data.totalVoucher } });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   };
 
@@ -400,14 +398,21 @@ export const Provider = ({ children }) => {
         headers: { access_token },
         data: input,
       });
-      await fetchVoucher();
+      return 'success'
     } catch (error) {
-      console.log(error);
-      Swal.fire({
-        title: error,
-        icon: "error",
-      });
-      return error;
+      // console.log(error.response)
+      if (error.response?.data?.message === "Code Voucher Existing") {
+        Swal.fire({
+          title: 'Code voucher sudah terpakai',
+          icon: "error",
+        });
+      } else {
+        Swal.fire({
+          title: error,
+          icon: "error",
+        });
+      }
+      return 'error';
     }
   };
 
@@ -415,14 +420,21 @@ export const Provider = ({ children }) => {
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + `/voucher/${id}`, {
       method: "PUT",
-      headers: { access_token, "Content-Type": "application/json" },
-      body: JSON.stringify(newData),
+      headers: { access_token },
+      body: newData,
     });
     data = await data.json();
+
     if (data.errMessage) {
-      throw data.errMessage;
+      return 'error';
+    } else if (data.message === "Code Voucher Existing") {
+      Swal.fire({
+        title: 'Code voucher sudah terpakai',
+        icon: "error",
+      })
+      return 'error';
     } else {
-      return { message: "success" };
+      return 'success'
     }
   };
 
@@ -449,6 +461,7 @@ export const Provider = ({ children }) => {
   return (
     <CMSContext.Provider
       value={{
+        URL_SERVER,
         produk: state.produk,
         totalProduk: state.totalProduk,
         brand: state.brand,

@@ -24,7 +24,7 @@ import Swal from "sweetalert2";
 export default function Index(props) {
   const classes = useStyles();
   const history = useHistory();
-console.log(props.row)
+
   let newPhoneNumber = props.row.phone;
   if (newPhoneNumber[0] === " ") newPhoneNumber = newPhoneNumber.slice(1);
 

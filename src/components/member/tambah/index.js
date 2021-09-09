@@ -58,7 +58,7 @@ function Index({ location }) {
     }
 
     response = location.state?.data ? await ubahMember(location.state.data.id, newData) : await tambahMember(newData);
-    console.log(response)
+
     if (response.message === "success") {
       history.push("/member");
     }
