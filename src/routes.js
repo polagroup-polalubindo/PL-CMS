@@ -7,6 +7,9 @@ import DaftarVoucher from "./components/voucher/daftar";
 import TambahProduk from "./components/produk/tambah";
 import DaftarProduk from "./components/produk/daftar";
 
+import TambahBrand from "./components/brand/tambah";
+import DaftarBrand from "./components/brand/daftar";
+
 import TambahMember from "./components/member/tambah";
 import DaftarMember from "./components/member/daftar";
 
@@ -33,6 +36,9 @@ function Routes() {
         <AuthenticatedRoute path="/produk/tambah" component={TambahProduk} />
         <AuthenticatedRoute path="/produk/:id" component={TambahProduk} />
         <AuthenticatedRoute path="/produk" component={DaftarProduk} />
+        <AuthenticatedRoute path="/brand/tambah" component={TambahBrand} />
+        <AuthenticatedRoute path="/brand/:id" component={TambahBrand} />
+        <AuthenticatedRoute path="/brand" component={DaftarBrand} />
         <AuthenticatedRoute path="/pesanan" component={Pesanan} />
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
         <AuthenticatedRoute path="/member/:id" component={TambahMember} />

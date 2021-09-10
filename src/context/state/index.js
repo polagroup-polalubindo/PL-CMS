@@ -8,6 +8,7 @@ const initialState = {
   produk: [],
   totalProduk: 0,
   brand: [],
+  totalBrand: 0,
   transaksi: [],
   totalTransaksi: 0,
   dataTransaksiForDownload: [],
@@ -340,15 +341,58 @@ export const Provider = ({ children }) => {
   };
 
   // BRAND
-  const fetchBrand = async () => {
+  const fetchBrand = async (query) => {
     dispatch({ type: "SET_PROSES" });
     const access_token = localStorage.getItem("access_token_CMS");
-    let data = await fetch(URL_SERVER + `/brand`, {
+    let data = await fetch(URL_SERVER + `/brand${query || ''}`, {
       method: "GET",
       headers: { access_token, "Content-Type": "application/json" },
     });
     data = await data.json();
-    dispatch({ type: "FETCH_BRAND", payload: data || [] });
+    dispatch({ type: "FETCH_BRAND", payload: { data: data.brandList || [], totalBrand: data.totalBrand } });
+  };
+
+  const deleteBrand = async (id) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    await fetch(URL_SERVER + `/brand/${id}`, {
+      method: "DELETE",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    return { message: "success" };
+  };
+
+  const addBrand = async (input) => {
+    try {
+      const access_token = localStorage.getItem("access_token_CMS");
+      await Axios(URL_SERVER + "/brand", {
+        method: "POST",
+        headers: { access_token },
+        data: input,
+      });
+      return 'success'
+    } catch (error) {
+      Swal.fire({
+        title: error,
+        icon: "error",
+      });
+      return 'error';
+    }
+  };
+
+  const editBrand = async (id, newData) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/brand/${id}`, {
+      method: "PUT",
+      headers: { access_token },
+      body: newData,
+    });
+    data = await data.json();
+
+    if (data.errMessage) {
+      return 'error';
+    } else {
+      return 'success'
+    }
   };
 
   // KOMISI
@@ -465,6 +509,7 @@ export const Provider = ({ children }) => {
         produk: state.produk,
         totalProduk: state.totalProduk,
         brand: state.brand,
+        totalBrand: state.totalBrand,
         member: state.member,
         totalMember: state.totalMember,
         dataMemberForDownload: state.dataMemberForDownload,
@@ -498,7 +543,6 @@ export const Provider = ({ children }) => {
 
         // TRANSAKSI
         fetchTransaksi,
-        fetchBrand,
         fetchTransaksiKomisi,
         konfirmasiTransaksi,
         tolakPesanan,
@@ -516,6 +560,12 @@ export const Provider = ({ children }) => {
         fetchOneVoucher,
         editVoucher,
         deleteVoucher,
+
+        // BRAND
+        fetchBrand,
+        deleteBrand,
+        addBrand,
+        editBrand,
 
         autoLogin,
         login,

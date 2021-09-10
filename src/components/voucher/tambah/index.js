@@ -71,7 +71,7 @@ function Index({ location }) {
       setInput({
         ...input,
         voucherId: location.state.data.id,
-        name: 'asdasdasd',
+        name: location.state.data.name,
         code: location.state.data.code,
         periodeStart: location.state.data.periodeStart.slice(0, 10),
         periodeEnd: location.state.data.periodeEnd.slice(0, 10),

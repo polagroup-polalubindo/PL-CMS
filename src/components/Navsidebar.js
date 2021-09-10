@@ -36,6 +36,7 @@ function Navsidebar(props) {
   const [member, setMember] = React.useState(false);
   const [transaksi, setTransaksi] = React.useState(false);
   const [voucher, setVoucher] = React.useState(false);
+  const [brand, setBrand] = React.useState(false);
   const [menus, setMenus] = React.useState([]);
   const { userData, setUserData } = useContext(CMSContext);
 
@@ -136,6 +137,25 @@ function Navsidebar(props) {
           icon: "/img/cms/sidebar/product-icon.png",
         },
         {
+          value: "Brand",
+          sub: [
+            {
+              value: "Edit Brand",
+              link: "brand/edit/:id",
+            },
+            {
+              value: "Tambah Brand",
+              link: "brand/tambah",
+            },
+            {
+              value: "Daftar Brand",
+              link: "brand",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/brand-icon.png",
+        },
+        {
           value: "Pesanan",
           sub: [],
           link: "pesanan",
@@ -228,6 +248,8 @@ function Navsidebar(props) {
                   ? () => setTransaksi(!transaksi)
                   : menu.value === "Voucher"
                   ? () => setVoucher(!voucher)
+                  : menu.value === "Brand"
+                  ? () => setBrand(!brand)
                   : menu.value === "Logout"
                   ? () => {
                       localStorage.removeItem("access_token_CMS");
@@ -266,6 +288,12 @@ function Navsidebar(props) {
                 ) : (
                   <ExpandMore />
                 )
+              ) : menu.value === "Brand" ? (
+                brand ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )
               ) : null}
             </ListItem>
             <Collapse
@@ -278,6 +306,8 @@ function Navsidebar(props) {
                   ? transaksi
                   : menu.value === "Voucher"
                   ? voucher
+                  : menu.value === "Brand"
+                  ? brand
                   : null
               }
               timeout="auto"
