@@ -211,6 +211,12 @@ function Navsidebar(props) {
           icon: "/img/cms/sidebar/voucher-icon.png",
         },
         {
+          value: "Warranty",
+          sub: [],
+          link: "warranty",
+          icon: "/img/cms/sidebar/waranty-icon.png",
+        },        
+        {
           value: "Logout",
           sub: [],
           link: "login",

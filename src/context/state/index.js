@@ -21,7 +21,9 @@ const initialState = {
   dataKomisi: [],
   totalKomisi: 0,
   voucher: [],
-  totalVoucher: 0
+  totalVoucher: 0,
+  dataWarranty: [],
+  totalWarranty: 0,
 };
 
 export const CMSContext = createContext(initialState);
@@ -502,6 +504,34 @@ export const Provider = ({ children }) => {
     return { message: "success" };
   };
 
+  // WARRANTY
+  const fetchWarranty = async (query) => {
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/warranty${query || ''}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+    dispatch({ type: "FETCH_WARRANTY", payload: { data: data.data || [], totalWarranty: data.totalWarranty } });
+  };
+  
+  const editWarranty = async (id, newData) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/warranty/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+    data = await data.json();
+
+    if (data.errMessage) {
+      return 'error';
+    } else {
+      return 'success'
+    }
+  };
+
   return (
     <CMSContext.Provider
       value={{
@@ -524,6 +554,8 @@ export const Provider = ({ children }) => {
         totalKomisi: state.totalKomisi,
         voucher: state.voucher,
         totalVoucher: state.totalVoucher,
+        dataWarranty: state.dataWarranty,
+        totalWarranty: state.totalWarranty,
 
         // PRODUK
         fetchProduk,
@@ -566,6 +598,10 @@ export const Provider = ({ children }) => {
         deleteBrand,
         addBrand,
         editBrand,
+
+        // WARRANTY
+        fetchWarranty,
+        editWarranty,
 
         autoLogin,
         login,

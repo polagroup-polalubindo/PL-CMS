@@ -15,6 +15,8 @@ import DaftarMember from "./components/member/daftar";
 
 import Pesanan from "./components/pesanan";
 
+import Warranty from "./components/warranty";
+
 import TransaksiKomisi from "./components/transaksi/komisi";
 import TransaksiPenjualan from "./components/transaksi/penjualan";
 
@@ -43,6 +45,7 @@ function Routes() {
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
         <AuthenticatedRoute path="/member/:id" component={TambahMember} />
         <AuthenticatedRoute path="/member" component={DaftarMember} />
+        <AuthenticatedRoute path="/warranty" component={Warranty} />
         <AuthenticatedRoute
           path="/transaksi/komisi"
           component={TransaksiKomisi}

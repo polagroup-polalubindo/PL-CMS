@@ -43,7 +43,7 @@ const CMSReducer = (state, action) => {
     case "FETCH_BRAND":
       return {
         ...state,
-        brand: action.payload.data ,
+        brand: action.payload.data,
         totalBrand: action.payload.totalBrand,
         proses: false,
       };
@@ -51,6 +51,13 @@ const CMSReducer = (state, action) => {
       return {
         ...state,
         transaksiKomisi: action.payload || [],
+        proses: false,
+      };
+    case "FETCH_WARRANTY":
+      return {
+        ...state,
+        dataWarranty: action.payload.data,
+        totalWarranty: action.payload.totalWarranty,
         proses: false,
       };
     case "FETCH_USER_DATA":

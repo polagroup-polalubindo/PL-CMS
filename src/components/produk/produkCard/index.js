@@ -31,7 +31,6 @@ const ProdukCard = (props, { row }) => {
     setProdukStatus(props.row.statusProduk);
   }, [props.row]);
 
-  //// console.log(row);
   const actions = [
     {
       value: "edit",
@@ -42,7 +41,6 @@ const ProdukCard = (props, { row }) => {
   ];
 
   const handleAction = (input) => {
-    //// console.log(input);
     if (input === "hapus") {
       Swal.fire({
         title: "Hapus produk permanen?",
