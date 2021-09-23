@@ -15,6 +15,7 @@ import {
   TextField,
   InputAdornment
 } from "@material-ui/core";
+import { useHistory } from "react-router";
 
 import useStyles from "./styles";
 import SearchIcon from "@material-ui/icons/Search";
@@ -23,6 +24,7 @@ import BrandCard from "../brandCard";
 
 export default function Index() {
   const classes = useStyles();
+  const history = useHistory();
 
   const { fetchBrand, brand, proses, totalBrand } = useContext(CMSContext);
 
@@ -73,80 +75,88 @@ export default function Index() {
   }
 
   return (
-    <>
+    <Grid>
+      <Button
+        variant="contained"
+        disableElevation
+        color="primary"
+        className={classes.tambah_produk}
+        onClick={() => history.push("/brand/tambah")}
+      >
+        + Tambah Brand
+      </Button>
+      <br />
+      <TextField
+        label="Cari brand"
+        variant="outlined"
+        size="small"
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        value={keyword}
+        onChange={handleChangeKeyword}
+        style={{ marginBottom: 20 }}
+      />
+
       <Paper style={{ padding: 10 }}>
-        <Grid container spacing={2}>
-          <TextField
-            label="Cari brand"
-            variant="outlined"
-            size="small"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            value={keyword}
-            onChange={handleChangeKeyword}
-          />
-
-
-          <Grid item xs={12}>
-            <TableContainer>
-              <Table className={classes.table} aria-label="simple table">
-                <TableHead className={classes.table_head}>
-                  <TableRow>
-                    {headRows.map((row) => (
-                      <TableCell key={row.value}>
-                        <b>{row.value}</b>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {!proses &&
-                    brand &&
-                    brand.length > 0 &&
-                    brand.map((row) => <BrandCard row={row} refresh={refresh} />)}
-                </TableBody>
-              </Table>
-              <Grid style={{ display: "flex", justifyContent: "center" }}>
-                {proses ? (
-                  <Grid
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: 80,
-                      height: 80,
-                    }}
-                  >
-                    <CircularProgress style={{ width: 50, height: 50 }} />
-                  </Grid>
-                ) : (
-                  brand.length === 0 && <p>Tidak ada data yang tersedia</p>
-                )}
-              </Grid>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={totalBrand}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                backIconButtonProps={{
-                  'aria-label': 'previous page'
-                }}
-                nextIconButtonProps={{
-                  'aria-label': 'next page'
-                }}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </TableContainer>
-          </Grid>
+        <Grid item xs={12}>
+          <TableContainer>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead className={classes.table_head}>
+                <TableRow>
+                  {headRows.map((row) => (
+                    <TableCell key={row.value}>
+                      <b>{row.value}</b>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {!proses &&
+                  brand &&
+                  brand.length > 0 &&
+                  brand.map((row) => <BrandCard row={row} refresh={refresh} />)}
+              </TableBody>
+            </Table>
+            <Grid style={{ display: "flex", justifyContent: "center" }}>
+              {proses ? (
+                <Grid
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: 80,
+                    height: 80,
+                  }}
+                >
+                  <CircularProgress style={{ width: 50, height: 50 }} />
+                </Grid>
+              ) : (
+                brand.length === 0 && <p>Tidak ada data yang tersedia</p>
+              )}
+            </Grid>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={totalBrand}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              backIconButtonProps={{
+                'aria-label': 'previous page'
+              }}
+              nextIconButtonProps={{
+                'aria-label': 'next page'
+              }}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </TableContainer>
         </Grid>
       </Paper>
-    </>
+    </Grid>
   );
 }

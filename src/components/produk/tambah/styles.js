@@ -97,7 +97,8 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
   },
   imgTag: {
-    maxWidth: 150,
+    width: 222,
+    height: 125,
     margin: 20,
   },
 }));

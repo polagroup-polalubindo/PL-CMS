@@ -60,6 +60,13 @@ const CMSReducer = (state, action) => {
         totalWarranty: action.payload.totalWarranty,
         proses: false,
       };
+    case "FETCH_MACHINE":
+      return {
+        ...state,
+        dataMachine: action.payload.data,
+        totalMachine: action.payload.totalMachine,
+        proses: false,
+      };
     case "FETCH_USER_DATA":
       return {
         ...state,

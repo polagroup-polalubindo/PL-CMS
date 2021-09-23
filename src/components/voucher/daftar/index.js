@@ -50,7 +50,7 @@ export default function Index() {
     { value: "Aksi" },
   ];
 
-  const fetchData = (limit, page, status, ) => {
+  const fetchData = (limit, page, status, keyword) => {
     let query = `?limit=${limit}&page=${page}`
     if (status !== null) query += `&status=${status}`
     if (keyword !== null) query += `&keyword=${keyword}`
@@ -124,96 +124,95 @@ export default function Index() {
         </Grid>
       </Paper>
       <br /> */}
+      <TextField
+        label="Cari nama/code"
+        variant="outlined"
+        size="small"
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        value={keyword}
+        onChange={handleChangeKeyword}
+        style={{ marginBottom: 20 }}
+      />
       <Paper style={{ padding: 10 }}>
-        <Grid container spacing={2}>
-          <TextField
-            label="Cari nama/code"
-            variant="outlined"
-            size="small"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            value={keyword}
-            onChange={handleChangeKeyword}
-          />
-
-          <Grid item xs={12}>
-            {views.map((option) => (
-              <Button
-                key={option.value}
-                onClick={() => handleChangeStatus(option.value)}
-                style={{
-                  borderBottom:
-                    status === option.value
-                      ? "2px solid red"
-                      : "1px solid #6e6d6d",
-                  borderRadius: 0,
-                  color: status === option.value ? "red" : "#6e6d6d",
-                }}
-              >
-                <b>{option.label}</b>
-              </Button>
-            ))}
-          </Grid>
-
-          <Grid item xs={12}>
-            <TableContainer>
-              <Table className={classes.table} aria-label="simple table">
-                <TableHead className={classes.table_head}>
-                  <TableRow>
-                    {headRows.map((row) => (
-                      <TableCell key={row.value}>
-                        <b>{row.value}</b>
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {!proses &&
-                    voucher &&
-                    voucher.length > 0 &&
-                    voucher.map((row) => <VoucherCard row={row} refresh={refresh}/>)}
-                </TableBody>
-              </Table>
-              <Grid style={{ display: "flex", justifyContent: "center" }}>
-                {proses ? (
-                  <Grid
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: 80,
-                      height: 80,
-                    }}
-                  >
-                    <CircularProgress style={{ width: 50, height: 50 }} />
-                  </Grid>
-                ) : (
-                  voucher.length === 0 && <p>Tidak ada data yang tersedia</p>
-                )}
-              </Grid>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 20]}
-                component="div"
-                count={totalVoucher}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                backIconButtonProps={{
-                  'aria-label': 'previous page'
-                }}
-                nextIconButtonProps={{
-                  'aria-label': 'next page'
-                }}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
-            </TableContainer>
-          </Grid>
+        <Grid item xs={12}>
+          {views.map((option) => (
+            <Button
+              key={option.value}
+              onClick={() => handleChangeStatus(option.value)}
+              style={{
+                borderBottom:
+                  status === option.value
+                    ? "2px solid red"
+                    : "1px solid #6e6d6d",
+                borderRadius: 0,
+                color: status === option.value ? "red" : "#6e6d6d",
+              }}
+            >
+              <b>{option.label}</b>
+            </Button>
+          ))}
         </Grid>
+
+        <Grid item xs={12}>
+          <TableContainer>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead className={classes.table_head}>
+                <TableRow>
+                  {headRows.map((row) => (
+                    <TableCell key={row.value}>
+                      <b>{row.value}</b>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {!proses &&
+                  voucher &&
+                  voucher.length > 0 &&
+                  voucher.map((row) => <VoucherCard row={row} refresh={refresh} />)}
+              </TableBody>
+            </Table>
+            <Grid style={{ display: "flex", justifyContent: "center" }}>
+              {proses ? (
+                <Grid
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: 80,
+                    height: 80,
+                  }}
+                >
+                  <CircularProgress style={{ width: 50, height: 50 }} />
+                </Grid>
+              ) : (
+                voucher.length === 0 && <p>Tidak ada data yang tersedia</p>
+              )}
+            </Grid>
+            <TablePagination
+              rowsPerPageOptions={[5, 10, 20]}
+              component="div"
+              count={totalVoucher}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              backIconButtonProps={{
+                'aria-label': 'previous page'
+              }}
+              nextIconButtonProps={{
+                'aria-label': 'next page'
+              }}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+          </TableContainer>
+        </Grid>
+
       </Paper>
     </>
   );

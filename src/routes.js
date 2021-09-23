@@ -20,6 +20,9 @@ import Warranty from "./components/warranty";
 import TransaksiKomisi from "./components/transaksi/komisi";
 import TransaksiPenjualan from "./components/transaksi/penjualan";
 
+import TambahMachine from "./components/machine/tambah";
+import DaftarMachine from "./components/machine/daftar";
+
 import Login from "./components/login";
 
 import useStyles from "./styles";
@@ -45,6 +48,9 @@ function Routes() {
         <AuthenticatedRoute path="/member/tambah" component={TambahMember} />
         <AuthenticatedRoute path="/member/:id" component={TambahMember} />
         <AuthenticatedRoute path="/member" component={DaftarMember} />
+        <AuthenticatedRoute path="/machine/tambah" component={TambahMachine} />
+        <AuthenticatedRoute path="/machine/:id" component={TambahMachine} />
+        <AuthenticatedRoute path="/machine" component={DaftarMachine} />
         <AuthenticatedRoute path="/warranty" component={Warranty} />
         <AuthenticatedRoute
           path="/transaksi/komisi"

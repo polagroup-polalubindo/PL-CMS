@@ -298,7 +298,7 @@ function Index({ location }) {
                   <b>Upload Foto Produk</b>
                 </Typography>
                 <Typography variant="body2" component="p">
-                  ukuran 700px x 700px
+                  ukuran 222px x 125px
                 </Typography>
               </CardContent>
             </Grid>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { CMSContext } from "../../context/state";
+import { CMSContext } from "../../../context/state";
 import {
   Button,
   Table,
@@ -19,13 +19,13 @@ import {
 import useStyles from "./styles";
 import SearchIcon from "@material-ui/icons/Search";
 
-import WarrantyCard from "./warrantyCard";
+import MachineCard from "../machineCard";
 
 export default function Index() {
   const classes = useStyles();
 
   const {
-    fetchWarranty, dataWarranty, proses, totalWarranty
+    fetchMachine, dataMachine, proses, totalMachine
   } = useContext(CMSContext);
 
   const [rowsPerPage, setRowsPerPage] = useState(5)
@@ -40,26 +40,26 @@ export default function Index() {
   const views = [
     { value: null, label: "Semua" },
     { value: "Belum diklaim", label: "Belum Diklaim" },
-    { value: "Pengajuan", label: "Pengajuan" },
-    { value: "Sedang diproses", label: "Sedang Diproses" },
     { value: "Sudah diklaim", label: "Sudah Diklaim" },
+    { value: "Klaim kadaluarsa", label: "Klaim kadaluarsa" },
   ];
 
   const headRows = [
-    { value: "Nama Pelanggan" },
-    { value: "Invoice" },
     { value: "No Mesin" },
+    { value: "Invoice" },
     { value: "Tanggal Pembelian" },
-    { value: "Tempat Pembelian" },
     { value: "Status" },
+    { value: "Aksi" },
   ];
 
   const fetchData = (limit, page, status, keyword) => {
     let query = `?limit=${limit}&page=${page}`
-    if (status !== null) query += `&status=${status}`
     if (keyword !== null) query += `&keyword=${keyword}`
+    if (status === 'Belum diklaim') query += `&hasClaim=0`
+    if (status === 'Sudah diklaim') query += `&hasClaim=1`
+    if (status === 'Klaim kadaluarsa') query += `&isValid=0`
 
-    fetchWarranty(query);
+    fetchMachine(query);
   }
 
   const handleChangeStatus = (args) => {
@@ -82,6 +82,7 @@ export default function Index() {
   const handleChangeKeyword = (event) => {
     setKeyword(event.target.value)
     setPage(0)
+    console.log(event.target.value)
     fetchData(rowsPerPage, 0, status, event.target.value)
   }
 
@@ -93,7 +94,7 @@ export default function Index() {
   return (
     <>
       <TextField
-        label="Cari nama pelanggan/no mesin/invoice"
+        label="Cari no mesin/invoice"
         variant="outlined"
         size="small"
         style={{ width: 400, marginBottom: 20 }}
@@ -143,9 +144,9 @@ export default function Index() {
                 </TableHead>
                 <TableBody>
                   {!proses &&
-                    dataWarranty &&
-                    dataWarranty.length > 0 &&
-                    dataWarranty.map((row) => <WarrantyCard row={row} refresh={refresh} />)}
+                    dataMachine &&
+                    dataMachine.length > 0 &&
+                    dataMachine.map((row) => <MachineCard row={row} refresh={refresh} />)}
                 </TableBody>
               </Table>
               <Grid style={{ display: "flex", justifyContent: "center" }}>
@@ -162,13 +163,13 @@ export default function Index() {
                     <CircularProgress style={{ width: 50, height: 50 }} />
                   </Grid>
                 ) : (
-                  dataWarranty.length === 0 && <p>Tidak ada data yang tersedia</p>
+                  dataMachine.length === 0 && <p>Tidak ada data yang tersedia</p>
                 )}
               </Grid>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 20]}
                 component="div"
-                count={totalWarranty}
+                count={totalMachine}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 backIconButtonProps={{

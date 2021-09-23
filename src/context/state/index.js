@@ -24,6 +24,8 @@ const initialState = {
   totalVoucher: 0,
   dataWarranty: [],
   totalWarranty: 0,
+  dataMachine: [],
+  totalMachine: 0
 };
 
 export const CMSContext = createContext(initialState);
@@ -515,7 +517,7 @@ export const Provider = ({ children }) => {
     data = await data.json();
     dispatch({ type: "FETCH_WARRANTY", payload: { data: data.data || [], totalWarranty: data.totalWarranty } });
   };
-  
+
   const editWarranty = async (id, newData) => {
     const access_token = localStorage.getItem("access_token_CMS");
     let data = await fetch(URL_SERVER + `/warranty/${id}`, {
@@ -530,6 +532,62 @@ export const Provider = ({ children }) => {
     } else {
       return 'success'
     }
+  };
+
+  // MACHINE
+  const fetchMachine = async (query) => {
+    console.log(query)
+    dispatch({ type: "SET_PROSES" });
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/machine${query || ''}`, {
+      method: "GET",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    data = await data.json();
+    console.log(data)
+    dispatch({ type: "FETCH_MACHINE", payload: { data: data.data || [], totalMachine: data.totalMachine } });
+  };
+
+  const editMachine = async (id, newData) => {
+  console.log(id, newData)
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/machine/${id}`, {
+      method: "PUT",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+    data = await data.json();
+
+    if (data.errMessage) {
+      return 'error';
+    } else {
+      return 'success'
+    }
+  };
+
+  const addMachine = async (newData) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    let data = await fetch(URL_SERVER + `/machine`, {
+      method: "POST",
+      headers: { access_token, "Content-Type": "application/json" },
+      body: JSON.stringify(newData),
+    });
+    data = await data.json();
+
+    if (data.errMessage) {
+      return 'error';
+    } else {
+      return 'success'
+    }
+  };
+
+  const deleteMachine = async (id) => {
+    const access_token = localStorage.getItem("access_token_CMS");
+    await fetch(URL_SERVER + `/machine/${id}`, {
+      method: "DELETE",
+      headers: { access_token, "Content-Type": "application/json" },
+    });
+    return { message: "success" };
   };
 
   return (
@@ -556,6 +614,8 @@ export const Provider = ({ children }) => {
         totalVoucher: state.totalVoucher,
         dataWarranty: state.dataWarranty,
         totalWarranty: state.totalWarranty,
+        dataMachine: state.dataMachine,
+        totalMachine: state.totalMachine,
 
         // PRODUK
         fetchProduk,
@@ -602,6 +662,12 @@ export const Provider = ({ children }) => {
         // WARRANTY
         fetchWarranty,
         editWarranty,
+
+        // MACHINE
+        fetchMachine,
+        editMachine,
+        addMachine,
+        deleteMachine,
 
         autoLogin,
         login,

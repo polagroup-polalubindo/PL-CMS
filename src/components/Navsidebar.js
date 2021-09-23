@@ -37,6 +37,7 @@ function Navsidebar(props) {
   const [transaksi, setTransaksi] = React.useState(false);
   const [voucher, setVoucher] = React.useState(false);
   const [brand, setBrand] = React.useState(false);
+  const [machine, setMachine] = React.useState(false);
   const [menus, setMenus] = React.useState([]);
   const { userData, setUserData } = useContext(CMSContext);
 
@@ -215,7 +216,26 @@ function Navsidebar(props) {
           sub: [],
           link: "warranty",
           icon: "/img/cms/sidebar/waranty-icon.png",
-        },        
+        },
+        {
+          value: "Machine",
+          sub: [
+            {
+              value: "Edit Machine",
+              link: "machine/edit/:id",
+            },
+            {
+              value: "Tambah Machine",
+              link: "machine/tambah",
+            },
+            {
+              value: "Daftar Machine",
+              link: "machine",
+            },
+          ],
+          expand: true,
+          icon: "/img/cms/sidebar/machine-icon.png",
+        },
         {
           value: "Logout",
           sub: [],
@@ -249,19 +269,21 @@ function Navsidebar(props) {
                 menu.value === "Produk"
                   ? () => setProduct(!product)
                   : menu.value === "Member"
-                  ? () => setMember(!member)
-                  : menu.value === "Transaksi"
-                  ? () => setTransaksi(!transaksi)
-                  : menu.value === "Voucher"
-                  ? () => setVoucher(!voucher)
-                  : menu.value === "Brand"
-                  ? () => setBrand(!brand)
-                  : menu.value === "Logout"
-                  ? () => {
-                      localStorage.removeItem("access_token_CMS");
-                      props.history.push("/login");
-                    }
-                  : null
+                    ? () => setMember(!member)
+                    : menu.value === "Transaksi"
+                      ? () => setTransaksi(!transaksi)
+                      : menu.value === "Voucher"
+                        ? () => setVoucher(!voucher)
+                        : menu.value === "Brand"
+                          ? () => setBrand(!brand)
+                          : menu.value === "Machine"
+                            ? () => setMachine(!machine)
+                            : menu.value === "Logout"
+                              ? () => {
+                                localStorage.removeItem("access_token_CMS");
+                                props.history.push("/login");
+                              }
+                              : null
               }
               component={menu.expand === true ? null : Link}
               to={menu.expand === true ? null : `/${menu.link}`}
@@ -300,6 +322,12 @@ function Navsidebar(props) {
                 ) : (
                   <ExpandMore />
                 )
+              ) : menu.value === "Machine" ? (
+                machine ? (
+                  <ExpandLess />
+                ) : (
+                  <ExpandMore />
+                )
               ) : null}
             </ListItem>
             <Collapse
@@ -307,14 +335,16 @@ function Navsidebar(props) {
                 menu.value === "Produk"
                   ? product
                   : menu.value === "Member"
-                  ? member
-                  : menu.value === "Transaksi"
-                  ? transaksi
-                  : menu.value === "Voucher"
-                  ? voucher
-                  : menu.value === "Brand"
-                  ? brand
-                  : null
+                    ? member
+                    : menu.value === "Transaksi"
+                      ? transaksi
+                      : menu.value === "Voucher"
+                        ? voucher
+                        : menu.value === "Brand"
+                          ? brand
+                          : menu.value === "Machine"
+                            ? machine
+                            : null
               }
               timeout="auto"
               unmountOnExit
