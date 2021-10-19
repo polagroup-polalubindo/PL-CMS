@@ -56,11 +56,13 @@ export default function MachineCard(props) {
       <TableCell>{props.row.noMachine}</TableCell>
       <TableCell>{props.row.invoice}</TableCell>
       <TableCell>{moment(props.row.purchaseDate).format('LL')}</TableCell>
-      <TableCell>{props.row.Warranty?.id && (props.row.Warranty?.hasClaim
-        ? 'Sudah diklaim'
-        : !props.row.Warranty?.isValid
-          ? 'Garansi sudah kadaluarsa'
-          : 'Belum diklaim')}</TableCell>
+      <TableCell>{props.row.Warranty?.id
+        ? (props.row.Warranty?.hasClaim
+          ? 'Sudah diklaim'
+          : !props.row.Warranty?.isValid
+            ? 'Garansi sudah kadaluarsa'
+            : 'Belum diklaim')
+        : 'Belum didaftarkan warranty'}</TableCell>
       <TableCell>
         <TextField
           select
