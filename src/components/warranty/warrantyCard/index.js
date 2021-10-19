@@ -61,7 +61,17 @@ export default function VoucherCard(props) {
       <TableCell>{props.row.invoice}</TableCell>
       <TableCell>{props.row.noMachine}</TableCell>
       <TableCell>{moment(props.row.purchaseDate).format('LL')}</TableCell>
-      <TableCell>{props.row.purchasePlace}</TableCell>
+      <TableCell>{
+        !props.row.Warranty 
+          ? 'Belum diklaim'
+          : (
+            props.row.Warranty.hasClaim
+              ? 'Sudah diklaim'
+              : props.row.Warranty.isValid
+                ? 'Belum diklaim'
+                : 'Klaim kadaluarsa '
+          )
+      }</TableCell>
       <TableCell>
         {
           props.row.statusClaim === 'Pengajuan' || props.row.statusClaim === 'Sedang diproses'

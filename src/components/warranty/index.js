@@ -110,7 +110,7 @@ export default function Index() {
 
       <Paper style={{ padding: 10 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             {views.map((option) => (
               <Button
                 key={option.value}
@@ -127,7 +127,7 @@ export default function Index() {
                 <b>{option.label}</b>
               </Button>
             ))}
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12}>
             <TableContainer>
